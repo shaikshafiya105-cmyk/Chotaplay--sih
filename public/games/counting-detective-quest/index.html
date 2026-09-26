@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Riya's Number Space Mission 🚀 | CHOTAPLAY</title>
+  <meta name="description" content="Learn numbers 1 to 20 with Riya and Little Star on a magical space mission! Interactive educational children's game by CHOTAPLAY.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Deep Space Canvas Background -->
+  <canvas id="space-canvas"></canvas>
+
+  <!-- Main Game Container -->
+  <div id="game-app">
+    
+    <!-- Top Navigation & HUD -->
+    <header id="game-hud" class="hud-container">
+      <div class="hud-left">
+        <div class="brand-badge">
+          <span class="brand-logo">⭐</span>
+          <span class="brand-text">CHOTAPLAY</span>
+        </div>
+        <button id="constellation-btn" class="hud-pill-btn" aria-label="View Star Constellation">
+          <span class="icon">✨</span>
+          <span class="label">Constellation</span>
+          <span id="star-energy-count" class="badge">1/20</span>
+        </button>
+      </div>
+
+      <!-- Center: Current Big Number & Quantity Target -->
+      <div class="hud-center">
+        <div class="mission-target-card" id="mission-target-card">
+          <div class="number-bubble" id="hud-number-bubble">
+            <span id="current-number-display">1</span>
+          </div>
+          <div class="target-meta">
+            <div class="target-name" id="current-number-name">ONE</div>
+            <div class="quantity-meter" id="quantity-meter" aria-label="Count progress">
+              <!-- Dynamically populated counting stars/dots -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Audio & Controls -->
+      <div class="hud-right">
+        <button id="repeat-voice-btn" class="hud-circle-btn pulse-hint" aria-label="Listen to Riya" title="Hear Riya Speak">
+          <span class="icon">🔊</span>
+        </button>
+        <button id="music-toggle-btn" class="hud-circle-btn" aria-label="Toggle Music" title="Space Music">
+          <span class="icon" id="music-icon">🎵</span>
+        </button>
+        <button id="nav-drawer-btn" class="hud-circle-btn" aria-label="Mission Select" title="Choose Mission 1-20">
+          <span class="icon">🚀</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Interactive Game Stage -->
+    <main id="game-stage">
+      
+      <!-- Characters Column: Riya & Little Star -->
+      <aside id="characters-sidebar">
+        <!-- Riya Character Card -->
+        <div class="character-card riya-card" id="riya-container">
+          <div class="character-speech-bubble" id="speech-bubble">
+            <p id="speech-text">Welcome to Number Space! Let's count!</p>
+            <button id="bubble-listen-btn" class="bubble-mini-btn" title="Repeat voice">🔊</button>
+          </div>
+          <div class="character-avatar riya-avatar" id="riya-avatar">
+            <img src="assets/riya.jpg" alt="Riya the Astronaut" id="riya-img" class="char-img">
+            <div class="astronaut-helmet-glow"></div>
+            <div class="badge-indicator">👩‍🚀</div>
+          </div>
+        </div>
+
+        <!-- Little Star Companion -->
+        <div class="character-card star-card" id="little-star-container">
+          <div class="little-star-avatar float-anim" id="little-star-avatar">
+            <img src="assets/little-star.jpg" alt="Little Star Companion" id="little-star-img" class="star-img">
+            <div class="star-halo"></div>
+          </div>
+        </div>
+
+        <!-- Mini Spaceship Energy Collector -->
+        <div class="character-card ship-card" id="ship-collector">
+          <div class="spaceship-dock" id="spaceship-dock">
+            <img src="assets/spaceship.jpg" alt="Riya's Spaceship" id="spaceship-img" class="ship-img">
+            <div class="engine-glow" id="ship-engine-glow"></div>
+            <div class="energy-core-indicator">
+              <span class="core-icon">⚡</span>
+              <span id="core-percent">5%</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Central Mission Playfield -->
+      <section id="mission-area" class="mission-area" aria-live="polite">
+        <!-- Dynamic Mission Elements Injected by JavaScript -->
+        <div id="mission-content" class="mission-content">
+          <!-- Mechanic containers rendered here -->
+        </div>
+
+        <!-- Floating Particles Layer -->
+        <div id="particle-overlay" class="particle-overlay"></div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Feedback & Counter Bar -->
+    <footer id="game-footer">
+      <div class="footer-count-box">
+        <span class="count-label">Collected:</span>
+        <span class="count-numbers" id="current-count-text">0 / 1</span>
+        <div class="count-progress-bar">
+          <div class="count-progress-fill" id="count-progress-fill"></div>
+        </div>
+      </div>
+      <div class="footer-hint" id="footer-hint">
+        Tap the floating star to collect Star Energy! ⭐
+      </div>
+      <div class="footer-nav-controls">
+        <button id="prev-number-btn" class="footer-nav-btn" aria-label="Previous Number">◀</button>
+        <span class="nav-current-label" id="nav-number-label">Number 1 of 20</span>
+        <button id="next-number-btn" class="footer-nav-btn" aria-label="Next Number">▶</button>
+      </div>
+    </footer>
+
+    <!-- START SCREEN OVERLAY -->
+    <div id="start-modal" class="modal-overlay active">
+      <div class="modal-card start-card">
+        <div class="modal-cosmic-glow"></div>
+        <div class="start-header">
+          <div class="brand-tag">CHOTAPLAY PRESENTS</div>
+          <h1 class="start-title">RIYA'S NUMBER<br><span class="highlight-text">SPACE MISSION 🚀</span></h1>
+          <p class="start-subtitle">Travel through the magical galaxy from <strong>1 to 20</strong>!</p>
+        </div>
+
+        <div class="start-hero-illustration">
+          <div class="hero-character hero-riya">
+            <img src="assets/riya.jpg" alt="Riya">
+          </div>
+          <div class="hero-character hero-star float-anim">
+            <img src="assets/little-star.jpg" alt="Little Star">
+          </div>
+          <div class="hero-character hero-ship">
+            <img src="assets/spaceship.jpg" alt="Spaceship">
+          </div>
+        </div>
+
+        <div class="story-preview-box">
+          <p>⭐ "Oh no! Our spaceship needs Star Energy! Can you help me collect the stars from <strong>1 to 20</strong>?"</p>
+        </div>
+
+        <div class="start-actions">
+          <button id="start-game-btn" class="super-start-btn">
+            <span class="btn-star">⭐</span>
+            <span class="btn-text">START MISSION</span>
+            <span class="btn-rocket">🚀</span>
+          </button>
+        </div>
+
+        <div class="start-badges">
+          <span class="pill-badge">✨ Voice & Sound</span>
+          <span class="pill-badge">🔢 Numbers 1–20</span>
+          <span class="pill-badge">🪐 6 Fun Space Missions</span>
+          <span class="pill-badge">👶 Ages 3–6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSTELLATION MAP OVERLAY -->
+    <div id="constellation-modal" class="modal-overlay">
+      <div class="modal-card constellation-card">
+        <button id="close-constellation-btn" class="modal-close-btn" aria-label="Close Constellation">✕</button>
+        <div class="modal-header">
+          <h2 class="modal-title">✨ 20-STAR CONSTELLATION</h2>
+          <p class="modal-subtitle">Collect Star Energy to illuminate the entire Number Constellation!</p>
+        </div>
+
+        <div class="constellation-sky" id="constellation-sky">
+          <svg id="constellation-svg" class="constellation-svg" viewBox="0 0 800 450"></svg>
+          <div id="constellation-nodes-container" class="constellation-nodes-container">
+            <!-- 20 Star Nodes -->
+          </div>
+        </div>
+
+        <div class="constellation-status">
+          <div class="status-gauge">
+            <div class="gauge-fill" id="constellation-gauge-fill" style="width: 5%;"></div>
+          </div>
+          <p id="constellation-status-text">1 of 20 Stars Powered Up!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK MISSION SELECTOR DRAWER -->
+    <div id="mission-drawer" class="modal-overlay">
+      <div class="modal-card drawer-card">
+        <button id="close-drawer-btn" class="modal-close-btn" aria-label="Close Mission Selector">✕</button>
+        <h2 class="modal-title">🚀 NUMBER SPACE MAP (1–20)</h2>
+        <p class="modal-subtitle">Pick any number mission to explore!</p>
+        
+        <div class="number-grid-selector" id="number-grid-selector">
+          <!-- Numbers 1 to 20 grid buttons generated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- MINI LEVEL COMPLETE CELEBRATION MODAL -->
+    <div id="level-complete-banner" class="level-complete-banner">
+      <div class="celebrate-content">
+        <div class="celebrate-badge" id="celebrate-num-badge">⭐ 7</div>
+        <h3 id="celebrate-title">Great Job!</h3>
+        <p id="celebrate-subtitle">Seven Stars Collected!</p>
+        <div class="celebrate-stars-burst" id="celebrate-stars-burst"></div>
+      </div>
+    </div>
+
+    <!-- GRAND FINALE VICTORY SCREEN (NUMBER 20 COMPLETION) -->
+    <div id="grand-finale-modal" class="modal-overlay">
+      <div class="modal-card finale-card">
+        <div class="finale-cosmic-burst"></div>
+        <div class="finale-header">
+          <div class="crown-badge">👑 CHOTAPLAY ASTRONAUT 👑</div>
+          <h1 class="finale-title">🌟 NUMBER SPACE HERO! 🌟</h1>
+          <p class="finale-subtitle">We powered the magical spaceship with all <strong>20 STAR ENERGIES</strong>!</p>
+        </div>
+
+        <!-- Hyperspace Rocket Animation Display -->
+        <div class="hyperspace-viewport">
+          <div class="warp-stars-layer" id="warp-stars"></div>
+          <div class="flying-rocket-group" id="flying-rocket">
+            <img src="assets/spaceship.jpg" alt="Spaceship Flying" class="finale-ship-img">
+            <div class="rainbow-hyper-thrusters"></div>
+          </div>
+          <div class="finale-riya-cheer">
+            <img src="assets/riya.jpg" alt="Riya Celebrating" class="cheer-riya-img">
+          </div>
+          <div class="finale-star-cheer">
+            <img src="assets/little-star.jpg" alt="Little Star" class="cheer-star-img">
+          </div>
+        </div>
+
+        <!-- Complete 1-20 Number Board Roll -->
+        <div class="all-numbers-board">
+          <h4>🚀 Number Master (1 to 20):</h4>
+          <div class="numbers-roll-grid" id="finale-numbers-grid">
+            <!-- 1 to 20 badges highlighted in sequence -->
+          </div>
+        </div>
+
+        <div class="finale-actions">
+          <button id="replay-game-btn" class="super-start-btn">
+            <span class="btn-star">✨</span>
+            <span class="btn-text">PLAY MISSION AGAIN</span>
+            <span class="btn-rocket">🚀</span>
+          </button>
+          <button id="explore-freely-btn" class="hud-pill-btn finale-sub-btn">
+            <span>🌌 Free Space Exploration</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

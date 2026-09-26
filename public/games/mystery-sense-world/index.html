@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>John's Senses Detective 🔍 | ChotaPlay Educational Game</title>
+  <meta name="description" content="Help John rediscover his five magical sense powers! A fun, interactive educational game for kids aged 3-6 by ChotaPlay.">
+  
+  <!-- Google Fonts: Fredoka & Nunito for child-friendly premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas for Fullscreen Particle Effects (Confetti, Stars, Sparkles, Scent trails) -->
+  <canvas id="particle-canvas"></canvas>
+
+  <div id="game-app">
+    <!-- TOP HEADER / HUD -->
+    <header id="game-header">
+      <div class="brand-container">
+        <span class="brand-tag">CHOTAPLAY</span>
+        <h1 class="game-title">🔍 John's Senses Detective</h1>
+      </div>
+
+      <!-- FIVE SENSES POWER SLOTS -->
+      <div id="powers-hud" aria-label="Sense Powers Progress">
+        <div class="power-slot" id="slot-sight" data-sense="sight" title="Sight Power (Eyes)">
+          <div class="slot-icon">👀</div>
+          <span class="slot-label">Sight</span>
+          <div class="slot-sparkle"></div>
+        </div>
+        <div class="power-slot" id="slot-hearing" data-sense="hearing" title="Hearing Power (Ears)">
+          <div class="slot-icon">👂</div>
+          <span class="slot-label">Hearing</span>
+          <div class="slot-sparkle"></div>
+        </div>
+        <div class="power-slot" id="slot-smell" data-sense="smell" title="Smell Power (Nose)">
+          <div class="slot-icon">👃</div>
+          <span class="slot-label">Smell</span>
+          <div class="slot-sparkle"></div>
+        </div>
+        <div class="power-slot" id="slot-taste" data-sense="taste" title="Taste Power (Tongue)">
+          <div class="slot-icon">👅</div>
+          <span class="slot-label">Taste</span>
+          <div class="slot-sparkle"></div>
+        </div>
+        <div class="power-slot" id="slot-touch" data-sense="touch" title="Touch Power (Skin)">
+          <div class="slot-icon">✋</div>
+          <span class="slot-label">Touch</span>
+          <div class="slot-sparkle"></div>
+        </div>
+      </div>
+
+      <!-- UTILITY CONTROLS -->
+      <div class="header-controls">
+        <button id="btn-repeat-voice" class="hud-btn" title="Repeat Voice Instruction" aria-label="Repeat Voice">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-txt">Say Again</span>
+        </button>
+        <button id="btn-audio-toggle" class="hud-btn" title="Sound Mute/Unmute" aria-label="Toggle Sound">
+          <span class="btn-icon" id="audio-icon">🎵</span>
+        </button>
+        <button id="btn-restart" class="hud-btn" title="Restart Mission" aria-label="Restart Game">
+          <span class="btn-icon">🔄</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN GAME STAGE VIEWPORT -->
+    <main id="game-stage">
+      <!-- DYNAMIC BACKGROUND LAYER -->
+      <div id="stage-bg" class="bg-room">
+        <div class="bg-decorations">
+          <div class="bg-cloud cloud-1"></div>
+          <div class="bg-cloud cloud-2"></div>
+          <div class="bg-light-beam beam-1"></div>
+          <div class="bg-light-beam beam-2"></div>
+        </div>
+      </div>
+
+      <!-- CHARACTERS INTERACTION LAYER -->
+      <div id="characters-layer">
+        <!-- JOHN CHARACTER -->
+        <div id="john-character" class="character-wrapper john-idle">
+          <div class="character-shadow"></div>
+          <div class="character-body-container">
+            <img id="john-img" src="assets/john.png" alt="John the Sense Detective Hero" class="character-sprite">
+            <!-- Dynamic Expression & Action Overlays -->
+            <div id="john-emotion-bubble" class="emotion-bubble hidden"></div>
+            <div id="john-glow-ring" class="glow-ring hidden"></div>
+          </div>
+          <!-- Voice Speech Bubble for John -->
+          <div id="john-dialog-bubble" class="dialog-bubble bubble-john hidden">
+            <p id="john-dialog-text">Hi! I am John!</p>
+          </div>
+        </div>
+
+        <!-- LITTLE STAR ⭐ COMPANION -->
+        <div id="star-character" class="character-wrapper star-float">
+          <div class="star-halo"></div>
+          <div class="star-graphic">
+            <div class="star-svg-container">
+              <svg viewBox="0 0 100 100" class="star-svg" width="90" height="90">
+                <defs>
+                  <radialGradient id="starGrad" cx="40%" cy="40%" r="60%">
+                    <stop offset="0%" stop-color="#FFF9A6" />
+                    <stop offset="50%" stop-color="#FFD700" />
+                    <stop offset="100%" stop-color="#FFA500" />
+                  </radialGradient>
+                  <filter id="starGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                <!-- 5-Point Star Body -->
+                <polygon points="50,5 64,36 98,36 71,57 81,91 50,70 19,91 29,57 2,36 36,36" 
+                         fill="url(#starGrad)" filter="url(#starGlow)" stroke="#FF8C00" stroke-width="2" />
+                <!-- Eyes -->
+                <ellipse cx="42" cy="46" rx="4" ry="6" fill="#2c1a06" class="star-eye" />
+                <ellipse cx="58" cy="46" rx="4" ry="6" fill="#2c1a06" class="star-eye" />
+                <circle cx="43" cy="44" r="1.8" fill="#FFFFFF" />
+                <circle cx="59" cy="44" r="1.8" fill="#FFFFFF" />
+                <!-- Rosy Cheeks -->
+                <circle cx="35" cy="52" r="4.5" fill="#FF6B8B" opacity="0.6" />
+                <circle cx="65" cy="52" r="4.5" fill="#FF6B8B" opacity="0.6" />
+                <!-- Smile -->
+                <path d="M 44 54 Q 50 62 56 54" fill="none" stroke="#2c1a06" stroke-width="2.5" stroke-linecap="round" />
+                <!-- Sparkle -->
+                <circle cx="50" cy="18" r="2.5" fill="#FFFFFF" opacity="0.8" />
+              </svg>
+            </div>
+            <div class="star-sparkle-trail">
+              <span class="sparkle s1">✨</span>
+              <span class="sparkle s2">⭐</span>
+              <span class="sparkle s3">✨</span>
+            </div>
+          </div>
+          <!-- Voice Speech Bubble for Little Star -->
+          <div id="star-dialog-bubble" class="dialog-bubble bubble-star hidden">
+            <p id="star-dialog-text">Let's become Sense Detectives!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERACTIVE CONTENT PANELS (Swapped Dynamically) -->
+      <div id="content-overlay">
+
+        <!-- ================= SCENE 0: OPENING / INTRO ================= -->
+        <section id="scene-intro" class="game-scene active">
+          <div class="intro-content">
+            <div class="mission-badge">
+              <span class="badge-icon">🕵️‍♂️</span>
+              <span class="badge-sub">CHOTAPLAY MISSION</span>
+            </div>
+            <h2 class="scene-title">The Mystery of the Lost Senses!</h2>
+            <p class="scene-subtitle">John lost his 5 magical senses. Help Little Star and John find them all!</p>
+            
+            <!-- 5 Glowing Floating Orbs in Intro -->
+            <div class="intro-orbs-container" id="intro-orbs">
+              <div class="intro-orb" id="orb-0"><span>👀</span><label>Sight</label></div>
+              <div class="intro-orb" id="orb-1"><span>👂</span><label>Hearing</label></div>
+              <div class="intro-orb" id="orb-2"><span>👃</span><label>Smell</label></div>
+              <div class="intro-orb" id="orb-3"><span>👅</span><label>Taste</label></div>
+              <div class="intro-orb" id="orb-4"><span>✋</span><label>Touch</label></div>
+            </div>
+
+            <div class="action-btn-container">
+              <button id="btn-start-game" class="huge-action-btn pulse-anim">
+                <span class="btn-glow"></span>
+                <span class="btn-icon">🔍</span>
+                <span class="btn-text">START MISSION</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 1: SIGHT (👀 THE EYE MYSTERY) ================= -->
+        <section id="scene-sight" class="game-scene">
+          <div class="scene-header-card">
+            <div class="sense-badge-pill">
+              <span class="pill-icon">👀</span>
+              <span class="pill-name">SENSE OF SIGHT</span>
+            </div>
+            <h2 class="scene-prompt" id="prompt-sight">"I can see with my eyes! Can you find the <span class="highlight-red">RED APPLE</span>?"</h2>
+          </div>
+
+          <div class="interactive-stage sight-stage" id="sight-garden">
+            <!-- Hidden / Searchable Objects in Magical Garden -->
+            <div class="clickable-item item-flower" data-item="flower" tabindex="0" role="button" aria-label="Pretty Pink Flower">
+              <div class="item-visual">🌸</div>
+              <span class="item-name">Flower</span>
+            </div>
+
+            <div class="clickable-item item-teddy" data-item="teddy" tabindex="0" role="button" aria-label="Cute Teddy Bear">
+              <div class="item-visual">🧸</div>
+              <span class="item-name">Teddy</span>
+            </div>
+
+            <div class="clickable-item item-apple target-sight" data-item="apple" tabindex="0" role="button" aria-label="Bright Red Apple">
+              <div class="target-glow-aura"></div>
+              <div class="item-visual">🍎</div>
+              <span class="item-name">Red Apple</span>
+              <div class="sparkle-burst"></div>
+            </div>
+
+            <div class="clickable-item item-car" data-item="car" tabindex="0" role="button" aria-label="Toy Car">
+              <div class="item-visual">🚗</div>
+              <span class="item-name">Toy Car</span>
+            </div>
+
+            <div class="clickable-item item-butterfly" data-item="butterfly" tabindex="0" role="button" aria-label="Blue Butterfly">
+              <div class="item-visual">🦋</div>
+              <span class="item-name">Butterfly</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 2: HEARING (👂 THE SOUND MYSTERY) ================= -->
+        <section id="scene-hearing" class="game-scene">
+          <div class="scene-header-card">
+            <div class="sense-badge-pill">
+              <span class="pill-icon">👂</span>
+              <span class="pill-name">SENSE OF HEARING</span>
+            </div>
+            <h2 class="scene-prompt" id="prompt-hearing">"Shhh... listen carefully! Who made that sound?"</h2>
+          </div>
+
+          <div class="interactive-stage hearing-stage">
+            <!-- Center Sound Mystery Pulsing Cloud -->
+            <div class="sound-mystery-box" id="hearing-sound-box" role="button" tabindex="0" aria-label="Play Sound Mystery">
+              <div class="sound-wave-ring r1"></div>
+              <div class="sound-wave-ring r2"></div>
+              <div class="sound-wave-ring r3"></div>
+              <div class="sound-speaker-icon">🎵</div>
+              <span class="sound-box-hint">Tap to Listen 🔊</span>
+            </div>
+
+            <!-- Choice Objects -->
+            <div class="hearing-choices-grid">
+              <div class="clickable-item hearing-choice target-hearing" data-animal="cat" tabindex="0" role="button" aria-label="Friendly Cat">
+                <div class="choice-visual">🐱</div>
+                <span class="item-name">Cat</span>
+                <span class="sound-label">"Meow!"</span>
+              </div>
+
+              <div class="clickable-item hearing-choice" data-animal="dog" tabindex="0" role="button" aria-label="Playful Dog">
+                <div class="choice-visual">🐶</div>
+                <span class="item-name">Dog</span>
+                <span class="sound-label">"Woof!"</span>
+              </div>
+
+              <div class="clickable-item hearing-choice" data-animal="car" tabindex="0" role="button" aria-label="Beeping Car">
+                <div class="choice-visual">🚗</div>
+                <span class="item-name">Car</span>
+                <span class="sound-label">"Honk!"</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 3: SMELL (👃 THE SMELL MYSTERY) ================= -->
+        <section id="scene-smell" class="game-scene">
+          <div class="scene-header-card">
+            <div class="sense-badge-pill">
+              <span class="pill-icon">👃</span>
+              <span class="pill-name">SENSE OF SMELL</span>
+            </div>
+            <h2 class="scene-prompt" id="prompt-smell">"Hmm... what smells so sweet and fresh? Follow the scent!"</h2>
+          </div>
+
+          <div class="interactive-stage smell-stage">
+            <!-- Flowing Scent Wave Ribbons -->
+            <div class="scent-wave-container" id="scent-container">
+              <div class="scent-trail trail-1">🌸 ~ ~ ~ 👃</div>
+              <div class="scent-trail trail-2">✨ ~ ~ ~ 👃</div>
+            </div>
+
+            <div class="smell-choices-grid">
+              <div class="clickable-item smell-choice target-smell" data-smell="flower" tabindex="0" role="button" aria-label="Sweet Fragrant Rose Flower">
+                <div class="scent-glow-pulse"></div>
+                <div class="choice-visual">🌹</div>
+                <span class="item-name">Sweet Rose</span>
+                <span class="smell-tag">Floral Scent ✨</span>
+              </div>
+
+              <div class="clickable-item smell-choice" data-smell="lemon" tabindex="0" role="button" aria-label="Zesty Fresh Lemon">
+                <div class="choice-visual">🍋</div>
+                <span class="item-name">Lemon</span>
+                <span class="smell-tag">Zesty Citrus 🍋</span>
+              </div>
+
+              <div class="clickable-item smell-choice" data-smell="cookie" tabindex="0" role="button" aria-label="Warm Chocolate Cookie">
+                <div class="choice-visual">🍪</div>
+                <span class="item-name">Cookie</span>
+                <span class="smell-tag">Warm Bakery 🍪</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 4: TASTE (👅 SWEET OR SOUR) ================= -->
+        <section id="scene-taste" class="game-scene">
+          <div class="scene-header-card">
+            <div class="sense-badge-pill">
+              <span class="pill-icon">👅</span>
+              <span class="pill-name">SENSE OF TASTE</span>
+            </div>
+            <h2 class="scene-prompt" id="prompt-taste">"What does my tongue tell me? Let's taste both treats!"</h2>
+          </div>
+
+          <div class="interactive-stage taste-stage">
+            <div class="taste-table-container">
+              <!-- Sour Lemon Choice -->
+              <div class="clickable-item taste-choice taste-sour" id="taste-item-lemon" data-taste="sour" tabindex="0" role="button" aria-label="Sour Lemon">
+                <div class="taste-card-header">SOUR TASTE 😝</div>
+                <div class="choice-visual big-bounce">🍋</div>
+                <span class="item-name">Yellow Lemon</span>
+                <span class="taste-description">"Super Sour & Tangy!"</span>
+                <div class="taste-badge-check hidden">✅ Tasted!</div>
+              </div>
+
+              <div class="taste-divider">
+                <span>VS</span>
+              </div>
+
+              <!-- Sweet Candy Choice -->
+              <div class="clickable-item taste-choice taste-sweet" id="taste-item-candy" data-taste="sweet" tabindex="0" role="button" aria-label="Sweet Lollipop Candy">
+                <div class="taste-card-header">SWEET TASTE 😋</div>
+                <div class="choice-visual big-bounce">🍭</div>
+                <span class="item-name">Sweet Lollipop</span>
+                <span class="taste-description">"Yummy Sugary Sweet!"</span>
+                <div class="taste-badge-check hidden">✅ Tasted!</div>
+              </div>
+            </div>
+
+            <div class="taste-helper-text">
+              <span id="taste-status-text">👉 Tap each treat to see John's fun reaction!</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 5: TOUCH (✋ THE MYSTERY BOX) ================= -->
+        <section id="scene-touch" class="game-scene">
+          <div class="scene-header-card">
+            <div class="sense-badge-pill">
+              <span class="pill-icon">✋</span>
+              <span class="pill-name">SENSE OF TOUCH</span>
+            </div>
+            <h2 class="scene-prompt" id="prompt-touch">"I can't see what's inside! Can you reach in and feel it?"</h2>
+          </div>
+
+          <div class="interactive-stage touch-stage">
+            <div class="mystery-box-wrapper">
+              <div class="magic-box-chest" id="touch-chest">
+                <div class="box-lid">✨ ✋ TOUCH MYSTERY BOX ✋ ✨</div>
+                <div class="box-hole-curtain">
+                  <div class="curtain-cloth left"></div>
+                  <div class="curtain-cloth right"></div>
+                  <div class="box-inner-glow"></div>
+                  <span class="hand-prompt-icon">👉 Reach Inside! 👈</span>
+                </div>
+              </div>
+
+              <!-- Inside Items to Feel -->
+              <div class="touch-choices-container">
+                <div class="clickable-item touch-choice touch-soft" id="touch-item-teddy" data-touch="soft" tabindex="0" role="button" aria-label="Soft and Fluffy Teddy Bear">
+                  <div class="texture-badge">☁️ SOFT & FLUFFY</div>
+                  <div class="choice-visual squish-anim">🧸</div>
+                  <span class="item-name">Teddy Bear</span>
+                  <span class="touch-feeling">"Feels super soft & cuddly!"</span>
+                  <div class="touch-badge-check hidden">✅ Felt!</div>
+                </div>
+
+                <div class="clickable-item touch-choice touch-hard" id="touch-item-rock" data-touch="hard" tabindex="0" role="button" aria-label="Hard and Smooth Rock">
+                  <div class="texture-badge">💎 HARD & SOLID</div>
+                  <div class="choice-visual rock-anim">🪨</div>
+                  <span class="item-name">Smooth Rock</span>
+                  <span class="touch-feeling">"Feels hard & sturdy!"</span>
+                  <div class="touch-badge-check hidden">✅ Felt!</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="touch-helper-text">
+              <span id="touch-status-text">👉 Tap to feel both textures with your skin!</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 6: FINAL WOW CONVERGENCE ================= -->
+        <section id="scene-final-wow" class="game-scene">
+          <div class="final-wow-container">
+            <div class="wow-rays-bg"></div>
+            <h2 class="wow-title pop-in-text">⭐ YOU FOUND ALL 5 SENSES! ⭐</h2>
+            <p class="wow-subtitle">Watch John's 5 Sense Powers combine into the Ultimate Detective Power!</p>
+
+            <!-- 5 Converging Orbiting Icons -->
+            <div class="convergence-orb-stage" id="convergence-stage">
+              <div class="converge-icon c-sight">👀</div>
+              <div class="converge-icon c-hearing">👂</div>
+              <div class="converge-icon c-smell">👃</div>
+              <div class="converge-icon c-taste">👅</div>
+              <div class="converge-icon c-touch">✋</div>
+              
+              <!-- Center Golden Master Badge -->
+              <div class="master-badge-award hidden" id="master-badge">
+                <div class="master-star-halo"></div>
+                <div class="master-badge-icon">⭐ 🔍 ⭐</div>
+                <h3 class="master-badge-title">MASTER SENSE DETECTIVE</h3>
+                <p class="master-badge-child">Awarded to You & John!</p>
+              </div>
+            </div>
+
+            <div class="final-actions">
+              <button id="btn-enter-freeplay" class="huge-action-btn pulse-anim hidden">
+                <span class="btn-glow"></span>
+                <span class="btn-icon">🌟</span>
+                <span class="btn-text">ENTER SENSES PLAYGROUND</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= SCENE 7: FREE-PLAY WONDERLAND WORLD ================= -->
+        <section id="scene-freeplay" class="game-scene">
+          <div class="scene-header-card freeplay-header">
+            <div class="sense-badge-pill gold-pill">
+              <span class="pill-icon">⭐</span>
+              <span class="pill-name">FREE PLAY SENSES PLAYGROUND</span>
+            </div>
+            <h2 class="scene-prompt">"Tap anything in John's world to explore all 5 senses anytime!"</h2>
+          </div>
+
+          <div class="interactive-stage freeplay-stage">
+            <!-- Playground Interactive Sense Pods -->
+            <div class="freeplay-grid">
+              <!-- Pod 1: SIGHT -->
+              <div class="freeplay-pod pod-sight" data-sense="sight" tabindex="0" role="button" aria-label="Explore Sight">
+                <div class="pod-tag">👀 SIGHT</div>
+                <div class="pod-visual">🌈 🦋 🎨</div>
+                <span class="pod-title">Rainbow & Butterfly</span>
+                <p class="pod-caption">"I see beautiful colors with my eyes!"</p>
+                <button class="pod-btn">Tap to See 👀</button>
+              </div>
+
+              <!-- Pod 2: HEARING -->
+              <div class="freeplay-pod pod-hearing" data-sense="hearing" tabindex="0" role="button" aria-label="Explore Hearing">
+                <div class="pod-tag">👂 HEARING</div>
+                <div class="pod-visual">🐦 🔔 🎶</div>
+                <span class="pod-title">Singing Bird & Bell</span>
+                <p class="pod-caption">"I hear sweet music with my ears!"</p>
+                <button class="pod-btn">Tap to Hear 👂</button>
+              </div>
+
+              <!-- Pod 3: SMELL -->
+              <div class="freeplay-pod pod-smell" data-sense="smell" tabindex="0" role="button" aria-label="Explore Smell">
+                <div class="pod-tag">👃 SMELL</div>
+                <div class="pod-visual">🌸 🍓 🕯️</div>
+                <span class="pod-title">Fresh Rose & Berries</span>
+                <p class="pod-caption">"I smell yummy aromas with my nose!"</p>
+                <button class="pod-btn">Tap to Smell 👃</button>
+              </div>
+
+              <!-- Pod 4: TASTE -->
+              <div class="freeplay-pod pod-taste" data-sense="taste" tabindex="0" role="button" aria-label="Explore Taste">
+                <div class="pod-tag">👅 TASTE</div>
+                <div class="pod-visual">🍦 🍉 🍫</div>
+                <span class="pod-title">Ice Cream & Melon</span>
+                <p class="pod-caption">"I taste yummy foods with my tongue!"</p>
+                <button class="pod-btn">Tap to Taste 👅</button>
+              </div>
+
+              <!-- Pod 5: TOUCH -->
+              <div class="freeplay-pod pod-touch" data-sense="touch" tabindex="0" role="button" aria-label="Explore Touch">
+                <div class="pod-tag">✋ TOUCH</div>
+                <div class="pod-visual">🐰 🎈 🪶</div>
+                <span class="pod-title">Fluffy Bunny & Balloon</span>
+                <p class="pod-caption">"I feel soft and squishy textures with my skin!"</p>
+                <button class="pod-btn">Tap to Feel ✋</button>
+              </div>
+            </div>
+
+            <!-- Bottom Navigation Bar for Freeplay -->
+            <div class="freeplay-footer">
+              <button id="btn-replay-adventure" class="action-pill-btn">
+                <span>🔄 Play Adventure Again</span>
+              </button>
+              <div class="all-senses-summary">
+                <span>👀 Eyes See</span> • 
+                <span>👂 Ears Hear</span> • 
+                <span>👃 Nose Smells</span> • 
+                <span>👅 Tongue Tastes</span> • 
+                <span>✋ Skin Feels</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div><!-- End #content-overlay -->
+    </main>
+
+    <!-- FLOATING CELEBRATION TOAST -->
+    <div id="celebration-toast" class="toast-popup hidden" aria-live="polite">
+      <div class="toast-star">⭐</div>
+      <div class="toast-text-container">
+        <h3 id="toast-title">Awesome Job!</h3>
+        <p id="toast-message">You unlocked a new sense power!</p>
+      </div>
+    </div>
+  </div><!-- End #game-app -->
+
+  <script src="script.js"></script>
+</body>
+</html>

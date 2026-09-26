@@ -1,0 +1,254 @@
+/* Class 1 Jumbled Word Adventure Specific Styles */
+
+.class1-stage {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 0;
+  position: relative;
+}
+
+/* Clue Banner & Question */
+.class1-prompt-banner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+  padding: 8px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 10;
+}
+
+.class1-arena {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  position: relative;
+  min-height: 0;
+  padding: 4px 0;
+}
+
+/* Top Clue Image Container */
+.clue-visual-wrap {
+  width: clamp(120px, 16vh, 170px);
+  height: clamp(120px, 16vh, 170px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.clue-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(7, 59, 76, 0.16));
+  animation: idleBounce 3s ease-in-out infinite;
+}
+
+/* Target Slot Drop Zones (The answer slots) */
+.target-slots-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 1.5vw, 16px);
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
+.letter-slot {
+  width: clamp(64px, 8vw, 92px);
+  height: clamp(74px, 9vw, 102px);
+  background: rgba(255, 255, 255, 0.7);
+  border: 3.5px dashed #94A3B8;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.letter-slot.drag-over {
+  background: #E0F2FE;
+  border-color: #38BDF8;
+  transform: scale(1.08);
+}
+
+.letter-slot.filled {
+  border-style: solid;
+  border-color: #38BDF8;
+  background: #FFFFFF;
+  box-shadow: 0 8px 18px rgba(56, 189, 248, 0.25);
+}
+
+/* Jumbled Source Letter Tiles */
+.jumbled-tiles-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.8vw, 18px);
+  min-height: clamp(76px, 10vw, 105px);
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
+.draggable-letter-tile {
+  width: clamp(64px, 8vw, 90px);
+  height: clamp(74px, 9vw, 100px);
+  background: #FFFFFF;
+  border: 3.5px solid #CBD5E1;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 54px);
+  font-weight: 900;
+  color: var(--color-navy);
+  cursor: grab;
+  box-shadow: 0 8px 18px rgba(7, 59, 76, 0.12), inset 0 -4px 0 #CBD5E1;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  user-select: none;
+}
+
+.draggable-letter-tile:hover {
+  transform: translateY(-4px) scale(1.06);
+  border-color: #8338EC;
+  box-shadow: 0 14px 26px rgba(131, 56, 236, 0.25);
+}
+
+.draggable-letter-tile.dragging {
+  opacity: 0.4;
+  cursor: grabbing;
+}
+
+.draggable-letter-tile.in-slot {
+  box-shadow: none;
+  border-color: #38BDF8;
+}
+
+.slot-wobble-error {
+  animation: wobbleWrong 0.5s ease-in-out;
+  border-color: #EF476F !important;
+  background: #FFE3E3 !important;
+}
+
+.slot-snap-correct {
+  animation: correctCelebrate 0.6s ease-in-out;
+  background: linear-gradient(135deg, #06D6A0 0%, #118AB2 100%) !important;
+  color: #FFF !important;
+  border-color: #FFF !important;
+}
+
+/* Bottom Dock: Mascot & Sentences on Left, Action Buttons on Right Side */
+.class1-bottom-dock {
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: relative;
+  z-index: 40;
+  pointer-events: none;
+  min-height: 80px;
+}
+
+.class1-stage .mascot-companion {
+  position: static;
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  pointer-events: auto;
+  max-width: 60%;
+}
+
+.class1-stage .mascot-speech-bubble {
+  max-width: 480px;
+  font-size: clamp(16px, 1.8vw, 20px);
+  background: #FFFFFF;
+  border: 2.5px solid #E2E8F0;
+  box-shadow: 0 8px 24px rgba(7, 59, 76, 0.12);
+  border-radius: 20px 20px 20px 4px;
+}
+
+/* Action Check / Reset buttons placed to the Right Side */
+.class1-action-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  z-index: 50;
+  pointer-events: auto;
+  margin-left: auto;
+}
+
+.btn-check-word {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 2.2vw, 20px);
+  font-weight: 800;
+  padding: 14px 32px;
+  border-radius: 18px;
+  border: none;
+  background: linear-gradient(135deg, #8338EC 0%, #3A86FF 100%);
+  color: #FFFFFF;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(131, 56, 236, 0.4);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-check-word:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 12px 28px rgba(131, 56, 236, 0.5);
+}
+
+.btn-check-word:active {
+  transform: translateY(1px) scale(0.97);
+}
+
+.btn-reset-tiles {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 2vw, 18px);
+  font-weight: 800;
+  padding: 14px 22px;
+  border-radius: 18px;
+  border: 2px solid #CBD5E1;
+  background: #FFFFFF;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-reset-tiles:hover {
+  background: #F1F5F9;
+  border-color: #94A3B8;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 900px) {
+  .class1-bottom-dock {
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 12px;
+  }
+  .class1-action-row {
+    margin-left: 0;
+  }
+}

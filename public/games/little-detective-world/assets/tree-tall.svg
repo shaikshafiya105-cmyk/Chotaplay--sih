@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 320" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tall-trunk" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#8D6E63"/>
+      <stop offset="50%" stop-color="#6D4C41"/>
+      <stop offset="100%" stop-color="#4E342E"/>
+    </linearGradient>
+    <radialGradient id="tall-foliage1" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#81C784"/>
+      <stop offset="70%" stop-color="#43A047"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </radialGradient>
+    <radialGradient id="tall-foliage2" cx="35%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#A5D6A7"/>
+      <stop offset="70%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#1B5E20"/>
+    </radialGradient>
+    <filter id="tree-shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="5" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="80" cy="305" rx="55" ry="12" fill="rgba(0,0,0,0.15)"/>
+
+  <!-- Tall Trunk -->
+  <path d="M 68 140 L 62 300 C 62 305 98 305 98 300 L 92 140 Z" fill="url(#tall-trunk)" filter="url(#tree-shadow)"/>
+  <!-- Bark Texture Lines -->
+  <path d="M 75 190 Q 73 220 76 250" stroke="#3E2723" stroke-width="2.5" opacity="0.4" stroke-linecap="round"/>
+  <path d="M 85 170 Q 87 210 84 270" stroke="#3E2723" stroke-width="2.5" opacity="0.4" stroke-linecap="round"/>
+
+  <!-- Canopy / Foliage Layers -->
+  <!-- Bottom Tier -->
+  <circle cx="80" cy="150" r="50" fill="url(#tall-foliage1)" filter="url(#tree-shadow)"/>
+  <circle cx="50" cy="140" r="35" fill="url(#tall-foliage1)"/>
+  <circle cx="110" cy="140" r="35" fill="url(#tall-foliage1)"/>
+  
+  <!-- Middle Tier -->
+  <circle cx="80" cy="100" r="45" fill="url(#tall-foliage2)" filter="url(#tree-shadow)"/>
+  <circle cx="52" cy="95" r="30" fill="url(#tall-foliage2)"/>
+  <circle cx="108" cy="95" r="30" fill="url(#tall-foliage2)"/>
+
+  <!-- Top Tier -->
+  <circle cx="80" cy="55" r="38" fill="url(#tall-foliage1)"/>
+  <circle cx="80" cy="35" r="25" fill="url(#tall-foliage2)"/>
+
+  <!-- Apples / Blossom Berries on Tree -->
+  <circle cx="55" cy="85" r="7" fill="#FF5252"/>
+  <circle cx="105" cy="75" r="7" fill="#FF5252"/>
+  <circle cx="75" cy="120" r="8" fill="#FF5252"/>
+  <circle cx="115" cy="130" r="7" fill="#FF5252"/>
+  <circle cx="45" cy="135" r="7" fill="#FF5252"/>
+
+  <!-- Cute Tree Face -->
+  <circle cx="70" cy="95" r="4" fill="#1B5E20"/>
+  <circle cx="69" cy="93" r="1.5" fill="#FFF"/>
+  <circle cx="90" cy="95" r="4" fill="#1B5E20"/>
+  <circle cx="89" cy="93" r="1.5" fill="#FFF"/>
+  <ellipse cx="60" cy="102" rx="4" ry="2.5" fill="#FF8A80" opacity="0.6"/>
+  <ellipse cx="100" cy="102" rx="4" ry="2.5" fill="#FF8A80" opacity="0.6"/>
+  <path d="M 75 104 Q 80 110 85 104" stroke="#1B5E20" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+</svg>

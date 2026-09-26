@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Colour Bubble Adventure 🌈</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
+
+        :root {
+            --sky: #87CEEB;
+            --cloud: #FFFFFF;
+            --text-dark: #333333;
+            --primary-btn: #FF6B6B;
+            --primary-btn-hover: #FF4F4F;
+            --bg-color: #E0F7FA;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+            max-height: 600px;
+            background: linear-gradient(to bottom, var(--sky), #e0f7fa);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        /* UI Overlays */
+        #top-bar {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .icon-btn {
+            background: white;
+            border: 4px solid var(--text-dark);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 0 var(--text-dark);
+            transition: transform 0.1s;
+        }
+        
+        .icon-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 var(--text-dark);
+        }
+
+        #progress-bar {
+            background: white;
+            border: 4px solid var(--text-dark);
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 20px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 0 var(--text-dark);
+        }
+
+        /* Screens */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            transition: opacity 0.5s ease;
+            z-index: 10;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        h1 {
+            font-size: 48px;
+            color: white;
+            text-shadow: 3px 3px 0 var(--text-dark), -2px -2px 0 var(--text-dark), 2px -2px 0 var(--text-dark), -2px 2px 0 var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 36px;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
+
+        .btn {
+            background-color: var(--primary-btn);
+            color: white;
+            border: 5px solid white;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 28px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 8px 0 rgba(0,0,0,0.2);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            background-color: var(--primary-btn-hover);
+            transform: scale(1.05);
+        }
+
+        .btn:active {
+            transform: translateY(8px) scale(1);
+            box-shadow: 0 0 0 rgba(0,0,0,0.2);
+        }
+
+        /* Intro Screen Elements */
+        .big-bubble {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 6px solid rgba(255,255,255,0.5);
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 10px 20px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .examples {
+            display: flex;
+            gap: 20px;
+            font-size: 60px;
+            margin-top: 20px;
+        }
+
+        .example-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: popIn 0.5s forwards;
+        }
+
+        /* Gameplay Elements */
+        #game-board {
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+            padding-top: 60px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .bubble-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 80%;
+            gap: 10px;
+        }
+
+        .game-bubble {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.6);
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .game-bubble:hover {
+            transform: scale(1.1);
+        }
+
+        #shooter-area {
+            height: 120px;
+            width: 100%;
+            background: rgba(255,255,255,0.3);
+            border-top: 4px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .shooter-cannon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px dashed white;
+        }
+
+        .projectile {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.6);
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.2);
+            z-index: 50;
+            transition: all 0.5s ease-in;
+            pointer-events: none;
+        }
+
+        /* Quiz Elements */
+        .quiz-options {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Garden */
+        #garden-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            max-width: 600px;
+            margin: 20px;
+            background: rgba(255,255,255,0.5);
+            padding: 30px;
+            border-radius: 20px;
+            border: 4px solid white;
+        }
+
+        .garden-item {
+            font-size: 50px;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            animation: popIn 0.5s ease-out forwards;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.5) translateY(20px); }
+            70% { transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .glow {
+            box-shadow: 0 0 30px 10px white, inset -5px -5px 10px rgba(0,0,0,0.2) !important;
+            transform: scale(1.1);
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 60;
+        }
+
+        /* Guide Character */
+        #character {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 60px;
+            z-index: 90;
+            animation: float 4s infinite;
+        }
+
+        #speech-bubble {
+            position: absolute;
+            bottom: 90px;
+            right: 50px;
+            background: white;
+            border: 3px solid var(--text-dark);
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        #speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            right: 20px;
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: var(--text-dark) transparent transparent transparent;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <div id="top-bar" class="hidden">
+            <button class="icon-btn" id="btn-audio">🔊</button>
+            <div id="progress-bar">⭐ <span id="stars-count">0 / 4</span></div>
+            <button class="icon-btn" id="btn-garden">🌸</button>
+        </div>
+
+        <div id="character" class="hidden">🧸</div>
+        <div id="speech-bubble" class="hidden">Hello!</div>
+
+        <div id="start-screen" class="screen">
+            <h1>🌈 COLOUR BUBBLE<br>ADVENTURE</h1>
+            <h2 style="background:none; color:white; font-size:24px;">Let's explore colours!</h2>
+            <button class="btn" onclick="startGame()">🌟 LET'S EXPLORE</button>
+        </div>
+
+        <div id="intro-screen" class="screen hidden">
+            <h2 id="intro-title">Look at this colour!</h2>
+            <div id="intro-bubble" class="big-bubble"></div>
+            <h1 id="intro-name" style="font-size: 60px;">RED</h1>
+            <div id="intro-examples" class="examples"></div>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <h2 id="game-instruction">Can you find RED?</h2>
+            <div id="game-board">
+                <div class="bubble-grid" id="bubble-grid"></div>
+            </div>
+            <div id="shooter-area">
+                <div class="shooter-cannon" id="shooter-cannon">
+                    <div class="game-bubble" id="loaded-bubble"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <h2>Which bubble is <span id="quiz-target-name">RED</span>?</h2>
+            <div class="quiz-options" id="quiz-options"></div>
+        </div>
+
+        <div id="garden-screen" class="screen hidden">
+            <h1>🌸 MY COLOUR GARDEN</h1>
+            <div id="garden-grid"></div>
+            <button class="btn" onclick="continueFromGarden()" id="btn-garden-continue">🌟 CONTINUE EXPLORING</button>
+        </div>
+
+        <div id="celebration-screen" class="screen hidden">
+            <h1>🎉 AMAZING!</h1>
+            <h2>You discovered 4 colours!</h2>
+            <div class="examples" id="celebration-emojis"></div>
+            <br>
+            <button class="btn" onclick="startWorld(1)">🌟 EXPLORE NEXT WORLD</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GAME DATA ---
+        const colourDB = [
+            // World 1
+            { id: "red", name: "Red", hex: "#FF3B30", examples: ["🍎", "🍓", "🚗"], reward: "🌹", world: 1 },
+            { id: "yellow", name: "Yellow", hex: "#FFCC00", examples: ["🍌", "🌻", "🌞"], reward: "🌻", world: 1 },
+            { id: "blue", name: "Blue", hex: "#007AFF", examples: ["🌊", "🫐", "🐟"], reward: "🦋", world: 1 },
+            { id: "green", name: "Green", hex: "#34C759", examples: ["🌿", "🍏", "🌳"], reward: "🍀", world: 1 },
+            // World 2
+            { id: "orange", name: "Orange", hex: "#FF9500", examples: ["🍊", "🥕", "🏀"], reward: "🏵️", world: 2 },
+            { id: "purple", name: "Purple", hex: "#AF52DE", examples: ["🍇", "🍆", "👾"], reward: "🪻", world: 2 },
+            { id: "pink", name: "Pink", hex: "#FF2D55", examples: ["🌸", "🎀", "🐷"], reward: "🩷", world: 2 },
+            { id: "brown", name: "Brown", hex: "#A2845E", examples: ["🐻", "🪵", "🍫"], reward: "🍂", world: 2 },
+        ];
+
+        // --- STATE ---
+        let audioEnabled = true;
+        let currentWorld = 1;
+        let worldColours = [];
+        let currentColourIndex = 0;
+        let unlockedRewards = [];
+        let hintTimeout;
+
+        // --- DOM ELEMENTS ---
+        const screens = {
+            start: document.getElementById('start-screen'),
+            intro: document.getElementById('intro-screen'),
+            game: document.getElementById('game-screen'),
+            quiz: document.getElementById('quiz-screen'),
+            garden: document.getElementById('garden-screen'),
+            celebration: document.getElementById('celebration-screen')
+        };
+        const topBar = document.getElementById('top-bar');
+        const character = document.getElementById('character');
+        const speechBubble = document.getElementById('speech-bubble');
+
+        // --- AUDIO / SPEECH ---
+        document.getElementById('btn-audio').addEventListener('click', () => {
+            audioEnabled = !audioEnabled;
+            document.getElementById('btn-audio').innerText = audioEnabled ? "🔊" : "🔇";
+        });
+
+        function speak(text, rate = 0.85) {
+            if (!audioEnabled || !window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.rate = rate;
+            utterance.pitch = 1.2; // Child-friendly pitch
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function playSound(type) {
+            if (!audioEnabled) return;
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            if (type === 'pop') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1000, ctx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                osc.start(); osc.stop(ctx.currentTime + 0.1);
+            } else if (type === 'bounce') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(200, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+                osc.start(); osc.stop(ctx.currentTime + 0.2);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, ctx.currentTime);
+                osc.frequency.setValueAtTime(600, ctx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(800, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.5, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                osc.start(); osc.stop(ctx.currentTime + 0.4);
+            }
+        }
+
+        // --- UTILS ---
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.add('hidden'));
+            screens[screenName].classList.remove('hidden');
+        }
+
+        function showCharacterMsg(msg, duration = 3000) {
+            speechBubble.innerText = msg;
+            speechBubble.classList.remove('hidden');
+            setTimeout(() => speechBubble.classList.add('hidden'), duration);
+        }
+
+        function createParticles(x, y, color) {
+            for (let i = 0; i < 15; i++) {
+                const p = document.createElement('div');
+                p.classList.add('particle');
+                p.style.backgroundColor = color;
+                p.style.width = Math.random() * 15 + 5 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+                document.body.appendChild(p);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * 50 + 20;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+
+                p.animate([
+                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
+                ], { duration: 600, easing: 'ease-out' });
+
+                setTimeout(() => p.remove(), 600);
+            }
+        }
+
+        // --- GAME FLOW ---
+        function startGame() {
+            topBar.classList.remove('hidden');
+            character.classList.remove('hidden');
+            speak("Welcome! Let's explore colours!");
+            startWorld(1);
+        }
+
+        function startWorld(worldNum) {
+            currentWorld = worldNum;
+            worldColours = colourDB.filter(c => c.world === currentWorld);
+            if(worldColours.length === 0) {
+                // Game completely finished
+                showCharacterMsg("You are a Colour Master!");
+                speak("You are a Colour Master!");
+                return;
+            }
+            currentColourIndex = 0;
+            document.getElementById('stars-count').innerText = `0 / ${worldColours.length}`;
+            playColourSequence();
+        }
+
+        function playColourSequence() {
+            if (currentColourIndex >= worldColours.length) {
+                endWorld();
+                return;
+            }
+            const colorData = worldColours[currentColourIndex];
+            document.getElementById('stars-count').innerText = `${currentColourIndex} / ${worldColours.length}`;
+            runIntro(colorData);
+        }
+
+        // --- PHASE 1: INTRO ---
+        function runIntro(colorData) {
+            showScreen('intro');
+            document.getElementById('intro-bubble').style.backgroundColor = colorData.hex;
+            document.getElementById('intro-name').innerText = colorData.name;
+            document.getElementById('intro-name').style.color = colorData.hex;
+            
+            const exContainer = document.getElementById('intro-examples');
+            exContainer.innerHTML = '';
+            
+            speak(`${colorData.name}.`);
+            
+            colorData.examples.forEach((ex, idx) => {
+                const el = document.createElement('div');
+                el.className = 'example-item';
+                el.innerText = ex;
+                el.style.animationDelay = `${(idx + 1) * 1}s`;
+                exContainer.appendChild(el);
+            });
+
+            setTimeout(() => { speak(colorData.name); }, 1000);
+            
+            // Move to game after intro
+            setTimeout(() => {
+                runGameplay(colorData);
+            }, 5000);
+        }
+
+        // --- PHASE 2: GAMEPLAY (BUBBLE SHOOTER) ---
+        function runGameplay(colorData) {
+            showScreen('game');
+            clearTimeout(hintTimeout);
+            document.getElementById('game-instruction').innerText = `Can you find ${colorData.name.toUpperCase()}?`;
+            document.getElementById('game-instruction').style.color = colorData.hex;
+            
+            speak(`Can you find ${colorData.name}?`);
+
+            // Setup Shooter
+            const loaded = document.getElementById('loaded-bubble');
+            loaded.style.backgroundColor = colorData.hex;
+            loaded.dataset.colorId = colorData.id;
+            
+            // Setup Board
+            const grid = document.getElementById('bubble-grid');
+            grid.innerHTML = '';
+            
+            // Create a guaranteed match-cluster
+            const boardSize = 12; // Simple small grid for kids
+            let targetCount = 0;
+            
+            // Select random distractors from previously learned or basic colors
+            const distractors = colourDB.filter(c => c.id !== colorData.id).slice(0, 3);
+            
+            for(let i=0; i<boardSize; i++) {
+                const b = document.createElement('div');
+                b.className = 'game-bubble';
+                
+                // Ensure a nice cluster of target colour in middle (indices 4,5,6,7)
+                let cellColorData;
+                if (i >= 4 && i <= 7) {
+                    cellColorData = colorData;
+                } else {
+                    cellColorData = distractors[Math.floor(Math.random() * distractors.length)];
+                }
+
+                b.style.backgroundColor = cellColorData.hex;
+                b.dataset.colorId = cellColorData.id;
+                
+                b.onclick = (e) => shootBubble(e, b, colorData);
+                grid.appendChild(b);
+            }
+
+            // Hint system
+            hintTimeout = setTimeout(() => {
+                showCharacterMsg(`Look for ${colorData.name}!`);
+                speak(`Look carefully! Can you find ${colorData.name}?`);
+                // Glow correct bubbles
+                document.querySelectorAll('.game-bubble').forEach(b => {
+                    if(b.dataset.colorId === colorData.id && b.parentElement.id === 'bubble-grid') {
+                        b.classList.add('glow');
+                    }
+                });
+            }, 8000);
+        }
+
+        function shootBubble(event, targetBubble, targetColorData) {
+            clearTimeout(hintTimeout);
+            
+            const loaded = document.getElementById('loaded-bubble');
+            const startRect = loaded.getBoundingClientRect();
+            const endRect = targetBubble.getBoundingClientRect();
+
+            // Create projectile
+            const proj = document.createElement('div');
+            proj.className = 'projectile';
+            proj.style.backgroundColor = loaded.style.backgroundColor;
+            proj.style.left = startRect.left + 'px';
+            proj.style.top = startRect.top + 'px';
+            document.body.appendChild(proj);
+            
+            // Hide loaded bubble briefly
+            loaded.style.opacity = '0';
+
+            // Animate to target
+            setTimeout(() => {
+                proj.style.left = endRect.left + 'px';
+                proj.style.top = endRect.top + 'px';
+            }, 10);
+
+            // Check match after animation
+            setTimeout(() => {
+                proj.remove();
+                loaded.style.opacity = '1';
+                
+                if (targetBubble.dataset.colorId === targetColorData.id) {
+                    // SUCCESS
+                    playSound('pop');
+                    playSound('success');
+                    showCharacterMsg("Great job!");
+                    speak("Great job!");
+                    
+                    // Pop matched cluster
+                    const rect = targetBubble.getBoundingClientRect();
+                    createParticles(rect.left + rect.width/2, rect.top + rect.height/2, targetColorData.hex);
+                    
+                    document.querySelectorAll('.game-bubble').forEach(b => {
+                        if (b.dataset.colorId === targetColorData.id && b.parentElement.id === 'bubble-grid') {
+                            b.style.visibility = 'hidden';
+                        }
+                    });
+
+                    setTimeout(() => runQuiz(targetColorData), 2000);
+
+                } else {
+                    // MISTAKE
+                    playSound('bounce');
+                    targetBubble.classList.add('shake');
+                    setTimeout(() => targetBubble.classList.remove('shake'), 400);
+                    
+                    showCharacterMsg("Almost! Try again!");
+                    speak("Almost! Look carefully!");
+                    
+                    // Reactivate hint
+                    hintTimeout = setTimeout(() => {
+                        document.querySelectorAll('.game-bubble').forEach(b => {
+                            if(b.dataset.colorId === targetColorData.id && b.parentElement.id === 'bubble-grid') {
+                                b.classList.add('glow');
+                            }
+                        });
+                    }, 3000);
+                }
+            }, 500);
+        }
+
+        // --- PHASE 3: QUIZ / RECOGNITION ---
+        function runQuiz(colorData) {
+            showScreen('quiz');
+            document.getElementById('quiz-target-name').innerText = colorData.name;
+            document.getElementById('quiz-target-name').style.color = colorData.hex;
+            
+            speak(`Which bubble is ${colorData.name}?`);
+
+            const opts = document.getElementById('quiz-options');
+            opts.innerHTML = '';
+
+            let options = [colorData];
+            let distractors = colourDB.filter(c => c.id !== colorData.id).sort(() => 0.5 - Math.random()).slice(0, 2);
+            options = options.concat(distractors).sort(() => 0.5 - Math.random());
+
+            options.forEach(opt => {
+                const b = document.createElement('div');
+                b.className = 'big-bubble';
+                b.style.backgroundColor = opt.hex;
+                b.style.cursor = 'pointer';
+                b.style.animation = 'none'; // stop float to make clicking easier
+                
+                b.onclick = () => {
+                    if (opt.id === colorData.id) {
+                        playSound('pop');
+                        playSound('success');
+                        showCharacterMsg(`Yes! That is ${colorData.name}!`);
+                        speak(`Yes! ${colorData.name}!`);
+                        
+                        const rect = b.getBoundingClientRect();
+                        createParticles(rect.left + rect.width/2, rect.top + rect.height/2, opt.hex);
+                        
+                        unlockedRewards.push(colorData.reward);
+                        
+                        setTimeout(() => {
+                            currentColourIndex++;
+                            showGarden(true);
+                        }, 2000);
+                    } else {
+                        playSound('bounce');
+                        b.classList.add('shake');
+                        setTimeout(() => b.classList.remove('shake'), 400);
+                        speak("Let's try again!");
+                    }
+                };
+                opts.appendChild(b);
+            });
+        }
+
+        // --- PHASE 4: REWARD GARDEN ---
+        function showGarden(isTransition = false) {
+            showScreen('garden');
+            const grid = document.getElementById('garden-grid');
+            grid.innerHTML = '';
+            
+            unlockedRewards.forEach((r, idx) => {
+                const item = document.createElement('div');
+                item.className = 'garden-item';
+                item.innerText = r;
+                item.style.animationDelay = `${idx * 0.1}s`;
+                grid.appendChild(item);
+            });
+
+            if (isTransition) {
+                document.getElementById('btn-garden-continue').classList.remove('hidden');
+                speak("A new item in your garden!");
+            } else {
+                // Opened manually via top bar
+                document.getElementById('btn-garden-continue').classList.add('hidden');
+                setTimeout(() => {
+                    // return to previous state - simple reload of current phase is complex in 1 file, 
+                    // so we just hide the screen to go back to what was behind it.
+                    // But to be safe, we disable manual garden checking during gameplay.
+                }, 3000);
+            }
+        }
+
+        document.getElementById('btn-garden').onclick = () => {
+            // Only allow opening garden if not in middle of action
+            if (screens.start.classList.contains('hidden') && !screens.celebration.classList.contains('hidden')) {
+                showGarden();
+                setTimeout(() => showScreen('celebration'), 3000);
+            }
+        };
+
+        function continueFromGarden() {
+            playColourSequence();
+        }
+
+        // --- PHASE 5: CELEBRATION ---
+        function endWorld() {
+            showScreen('celebration');
+            document.getElementById('stars-count').innerText = `${worldColours.length} / ${worldColours.length}`;
+            playSound('success');
+            speak(`Amazing! You discovered ${worldColours.length} colours!`);
+            
+            const emojis = document.getElementById('celebration-emojis');
+            emojis.innerHTML = '';
+            worldColours.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'garden-item';
+                el.innerText = c.reward;
+                el.style.backgroundColor = c.hex;
+                emojis.appendChild(el);
+            });
+
+            // Confetti
+            for(let i=0; i<30; i++) {
+                setTimeout(() => {
+                    const colors = worldColours.map(c => c.hex);
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    createParticles(Math.random() * window.innerWidth, window.innerHeight/2, color);
+                }, i * 100);
+            }
+        }
+
+    </script>
+</body>
+</html>

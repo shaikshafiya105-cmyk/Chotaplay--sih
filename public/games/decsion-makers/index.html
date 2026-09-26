@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Riya's Choice Adventure — CHOTAPLAY</title>
+  <meta name="description" content="An interactive UKG educational decision adventure for children age 4-6. Learn right and wrong through positive actions and fixing mistakes with Riya, Little Star, and John!">
+  <link rel="stylesheet" href="style.css">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- App Container -->
+  <div id="game-app" class="game-app">
+    
+    <!-- Top HUD Navigation Bar -->
+    <header class="hud-header" id="hud-header">
+      <div class="brand-badge">
+        <span class="brand-chota">CHOTA</span><span class="brand-play">PLAY</span>
+      </div>
+
+      <div class="star-progress-container" id="star-progress-container" title="Good Choices Stars">
+        <div class="star-icon-glow">🌟</div>
+        <div class="star-counter-track">
+          <span class="star-counter-label">GOOD CHOICES:</span>
+          <span class="star-counter-value" id="star-counter-val">0</span>
+          <span class="star-counter-total">/ 10</span>
+        </div>
+        <div class="star-mini-dots" id="star-mini-dots">
+          <!-- 10 mini star dots generated dynamically -->
+        </div>
+      </div>
+
+      <div class="hud-controls">
+        <button id="btn-replay-voice" class="hud-btn voice-btn" title="Hear Again" aria-label="Replay Voice Narration">
+          <span class="hud-btn-icon">🔊</span>
+          <span class="hud-btn-label">Hear</span>
+        </button>
+        <button id="btn-music-toggle" class="hud-btn music-btn" title="Sound Effects" aria-label="Toggle Sound Effects">
+          <span class="hud-btn-icon" id="music-btn-icon">🎵</span>
+        </button>
+        <button id="btn-playground-nav" class="hud-btn playground-btn" title="Choice Playground" aria-label="Choice Playground Free Play">
+          <span class="hud-btn-icon">🎡</span>
+          <span class="hud-btn-label">Playground</span>
+        </button>
+        <button id="btn-fullscreen" class="hud-btn fullscreen-btn" title="Fullscreen" aria-label="Toggle Fullscreen">
+          <span class="hud-btn-icon">⛶</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Viewport (16:9 responsive stage) -->
+    <main id="stage-viewport" class="stage-viewport">
+
+      <!-- Scene Canvas Area -->
+      <div id="scene-container" class="scene-container scene-opening">
+        <!-- Dynamic Background Elements Layer -->
+        <div id="bg-layer" class="bg-layer"></div>
+
+        <!-- Floating Particles Layer (sparkles, hearts, bubbles) -->
+        <div id="particle-container" class="particle-container"></div>
+
+        <!-- Character Stage Layer -->
+        <div id="character-stage" class="character-stage">
+          <!-- Little Star Guide (Floats in top/middle) -->
+          <div id="char-little-star" class="char-little-star star-float" aria-label="Little Star Guide">
+            <div class="star-glow-ring"></div>
+            <div class="star-svg-wrap" id="star-svg-wrap">
+              <!-- Animated SVG for Little Star -->
+              <svg class="star-svg" viewBox="0 0 120 120" width="100%" height="100%">
+                <defs>
+                  <radialGradient id="starGrad" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="#FFF9A6" />
+                    <stop offset="60%" stop-color="#FFD124" />
+                    <stop offset="100%" stop-color="#FFA800" />
+                  </radialGradient>
+                  <filter id="starGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+                <!-- Star Body -->
+                <polygon points="60,8 74,44 113,46 82,70 93,108 60,86 27,108 38,70 7,46 46,44" 
+                         fill="url(#starGrad)" filter="url(#starGlow)" stroke="#FF8A00" stroke-width="2" stroke-linejoin="round"/>
+                <!-- Cute Face -->
+                <g class="star-face">
+                  <!-- Cheeks -->
+                  <circle cx="44" cy="62" r="6" fill="#FF8080" opacity="0.7"/>
+                  <circle cx="76" cy="62" r="6" fill="#FF8080" opacity="0.7"/>
+                  <!-- Eyes -->
+                  <circle class="star-eye left" cx="48" cy="54" r="5" fill="#2D1300"/>
+                  <circle class="star-eye right" cx="72" cy="54" r="5" fill="#2D1300"/>
+                  <circle cx="46.5" cy="52" r="2" fill="#FFFFFF"/>
+                  <circle cx="70.5" cy="52" r="2" fill="#FFFFFF"/>
+                  <!-- Happy Smile -->
+                  <path id="star-mouth" d="M 52 64 Q 60 74 68 64" fill="none" stroke="#2D1300" stroke-width="3" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <div class="star-name-tag">Little Star ⭐</div>
+          </div>
+
+          <!-- Riya Main Character -->
+          <div id="char-riya" class="character-actor char-riya state-idle" aria-label="Riya">
+            <div class="actor-svg-wrap">
+              <svg class="actor-svg" viewBox="0 0 200 320" width="100%" height="100%">
+                <defs>
+                  <linearGradient id="riyaHairGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#3A1F13"/>
+                    <stop offset="100%" stop-color="#1A0D08"/>
+                  </linearGradient>
+                  <linearGradient id="riyaDressGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#FF5E8E"/>
+                    <stop offset="100%" stop-color="#E91E63"/>
+                  </linearGradient>
+                  <linearGradient id="riyaSkinGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFDFC4"/>
+                    <stop offset="100%" stop-color="#F0B88A"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Shadow -->
+                <ellipse cx="100" cy="305" rx="55" ry="12" fill="rgba(0,0,0,0.18)"/>
+
+                <!-- Legs & Shoes -->
+                <g class="actor-legs">
+                  <!-- Left Leg -->
+                  <rect x="75" y="225" width="18" height="60" rx="9" fill="url(#riyaSkinGrad)"/>
+                  <!-- Left Shoe -->
+                  <path d="M 68 275 Q 85 272 95 275 Q 98 290 85 292 Q 68 292 68 275 Z" fill="#E91E63"/>
+                  <ellipse cx="80" cy="285" rx="6" ry="3" fill="#FFF"/>
+                  <!-- Right Leg -->
+                  <rect x="107" y="225" width="18" height="60" rx="9" fill="url(#riyaSkinGrad)"/>
+                  <!-- Right Shoe -->
+                  <path d="M 105 275 Q 122 272 132 275 Q 135 290 122 292 Q 105 292 105 275 Z" fill="#E91E63"/>
+                  <ellipse cx="118" cy="285" rx="6" ry="3" fill="#FFF"/>
+                </g>
+
+                <!-- Dress -->
+                <g class="actor-torso">
+                  <path d="M 75 145 L 125 145 L 145 235 L 55 235 Z" fill="url(#riyaDressGrad)"/>
+                  <!-- Collar & Cute Ribbon -->
+                  <path d="M 85 145 Q 100 160 115 145" fill="#FFF" stroke="#FF5E8E" stroke-width="2"/>
+                  <circle cx="100" cy="155" r="5" fill="#FFD700"/>
+                  <!-- Cute Pattern on Dress -->
+                  <circle cx="85" cy="190" r="5" fill="#FFF" opacity="0.8"/>
+                  <circle cx="115" cy="190" r="5" fill="#FFF" opacity="0.8"/>
+                  <circle cx="100" cy="215" r="5" fill="#FFF" opacity="0.8"/>
+                </g>
+
+                <!-- Left Arm -->
+                <g id="riya-arm-left" class="actor-arm left-arm">
+                  <path d="M 72 150 Q 50 180 62 210" fill="none" stroke="url(#riyaSkinGrad)" stroke-width="15" stroke-linecap="round"/>
+                  <circle cx="62" cy="210" r="9" fill="url(#riyaSkinGrad)"/>
+                </g>
+
+                <!-- Right Arm (interactive pointing/celebrating) -->
+                <g id="riya-arm-right" class="actor-arm right-arm">
+                  <path d="M 128 150 Q 150 180 138 210" fill="none" stroke="url(#riyaSkinGrad)" stroke-width="15" stroke-linecap="round"/>
+                  <circle cx="138" cy="210" r="9" fill="url(#riyaSkinGrad)"/>
+                </g>
+
+                <!-- Head & Hair (Back) -->
+                <g class="actor-head">
+                  <!-- Ponytails -->
+                  <path d="M 50 70 Q 20 60 25 100 Q 38 105 50 85" fill="url(#riyaHairGrad)"/>
+                  <circle cx="48" cy="72" r="7" fill="#FF5E8E"/> <!-- Ribbon -->
+                  <path d="M 150 70 Q 180 60 175 100 Q 162 105 150 85" fill="url(#riyaHairGrad)"/>
+                  <circle cx="152" cy="72" r="7" fill="#FF5E8E"/> <!-- Ribbon -->
+
+                  <!-- Head Base -->
+                  <circle cx="100" cy="90" r="44" fill="url(#riyaSkinGrad)"/>
+                  <path d="M 60 80 Q 100 45 140 80 Q 120 60 100 62 Q 80 60 60 80 Z" fill="url(#riyaHairGrad)"/>
+
+                  <!-- Front Bangs -->
+                  <path d="M 60 80 C 70 55, 95 60, 100 75 C 105 60, 130 55, 140 80 C 130 65, 110 65, 100 70 C 90 65, 70 65, 60 80 Z" fill="url(#riyaHairGrad)"/>
+
+                  <!-- Cheeks -->
+                  <circle cx="78" cy="104" r="8" fill="#FF8080" opacity="0.6"/>
+                  <circle cx="122" cy="104" r="8" fill="#FF8080" opacity="0.6"/>
+
+                  <!-- Eyes -->
+                  <g class="riya-eyes">
+                    <circle cx="82" cy="92" r="6.5" fill="#24140D"/>
+                    <circle cx="118" cy="92" r="6.5" fill="#24140D"/>
+                    <!-- Eye shine -->
+                    <circle cx="80" cy="89.5" r="2.5" fill="#FFF"/>
+                    <circle cx="116" cy="89.5" r="2.5" fill="#FFF"/>
+                    <!-- Eyelashes -->
+                    <path d="M 76 86 Q 82 82 88 86" fill="none" stroke="#24140D" stroke-width="2" stroke-linecap="round"/>
+                    <path d="M 112 86 Q 118 82 124 86" fill="none" stroke="#24140D" stroke-width="2" stroke-linecap="round"/>
+                  </g>
+
+                  <!-- Cute Smile -->
+                  <path id="riya-mouth" d="M 90 108 Q 100 120 110 108" fill="none" stroke="#A82828" stroke-width="3.5" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <div class="actor-name-badge">Riya 👧</div>
+          </div>
+
+          <!-- John Secondary Character -->
+          <div id="char-john" class="character-actor char-john state-idle" aria-label="John">
+            <div class="actor-svg-wrap">
+              <svg class="actor-svg" viewBox="0 0 200 320" width="100%" height="100%">
+                <defs>
+                  <linearGradient id="johnHairGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4A3525"/>
+                    <stop offset="100%" stop-color="#241A12"/>
+                  </linearGradient>
+                  <linearGradient id="johnShirtGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#3FA9F5"/>
+                    <stop offset="100%" stop-color="#1A73E8"/>
+                  </linearGradient>
+                  <linearGradient id="johnShortsGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FF9800"/>
+                    <stop offset="100%" stop-color="#E65100"/>
+                  </linearGradient>
+                  <linearGradient id="johnSkinGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FCDCB8"/>
+                    <stop offset="100%" stop-color="#E8B885"/>
+                  </linearGradient>
+                </defs>
+
+                <!-- Shadow -->
+                <ellipse cx="100" cy="305" rx="55" ry="12" fill="rgba(0,0,0,0.18)"/>
+
+                <!-- Legs & Shoes -->
+                <g class="actor-legs">
+                  <!-- Left Leg -->
+                  <rect x="73" y="235" width="20" height="50" rx="9" fill="url(#johnSkinGrad)"/>
+                  <path d="M 66 278 Q 85 275 97 278 Q 100 294 85 295 Q 66 295 66 278 Z" fill="#333"/>
+                  <ellipse cx="80" cy="286" rx="6" ry="2" fill="#FFF"/>
+                  <!-- Right Leg -->
+                  <rect x="107" y="235" width="20" height="50" rx="9" fill="url(#johnSkinGrad)"/>
+                  <path d="M 103 278 Q 122 275 134 278 Q 137 294 122 295 Q 103 295 103 278 Z" fill="#333"/>
+                  <ellipse cx="117" cy="286" rx="6" ry="2" fill="#FFF"/>
+                </g>
+
+                <!-- Shorts -->
+                <g class="john-shorts">
+                  <path d="M 68 190 L 132 190 L 136 240 L 105 240 L 100 220 L 95 240 L 64 240 Z" fill="url(#johnShortsGrad)"/>
+                </g>
+
+                <!-- Shirt / Torso -->
+                <g class="actor-torso">
+                  <path d="M 68 140 L 132 140 L 134 195 L 66 195 Z" fill="url(#johnShirtGrad)"/>
+                  <!-- White Collar -->
+                  <polygon points="100,152 82,140 118,140" fill="#FFF"/>
+                  <!-- Pocket / Badge -->
+                  <rect x="110" y="155" width="14" height="16" rx="3" fill="#FFF" opacity="0.8"/>
+                </g>
+
+                <!-- Arms -->
+                <g id="john-arm-left" class="actor-arm left-arm">
+                  <path d="M 66 148 Q 45 180 58 205" fill="none" stroke="url(#johnSkinGrad)" stroke-width="15" stroke-linecap="round"/>
+                  <circle cx="58" cy="205" r="9" fill="url(#johnSkinGrad)"/>
+                </g>
+                <g id="john-arm-right" class="actor-arm right-arm">
+                  <path d="M 134 148 Q 155 180 142 205" fill="none" stroke="url(#johnSkinGrad)" stroke-width="15" stroke-linecap="round"/>
+                  <circle cx="142" cy="205" r="9" fill="url(#johnSkinGrad)"/>
+                </g>
+
+                <!-- Head & Hair -->
+                <g class="actor-head">
+                  <circle cx="100" cy="88" r="44" fill="url(#johnSkinGrad)"/>
+                  <!-- Boy Short Haircut with Side Part -->
+                  <path d="M 56 82 C 56 45, 144 45, 144 82 C 140 60, 110 55, 100 62 C 90 55, 65 65, 56 82 Z" fill="url(#johnHairGrad)"/>
+                  <path d="M 56 80 Q 50 65 60 55 Q 100 35 140 55 Q 150 70 144 80 Q 130 55 100 58 Q 70 55 56 80 Z" fill="url(#johnHairGrad)"/>
+
+                  <!-- Cheeks -->
+                  <circle cx="78" cy="102" r="8" fill="#FF8080" opacity="0.5"/>
+                  <circle cx="122" cy="102" r="8" fill="#FF8080" opacity="0.5"/>
+
+                  <!-- Eyes -->
+                  <g class="john-eyes">
+                    <circle cx="82" cy="90" r="6" fill="#1C1C1C"/>
+                    <circle cx="118" cy="90" r="6" fill="#1C1C1C"/>
+                    <circle cx="80" cy="88" r="2.2" fill="#FFF"/>
+                    <circle cx="116" cy="88" r="2.2" fill="#FFF"/>
+                  </g>
+
+                  <!-- Eyebrows -->
+                  <path d="M 74 78 Q 82 74 90 78" fill="none" stroke="#241A12" stroke-width="2.5" stroke-linecap="round"/>
+                  <path d="M 110 78 Q 118 74 126 78" fill="none" stroke="#241A12" stroke-width="2.5" stroke-linecap="round"/>
+
+                  <!-- Smile -->
+                  <path id="john-mouth" d="M 88 106 Q 100 118 112 106" fill="none" stroke="#8D2525" stroke-width="3.5" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+            <div class="actor-name-badge">John 👦</div>
+          </div>
+
+          <!-- Secondary Character / Entity (Teacher, Dog, etc.) -->
+          <div id="char-extra" class="character-actor char-extra state-idle" style="display: none;">
+            <div class="actor-svg-wrap" id="extra-actor-svg-wrap"></div>
+            <div class="actor-name-badge" id="extra-name-badge">Teacher 👩‍🏫</div>
+          </div>
+        </div>
+
+        <!-- Interactive Playground / Scene Center Elements (Mini-games, props, bins, sinks, traffic lights, messy objects) -->
+        <div id="interactive-stage" class="interactive-stage"></div>
+
+        <!-- Speech & Narration Bubble (Voice subtitle & speaker cue) -->
+        <div id="dialogue-box" class="dialogue-box">
+          <div class="speaker-avatar" id="speaker-avatar">⭐</div>
+          <div class="dialogue-content">
+            <div class="speaker-name" id="speaker-name">Little Star</div>
+            <div class="dialogue-text" id="dialogue-text">Welcome to Riya's Choice Adventure!</div>
+          </div>
+          <button id="dialogue-speak-btn" class="dialogue-repeat-btn" title="Repeat Voice" aria-label="Repeat Voice">🔊</button>
+        </div>
+
+        <!-- Choices Card Deck (Large, child-friendly Right vs Wrong decision cards) -->
+        <div id="choice-container" class="choice-container">
+          <!-- Choice cards generated dynamically by Game Engine -->
+        </div>
+
+        <!-- Action / Continue Button Banner -->
+        <div id="action-banner" class="action-banner" style="display: none;">
+          <button id="btn-next-step" class="btn-primary-action pulse-anim">
+            <span>Next Adventure! 🚀</span>
+          </button>
+        </div>
+
+      </div> <!-- /#scene-container -->
+
+    </main>
+
+    <!-- Modal: The Magic Choice Door (Final WOW Moment) -->
+    <div id="modal-magic-door" class="game-modal magic-door-modal" style="display: none;">
+      <div class="modal-backdrop"></div>
+      <div class="magic-door-stage">
+        <h2 class="magic-title">✨ THE MAGIC CHOICE DOOR ✨</h2>
+        <p class="magic-subtitle">Look at all the good choices you made!</p>
+
+        <div class="door-frame" id="door-frame">
+          <div class="door-light-beam" id="door-light-beam"></div>
+          
+          <!-- 10 Glowing Choice Badges on Door Arch -->
+          <div class="door-badges-grid" id="door-badges-grid">
+            <div class="door-badge-gem" data-gem="0" title="School Care"><span class="gem-icon">✏️</span><span class="gem-label">Care</span></div>
+            <div class="door-badge-gem" data-gem="1" title="Clean Hands"><span class="gem-icon">🧼</span><span class="gem-label">Clean Hands</span></div>
+            <div class="door-badge-gem" data-gem="2" title="Road Safety"><span class="gem-icon">🚦</span><span class="gem-label">Road Safety</span></div>
+            <div class="door-badge-gem" data-gem="3" title="Sharing"><span class="gem-icon">❤️</span><span class="gem-label">Sharing</span></div>
+            <div class="door-badge-gem" data-gem="4" title="Clean Earth"><span class="gem-icon">🗑️</span><span class="gem-label">Clean World</span></div>
+            <div class="door-badge-gem" data-gem="5" title="Animal Love"><span class="gem-icon">🐶</span><span class="gem-label">Kindness</span></div>
+            <div class="door-badge-gem" data-gem="6" title="Listening"><span class="gem-icon">👩‍🏫</span><span class="gem-label">Listening</span></div>
+            <div class="door-badge-gem" data-gem="7" title="Taking Turns"><span class="gem-icon">⏳</span><span class="gem-label">Taking Turns</span></div>
+            <div class="door-badge-gem" data-gem="8" title="Kind Words"><span class="gem-icon">💬</span><span class="gem-label">Kind Words</span></div>
+            <div class="door-badge-gem" data-gem="9" title="Fix The Wrong"><span class="gem-icon">✨</span><span class="gem-label">Fix & Shine</span></div>
+          </div>
+
+          <!-- Double Doors that swing open -->
+          <div class="door-wings-wrap" id="door-wings-wrap">
+            <div class="door-wing left-wing" id="door-wing-left">
+              <div class="door-handle"></div>
+            </div>
+            <div class="door-wing right-wing" id="door-wing-right">
+              <div class="door-handle"></div>
+            </div>
+          </div>
+        </div>
+
+        <button id="btn-unlock-door" class="btn-primary-action pulse-anim btn-unlock-door">
+          <span>🌟 Unlock The Magic Door! 🌟</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal: Choice Champion Celebration Screen -->
+    <div id="modal-celebration" class="game-modal celebration-modal" style="display: none;">
+      <div class="modal-backdrop"></div>
+      <div class="celebration-card" id="celebration-card">
+        <div class="trophy-bounce">🏆</div>
+        <h1 class="champion-title">🌟 CHOICE CHAMPION! 🌟</h1>
+        <p class="champion-praise">You made so many right choices and helped everyone!</p>
+        
+        <div class="champion-stars-display" id="champion-stars-display">
+          ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
+        </div>
+
+        <div class="champion-message-box">
+          <p><strong>Riya:</strong> "We made our world happy and bright!"</p>
+          <p><strong>Little Star:</strong> "Right choices make you a superstar!"</p>
+        </div>
+
+        <div class="champion-actions">
+          <button id="btn-replay-adventure" class="btn-primary-action">
+            <span>🔄 Play Adventure Again</span>
+          </button>
+          <button id="btn-open-playground" class="btn-secondary-action">
+            <span>🎡 Choice Playground (Free Play)</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Choice Playground (Free Play Mode) -->
+    <div id="modal-playground" class="game-modal playground-modal" style="display: none;">
+      <div class="modal-backdrop" id="playground-backdrop"></div>
+      <div class="playground-panel">
+        <div class="playground-header">
+          <h2>🎡 CHOICE PLAYGROUND 🎡</h2>
+          <p>Pick any situation to practice your good choices anytime!</p>
+          <button id="btn-close-playground" class="btn-close-modal" aria-label="Close Playground">✖</button>
+        </div>
+
+        <div class="playground-grid" id="playground-grid">
+          <!-- 10 Interactive Scene Launcher Cards generated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Fullscreen Confetti Canvas Layer -->
+    <canvas id="confetti-canvas" class="confetti-canvas"></canvas>
+
+  </div> <!-- /#game-app -->
+
+  <!-- Game Logic Script -->
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+/* UKG Word Builder Specific Styles */
+
+.ukg-stage {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  position: relative;
+}
+
+/* UKG Header Banner */
+.ukg-prompt-banner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ukg-level-pills {
+  display: flex;
+  background: #E2E8F0;
+  padding: 4px;
+  border-radius: 14px;
+  gap: 4px;
+}
+
+.ukg-level-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: 10px;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ukg-level-btn.active {
+  background: #FFFFFF;
+  color: var(--color-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Transformation Stage */
+.ukg-arena {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Letters Stage (Before Combining) */
+.ukg-letters-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  position: relative;
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.ukg-letter-tile {
+  width: 140px;
+  height: 160px;
+  background: #FFFFFF;
+  border: 4px solid #CBD5E1;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 88px;
+  font-weight: 900;
+  color: var(--color-navy);
+  box-shadow: 0 16px 32px rgba(7, 59, 76, 0.14), inset 0 -6px 0 #CBD5E1;
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.ukg-letters-row.combining {
+  gap: 8px;
+}
+
+.ukg-letters-row.combining .ukg-letter-tile {
+  border-color: #38BDF8;
+  box-shadow: 0 8px 24px rgba(56, 189, 248, 0.4);
+}
+
+/* Living Word Structure (When transformed) */
+.ukg-living-word-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.living-letters-sculpture {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFA07A 50%, #FFD166 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: var(--font-display);
+  font-size: 110px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  filter: drop-shadow(0 12px 24px rgba(255, 107, 107, 0.35));
+  animation: livingWordMorph 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite alternate;
+}
+
+/* Real Object Reveal inside the environment */
+.ukg-real-object-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.ukg-object-glow-wrap {
+  width: 280px;
+  height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.ukg-object-glow-wrap::before {
+  content: '';
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, rgba(255, 209, 102, 0.6) 0%, rgba(6, 214, 160, 0.3) 50%, transparent 70%);
+  border-radius: 50%;
+  animation: pulseSun 3s ease-in-out infinite alternate;
+  z-index: 1;
+}
+
+.ukg-real-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 32px rgba(0,0,0,0.22));
+  position: relative;
+  z-index: 2;
+  animation: idleBounce 2.5s ease-in-out infinite;
+}
+
+.ukg-spelling-display {
+  font-family: var(--font-display);
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--color-navy);
+  letter-spacing: 8px;
+  background: #FFFFFF;
+  padding: 8px 36px;
+  border-radius: 24px;
+  border: 4px solid #CBD5E1;
+  box-shadow: 0 12px 32px rgba(7, 59, 76, 0.12);
+  text-align: center;
+}
+
+.btn-combine-action {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 800;
+  padding: 16px 36px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(135deg, #3A86FF 0%, #00BBF9 100%);
+  color: #FFF;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(58, 134, 255, 0.35);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-combine-action:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 12px 32px rgba(58, 134, 255, 0.45);
+}
+
+@media (max-width: 768px) {
+  .ukg-letter-tile {
+    width: 90px;
+    height: 110px;
+    font-size: 56px;
+  }
+  .living-letters-sculpture {
+    font-size: 72px;
+  }
+  .ukg-spelling-display {
+    font-size: 48px;
+    padding: 6px 20px;
+  }
+}

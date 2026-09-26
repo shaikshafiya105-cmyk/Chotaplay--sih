@@ -1,0 +1,225 @@
+/* LKG Alphabet Adventure Specific Styles */
+
+.lkg-stage {
+  width: 100%;
+  max-width: 1280px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  position: relative;
+}
+
+/* Prompt Banner */
+.lkg-prompt-banner {
+  background: var(--glass-bg);
+  backdrop-filter: blur(14px);
+  border: 3px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--glass-shadow);
+  border-radius: 24px;
+  padding: 12px 36px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.prompt-text {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--color-navy);
+}
+
+.target-letter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 64px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%);
+  color: #FFF;
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 900;
+  box-shadow: 0 6px 16px rgba(255, 107, 107, 0.4);
+  animation: pulseSun 2s ease-in-out infinite alternate;
+}
+
+.difficulty-pills {
+  display: flex;
+  background: #E2E8F0;
+  padding: 4px;
+  border-radius: 14px;
+  gap: 4px;
+}
+
+.diff-btn {
+  border: none;
+  background: transparent;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: 10px;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.diff-btn.active {
+  background: #FFFFFF;
+  color: var(--color-blue);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* Central Active Gameplay Arena */
+.lkg-arena {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Letters Grid */
+.lkg-letter-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  max-width: 1000px;
+  z-index: 10;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.letter-bubble {
+  width: 130px;
+  height: 130px;
+  background: #FFFFFF;
+  border: 4px solid #E2E8F0;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 68px;
+  font-weight: 900;
+  color: var(--color-navy);
+  cursor: pointer;
+  box-shadow: 0 14px 28px rgba(7, 59, 76, 0.12), inset 0 -4px 0 #CBD5E1;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.letter-bubble:hover {
+  transform: translateY(-8px) scale(1.08);
+  border-color: #38BDF8;
+  box-shadow: 0 20px 36px rgba(56, 189, 248, 0.3), inset 0 -4px 0 #38BDF8;
+}
+
+.letter-bubble:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.letter-bubble.wobble-error {
+  animation: wobbleWrong 0.5s ease-in-out;
+  border-color: #F87171;
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+.letter-bubble.correct-hit {
+  animation: correctCelebrate 0.8s ease-in-out forwards;
+  background: linear-gradient(135deg, #06D6A0 0%, #118AB2 100%);
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+  box-shadow: 0 0 40px rgba(6, 214, 160, 0.6);
+}
+
+/* Discovery Showcase (Revealed after correct click) */
+.lkg-discovery-modal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.discovery-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 4px solid #FFFFFF;
+  border-radius: 36px;
+  box-shadow: 0 24px 60px rgba(7, 59, 76, 0.2);
+  padding: 36px 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 700px;
+  position: relative;
+}
+
+.discovery-object-container {
+  width: 240px;
+  height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.discovery-real-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.18));
+  animation: idleBounce 2.5s ease-in-out infinite;
+}
+
+.discovery-heading {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--color-navy);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.discovery-letter-highlight {
+  color: var(--color-coral);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.discovery-association-word {
+  color: var(--color-blue);
+}
+
+@media (max-width: 768px) {
+  .letter-bubble {
+    width: 90px;
+    height: 90px;
+    font-size: 48px;
+    border-radius: 20px;
+  }
+  .prompt-text {
+    font-size: 24px;
+  }
+  .target-letter-badge {
+    min-width: 48px;
+    height: 48px;
+    font-size: 32px;
+  }
+}

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <radialGradient id="ele-body" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#90CAF9"/>
+      <stop offset="60%" stop-color="#42A5F5"/>
+      <stop offset="100%" stop-color="#1976D2"/>
+    </radialGradient>
+    <radialGradient id="ele-ear" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFCDD2"/>
+      <stop offset="60%" stop-color="#EF9A9A"/>
+      <stop offset="100%" stop-color="#E57373"/>
+    </radialGradient>
+    <filter id="ele-shadow">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Big Body -->
+  <ellipse cx="85" cy="95" rx="55" ry="48" fill="url(#ele-body)" filter="url(#ele-shadow)"/>
+
+  <!-- Big Feet -->
+  <rect x="45" y="120" width="22" height="30" rx="8" fill="#1976D2"/>
+  <rect x="75" y="125" width="22" height="25" rx="8" fill="#1976D2"/>
+  <rect x="105" y="120" width="22" height="30" rx="8" fill="#1976D2"/>
+  <!-- Toenails -->
+  <circle cx="50" cy="146" r="3" fill="#FFF"/>
+  <circle cx="56" cy="146" r="3" fill="#FFF"/>
+  <circle cx="62" cy="146" r="3" fill="#FFF"/>
+  <circle cx="110" cy="146" r="3" fill="#FFF"/>
+  <circle cx="116" cy="146" r="3" fill="#FFF"/>
+  <circle cx="122" cy="146" r="3" fill="#FFF"/>
+
+  <!-- Head -->
+  <circle cx="55" cy="70" r="36" fill="url(#ele-body)"/>
+
+  <!-- Giant Cute Ear (Left/Back) -->
+  <path d="M 50 35 C 20 20, 5 60, 25 85 C 38 98, 55 90, 50 70 Z" fill="url(#ele-body)"/>
+  <path d="M 45 42 C 25 32, 16 62, 28 78 C 36 85, 48 80, 45 68 Z" fill="url(#ele-ear)" opacity="0.8"/>
+
+  <!-- Cute Eyes -->
+  <ellipse cx="62" cy="65" rx="5.5" ry="7" fill="#1A237E"/>
+  <circle cx="60.5" cy="62" r="2.2" fill="#FFF"/>
+  <circle cx="64" cy="67" r="1.2" fill="#FFF"/>
+  <ellipse cx="72" cy="76" rx="6" ry="4" fill="#FF8A80" opacity="0.6"/>
+
+  <!-- Curled Happy Trunk -->
+  <path d="M 46 80 C 40 95, 30 110, 20 105 C 12 100, 18 85, 28 85 C 35 85, 38 92, 38 95" stroke="#1976D2" stroke-width="12" stroke-linecap="round" fill="none"/>
+  <path d="M 46 80 C 40 95, 30 110, 20 105 C 12 100, 18 85, 28 85 C 35 85, 38 92, 38 95" stroke="#42A5F5" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Water droplets from trunk -->
+  <circle cx="14" cy="80" r="3" fill="#40C4FF"/>
+  <circle cx="10" cy="70" r="2" fill="#40C4FF"/>
+  <circle cx="20" cy="65" r="2.5" fill="#40C4FF"/>
+
+  <!-- Tail -->
+  <path d="M 138 95 Q 150 105 146 120" stroke="#1976D2" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>John's Magic Comparison Land 🌈 | Chotaplay</title>
+  <meta name="description" content="A magical children's educational game teaching Big/Small, Tall/Short, More/Less, and Different through playful visual exploration.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;800&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Ambient Magic Particle Canvas -->
+  <canvas id="magic-canvas"></canvas>
+
+  <div id="game-app">
+    <!-- Top Navigation & Brand Header -->
+    <header id="game-header">
+      <div class="brand-container">
+        <img src="assets/chotaplay-logo.svg" alt="Chotaplay" class="brand-logo" id="header-brand">
+      </div>
+      <div class="header-center">
+        <div id="power-hud" class="power-hud hidden">
+          <span class="power-label">⚡ MAGIC POWER:</span>
+          <div class="power-bars">
+            <span class="power-bolt" id="bolt-1">⚡</span>
+            <span class="power-bolt" id="bolt-2">⚡</span>
+            <span class="power-bolt" id="bolt-3">⚡</span>
+            <span class="power-bolt" id="bolt-4">⚡</span>
+            <span class="power-bolt" id="bolt-5">⚡</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button id="btn-map" class="hud-btn hidden" title="Back to Map" aria-label="Open Map">
+          <span class="btn-icon">🗺️</span>
+          <span class="btn-text">Map</span>
+        </button>
+        <button id="btn-voice-repeat" class="hud-btn" title="Repeat Voice Instruction" aria-label="Repeat Voice">
+          <span class="btn-icon">🔊</span>
+          <span class="btn-text">Listen</span>
+        </button>
+        <button id="btn-sound-toggle" class="hud-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <span class="btn-icon" id="sound-icon">🎵</span>
+          <span class="btn-text">Music</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Global Voice & Dialogue Bubble -->
+    <div id="dialogue-banner" class="dialogue-banner hidden">
+      <div class="dialogue-avatar" id="dialogue-speaker-avatar">⭐</div>
+      <div class="dialogue-content">
+        <p id="dialogue-text">Welcome to Comparison Land!</p>
+      </div>
+      <button id="dialogue-sound-btn" class="mini-sound-btn" title="Replay voice">🔊</button>
+    </div>
+
+    <!-- MAIN SCENE VIEWPORT -->
+    <main id="scene-viewport">
+
+      <!-- ================= SCENE 0: OPENING ================= -->
+      <section id="scene-opening" class="game-scene active">
+        <div class="scenery opening-scenery">
+          <div class="cloud cloud-1">☁️</div>
+          <div class="cloud cloud-2">☁️</div>
+          <div class="cloud cloud-3">☁️</div>
+          <div class="floating-rainbow">🌈</div>
+          <div class="scene-title-badge">
+            <h1 class="main-title">JOHN'S MAGIC<br><span class="highlight-title">COMPARISON LAND</span></h1>
+            <div class="age-pill">Ages 3–6 • Visual Learning Fun</div>
+          </div>
+        </div>
+
+        <div class="opening-stage">
+          <div class="actor-card john-actor" id="opening-john">
+            <img src="assets/john-idle.svg" alt="John" class="character-img" id="opening-john-img">
+            <div class="speech-bubble john-bubble" id="opening-john-bubble">
+              "Wow! Where are we?"
+            </div>
+          </div>
+
+          <div class="actor-card star-actor" id="opening-star">
+            <img src="assets/star-idle.svg" alt="Little Star" class="character-img star-img float-anim">
+            <div class="speech-bubble star-bubble" id="opening-star-bubble">
+              "Welcome to Comparison Land! Let's explore!"
+            </div>
+          </div>
+        </div>
+
+        <div class="opening-action">
+          <button id="btn-start-game" class="big-cta-btn pulse-glow">
+            <span class="cta-sparkle">✨</span>
+            <span class="cta-text">START EXPLORATION</span>
+            <span class="cta-sparkle">✨</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= SCENE 1: MAGIC MAP ================= -->
+      <section id="scene-map" class="game-scene hidden">
+        <div class="map-header-zone">
+          <h2 class="scene-heading">✨ Choose Where to Explore! ✨</h2>
+          <p class="scene-sub">Tap any world to discover with John & Little Star!</p>
+        </div>
+
+        <div class="map-grid">
+          <!-- Area 1 Card -->
+          <div class="map-island" data-area="area1" id="map-island-1">
+            <div class="island-badge" id="badge-1">⭐</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">🌳🍎</span>
+            </div>
+            <h3 class="island-title">Big & Small</h3>
+            <span class="island-desc">Magic Grow Garden</span>
+          </div>
+
+          <!-- Area 2 Card -->
+          <div class="map-island" data-area="area2" id="map-island-2">
+            <div class="island-badge" id="badge-2">⭐</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">🌲🌱</span>
+            </div>
+            <h3 class="island-title">Tall & Short</h3>
+            <span class="island-desc">Magic Tree Forest</span>
+          </div>
+
+          <!-- Area 3 Card -->
+          <div class="map-island" data-area="area3" id="map-island-3">
+            <div class="island-badge" id="badge-3">⭐</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">🪐🍎</span>
+            </div>
+            <h3 class="island-title">More & Less</h3>
+            <span class="island-desc">Comparison Planets</span>
+          </div>
+
+          <!-- Area 4 Card -->
+          <div class="map-island" data-area="area4" id="map-island-4">
+            <div class="island-badge" id="badge-4">⭐</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">🔍🌸</span>
+            </div>
+            <h3 class="island-title">Different</h3>
+            <span class="island-desc">Difference Detective</span>
+          </div>
+
+          <!-- Area 5 Card -->
+          <div class="map-island" data-area="area5" id="map-island-5">
+            <div class="island-badge" id="badge-5">⭐</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">🧩🐘</span>
+            </div>
+            <h3 class="island-title">Classification</h3>
+            <span class="island-desc">Find the Outlier</span>
+          </div>
+
+          <!-- Final Machine Card -->
+          <div class="map-island machine-island locked" data-area="machine" id="map-island-machine">
+            <div class="island-badge" id="badge-machine">🔒</div>
+            <div class="island-icon-box">
+              <span class="island-emoji">⚡⚙️</span>
+            </div>
+            <h3 class="island-title">Magic Machine</h3>
+            <span class="island-desc">Ultimate Comparison</span>
+          </div>
+        </div>
+
+        <div class="map-footer-guide">
+          <div class="mini-guide-char">
+            <img src="assets/star-idle.svg" alt="Star" class="mini-star-icon">
+            <span id="map-voice-hint">"Tap an island to start discovering!"</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AREA 1: BIG & SMALL (Magic Grow Machine) ================= -->
+      <section id="scene-area1" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Area 1 • Big & Small</div>
+          <h2 class="zone-title">Magic Grow Garden</h2>
+        </div>
+
+        <div class="interactive-stage" id="stage-area1">
+          <!-- Step 1: Comparison of Two Apples -->
+          <div class="comparison-row" id="area1-targets">
+            <div class="item-card item-big" id="apple-big" data-type="big" tabindex="0" role="button" aria-label="Big Apple">
+              <div class="item-halo"></div>
+              <img src="assets/apple.svg" alt="Big Apple" class="item-graphic graphic-big">
+              <span class="item-label hidden" id="label-big">BIG! 🍎</span>
+            </div>
+
+            <div class="item-card item-small" id="apple-small" data-type="small" tabindex="0" role="button" aria-label="Small Apple">
+              <div class="item-halo"></div>
+              <img src="assets/apple.svg" alt="Small Apple" class="item-graphic graphic-small">
+              <span class="item-label hidden" id="label-small">SMALL! 🍏</span>
+            </div>
+          </div>
+
+          <!-- Step 2: Magic Balance Scale Demonstration (Activated after both tapped) -->
+          <div class="scale-container hidden" id="area1-scale-view">
+            <img src="assets/scale.svg" alt="Magic Scale" class="scale-graphic" id="scale-img">
+            <div class="scale-plate left-plate" id="scale-plate-left">
+              <img src="assets/apple.svg" alt="Big Apple on Scale" class="scale-item item-big-placed">
+              <span class="scale-tag">BIG</span>
+            </div>
+            <div class="scale-plate right-plate" id="scale-plate-right">
+              <img src="assets/apple.svg" alt="Small Apple on Scale" class="scale-item item-small-placed">
+              <span class="scale-tag">SMALL</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="area1-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="area1-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AREA 2: TALL & SHORT (Magic Tree Garden) ================= -->
+      <section id="scene-area2" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Area 2 • Tall & Short</div>
+          <h2 class="zone-title">Magic Tree Forest</h2>
+        </div>
+
+        <div class="interactive-stage" id="stage-area2">
+          <div class="trees-container" id="area2-targets">
+            <div class="tree-card item-tall" id="tree-tall" data-type="tall" tabindex="0" role="button" aria-label="Tall Tree">
+              <div class="height-meter-line hidden" id="tall-meter">
+                <span class="meter-label">TALL 🌲</span>
+              </div>
+              <img src="assets/tree-tall.svg" alt="Tall Tree" class="tree-graphic graphic-tall">
+              <span class="item-label hidden" id="label-tall">TALL! 🌲</span>
+            </div>
+
+            <div class="tree-card item-short" id="tree-short" data-type="short" tabindex="0" role="button" aria-label="Short Tree">
+              <div class="height-meter-line hidden" id="short-meter">
+                <span class="meter-label">SHORT 🌱</span>
+              </div>
+              <img src="assets/tree-short.svg" alt="Short Tree" class="tree-graphic graphic-short">
+              <span class="item-label hidden" id="label-short">SHORT! 🌱</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="area2-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="area2-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AREA 3: MORE & LESS (Comparison Planets) ================= -->
+      <section id="scene-area3" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Area 3 • More & Less</div>
+          <h2 class="zone-title">Comparison Planets</h2>
+        </div>
+
+        <div class="interactive-stage" id="stage-area3">
+          <div class="planets-row" id="area3-targets">
+            <!-- Planet A (MORE: 5 items) -->
+            <div class="planet-card item-more" id="planet-more" data-type="more" tabindex="0" role="button" aria-label="Planet with More Apples">
+              <div class="planet-halo"></div>
+              <img src="assets/planet-more.svg" alt="Planet A" class="planet-bg">
+              <div class="planet-items-cluster cluster-5">
+                <span class="p-item item-1">🍎</span>
+                <span class="p-item item-2">🍎</span>
+                <span class="p-item item-3">🍎</span>
+                <span class="p-item item-4">🍎</span>
+                <span class="p-item item-5">🍎</span>
+              </div>
+              <span class="item-label hidden" id="label-more">MORE! 🍎🍎🍎🍎🍎</span>
+            </div>
+
+            <!-- Planet B (LESS: 2 items) -->
+            <div class="planet-card item-less" id="planet-less" data-type="less" tabindex="0" role="button" aria-label="Planet with Less Apples">
+              <div class="planet-halo"></div>
+              <img src="assets/planet-less.svg" alt="Planet B" class="planet-bg">
+              <div class="planet-items-cluster cluster-2">
+                <span class="p-item item-1">🍎</span>
+                <span class="p-item item-2">🍎</span>
+              </div>
+              <span class="item-label hidden" id="label-less">LESS! 🍎🍎</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="area3-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="area3-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AREA 4: DIFFERENT (Difference Detective) ================= -->
+      <section id="scene-area4" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Area 4 • Difference Detective</div>
+          <h2 class="zone-title">Can You Find What's Different?</h2>
+        </div>
+
+        <div class="interactive-stage" id="stage-area4">
+          <div class="detective-scenes" id="area4-targets">
+            <!-- Scene A (Left Box) -->
+            <div class="detective-box" id="scene-left">
+              <div class="box-tag">Picture 1</div>
+              <div class="scene-items-grid" id="grid-left">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <div class="detective-vs">🔍</div>
+
+            <!-- Scene B (Right Box - Contains different object) -->
+            <div class="detective-box" id="scene-right">
+              <div class="box-tag">Picture 2</div>
+              <div class="scene-items-grid" id="grid-right">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="area4-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="area4-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= AREA 5: CLASSIFICATION (Small & Different) ================= -->
+      <section id="scene-area5" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Area 5 • Magic Classification</div>
+          <h2 class="zone-title" id="area5-title">Find the Different One!</h2>
+        </div>
+
+        <div class="interactive-stage" id="stage-area5">
+          <div class="trio-container" id="area5-trio">
+            <!-- Trio items injected via JS -->
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="area5-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="area5-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= FINAL: MAGIC COMPARISON MACHINE ================= -->
+      <section id="scene-machine" class="game-scene hidden">
+        <div class="zone-banner">
+          <div class="zone-pill">Final Challenge • Comparison Master</div>
+          <h2 class="zone-title">⚡ Magic Comparison Machine ⚡</h2>
+        </div>
+
+        <div class="machine-stage">
+          <div class="machine-housing">
+            <img src="assets/machine.svg" alt="Magic Machine" class="machine-graphic" id="machine-body-img">
+            
+            <!-- Dynamic Challenge Screen Inside Machine -->
+            <div class="machine-screen" id="machine-screen-box">
+              <div class="challenge-prompt-text" id="machine-question-text">Look carefully!</div>
+              <div class="machine-challenge-items" id="machine-items-container">
+                <!-- Dynamic Challenge Items injected here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="zone-characters">
+          <div class="zone-actor">
+            <img src="assets/john-idle.svg" alt="John" class="zone-john" id="machine-john">
+          </div>
+          <div class="zone-actor">
+            <img src="assets/star-idle.svg" alt="Star" class="zone-star float-anim" id="machine-star">
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= CELEBRATION & FREE PLAY ================= -->
+      <section id="scene-celebration" class="game-scene hidden">
+        <!-- Confetti & Rainbow Explosion -->
+        <div class="celebration-sky">
+          <div class="big-rainbow-arc">🌈</div>
+          <div class="confetti-holder" id="confetti-container"></div>
+        </div>
+
+        <div class="celebration-content">
+          <div class="master-badge-box pulse-glow">
+            <h1 class="master-title">🌈 COMPARISON MASTER! 🌈</h1>
+            <p class="master-sub">John and Little Star are so proud of you!</p>
+          </div>
+
+          <!-- Sequential Review Cards Carousel / Flashcards -->
+          <div class="review-cards-container" id="review-cards-box">
+            <div class="review-card active" id="review-pair-1">
+              <div class="card-pair-icons">
+                <span class="icon-big">🐘</span>
+                <span class="icon-arrow">↔️</span>
+                <span class="icon-small">🐭</span>
+              </div>
+              <h3 class="pair-text">BIG and SMALL!</h3>
+            </div>
+
+            <div class="review-card hidden" id="review-pair-2">
+              <div class="card-pair-icons">
+                <span class="icon-tall">🌲</span>
+                <span class="icon-arrow">↔️</span>
+                <span class="icon-short">🌱</span>
+              </div>
+              <h3 class="pair-text">TALL and SHORT!</h3>
+            </div>
+
+            <div class="review-card hidden" id="review-pair-3">
+              <div class="card-pair-icons">
+                <span class="icon-more">🍎🍎🍎🍎</span>
+                <span class="icon-arrow">↔️</span>
+                <span class="icon-less">🍎🍎</span>
+              </div>
+              <h3 class="pair-text">MORE and LESS!</h3>
+            </div>
+
+            <div class="review-card hidden" id="review-pair-4">
+              <div class="card-pair-icons">
+                <span class="icon-same">🌸 🌸</span>
+                <span class="icon-arrow">↔️</span>
+                <span class="icon-diff">🌻</span>
+              </div>
+              <h3 class="pair-text">SAME and DIFFERENT!</h3>
+            </div>
+          </div>
+
+          <!-- Free Play Playground -->
+          <div class="freeplay-area">
+            <div class="freeplay-header">
+              <span class="fp-badge">✨ FREE PLAY ZONE ✨</span>
+              <p>Tap anything on screen to see magical surprises!</p>
+            </div>
+            
+            <div class="freeplay-actors">
+              <div class="fp-interactive fp-john" id="fp-john" tabindex="0" role="button" aria-label="Tap John to dance">
+                <img src="assets/john-celebrate.svg" alt="John Celebrating" class="fp-img">
+                <span class="fp-tooltip">Tap me! 👦</span>
+              </div>
+
+              <div class="fp-interactive fp-star" id="fp-star" tabindex="0" role="button" aria-label="Tap Star to spin">
+                <img src="assets/star-idle.svg" alt="Star Sparkling" class="fp-img spin-on-tap">
+                <span class="fp-tooltip">Tap me! ⭐</span>
+              </div>
+
+              <div class="fp-interactive fp-tree-tall" id="fp-tree-tall" tabindex="0" role="button" aria-label="Tap Tall Tree">
+                <img src="assets/tree-tall.svg" alt="Tall Tree" class="fp-img">
+                <span class="fp-tooltip">Tall Tree 🌲</span>
+              </div>
+
+              <div class="fp-interactive fp-tree-short" id="fp-tree-short" tabindex="0" role="button" aria-label="Tap Short Tree">
+                <img src="assets/tree-short.svg" alt="Short Tree" class="fp-img">
+                <span class="fp-tooltip">Short Tree 🌱</span>
+              </div>
+
+              <div class="fp-interactive fp-apple" id="fp-apple" tabindex="0" role="button" aria-label="Tap Apple">
+                <img src="assets/apple.svg" alt="Magic Apple" class="fp-img">
+                <span class="fp-tooltip">Magic Apple 🍎</span>
+              </div>
+            </div>
+
+            <div class="freeplay-actions">
+              <button id="btn-play-again" class="big-cta-btn secondary">
+                <span>🔄</span>
+                <span>Play Again!</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Visual Feedback Toast & Sparkle Overlay -->
+    <div id="reward-modal" class="reward-modal hidden">
+      <div class="reward-card pulse-glow">
+        <div class="reward-star-burst">⭐✨⭐</div>
+        <h2 id="reward-title">GREAT COMPARING!</h2>
+        <p id="reward-message">You discovered the concept!</p>
+        <button id="btn-next-area" class="big-cta-btn">
+          <span>Continue ➡️</span>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

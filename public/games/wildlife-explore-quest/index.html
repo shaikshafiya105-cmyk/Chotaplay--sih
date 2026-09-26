@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bird Jigsaw Adventure</title>
+    <style>
+        /* CSS3 STYLES & ANIMATIONS */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
+
+        :root {
+            --primary: #4CAF50;
+            --secondary: #2196F3;
+            --accent: #FFC107;
+            --bg-top: #87CEEB;
+            --bg-bottom: #E0F7FA;
+            --text-dark: #333;
+            --text-light: #fff;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            touch-action: none;
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Screen Management */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* UI Elements */
+        h1, h2 {
+            color: var(--text-dark);
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.7);
+            text-align: center;
+        }
+        h1 { font-size: clamp(24px, 4vw, 40px); color: #1565C0; margin-bottom: 5px; }
+        h2 { font-size: clamp(18px, 2.5vw, 30px); margin-bottom: 15px; }
+
+        .btn {
+            background-color: var(--primary);
+            color: var(--text-light);
+            border: 4px solid rgba(0,0,0,0.1);
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-size: clamp(14px, 1.8vw, 24px);
+            cursor: pointer;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.2);
+            transition: transform 0.1s, filter 0.2s;
+            margin: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-transform: uppercase;
+        }
+        .btn:hover { filter: brightness(1.1); transform: scale(1.05); }
+        .btn:active { transform: scale(0.95); box-shadow: 0 3px 5px rgba(0,0,0,0.2); }
+        .btn.secondary { background-color: var(--secondary); }
+        .btn.accent { background-color: var(--accent); color: var(--text-dark); border-color: rgba(255,255,255,0.5); }
+        .btn.danger { background-color: #f44336; }
+
+        .top-bar {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        .top-bar .btn { padding: 8px 15px; font-size: clamp(12px, 1.5vw, 18px); margin: 0; }
+
+        /* Mascot */
+        .mascot-container {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            display: flex;
+            align-items: flex-end;
+            z-index: 50;
+        }
+        .mascot {
+            font-size: clamp(40px, 5vw, 60px);
+            animation: float 3s ease-in-out infinite;
+        }
+        .bubble {
+            background: white;
+            border-radius: 20px;
+            padding: 10px 15px;
+            margin-left: 15px;
+            font-size: clamp(14px, 1.5vw, 20px);
+            border: 3px solid var(--secondary);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .bubble::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            bottom: 15px;
+            border-width: 8px 12px 8px 0;
+            border-style: solid;
+            border-color: transparent white transparent transparent;
+        }
+
+        /* Puzzle Screen Layout */
+        #puzzle-container {
+            display: flex;
+            flex-direction: column;
+            width: 95%;
+            height: 75vh;
+            margin-top: 40px;
+        }
+        .puzzle-main {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            flex: 1;
+            gap: 15px;
+        }
+        .board-wrapper {
+            position: relative;
+            background: rgba(255,255,255,0.4);
+            border: 6px solid rgba(255,255,255,0.8);
+            border-radius: 20px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 65%;
+            overflow: hidden;
+        }
+        .side-panel {
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .reference-box {
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            border: 5px solid var(--accent);
+            text-align: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .reference-img {
+            max-width: 100%;
+            max-height: 18vh;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+        .tray {
+            flex: 1;
+            background: rgba(255,255,255,0.6);
+            border-radius: 20px;
+            position: relative;
+            border: 5px solid rgba(255,255,255,0.9);
+            box-shadow: inset 0 5px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        /* Puzzle Pieces & Board Guides */
+        .puzzle-piece {
+            position: absolute;
+            cursor: grab;
+            filter: drop-shadow(3px 3px 4px rgba(0,0,0,0.3));
+            transition: transform 0.1s;
+            z-index: 10;
+        }
+        .puzzle-piece:active { cursor: grabbing; transform: scale(1.05); z-index: 100; }
+        .puzzle-piece.locked { cursor: default; filter: none; z-index: 5; pointer-events: none; }
+        .puzzle-piece canvas { pointer-events: none; width: 100%; height: 100%; }
+
+        #puzzle-frame {
+            position: absolute;
+            border: 4px dashed rgba(0, 0, 0, 0.2);
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #hint-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 2;
+        }
+
+        /* Grids for Selection */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            width: 85%;
+            max-height: 70vh;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 20px;
+            scrollbar-width: thin;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            border: 4px solid transparent;
+        }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card img { width: 100%; height: 80px; object-fit: cover; border-radius: 10px; }
+        .card.locked img { filter: grayscale(100%) brightness(0.5); }
+        .card h3 { font-size: clamp(12px, 1.2vw, 16px); margin-top: 5px; color: var(--text-dark); }
+
+        /* Learn Screen */
+        .learn-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+        }
+        .learn-container {
+            background: white;
+            padding: 20px;
+            border-radius: 25px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 600px;
+            border: 6px solid var(--primary);
+            margin-bottom: 15px;
+        }
+        .learn-img {
+            max-height: 25vh;
+            border-radius: 10px;
+            border: 4px solid var(--bg-top);
+            object-fit: contain;
+            margin: 10px 0;
+        }
+        .learn-fact {
+            font-size: clamp(14px, 1.8vw, 22px);
+            color: #555;
+            margin: 10px 0;
+            background: var(--bg-bottom);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .confetti {
+            position: absolute;
+            width: 15px; height: 15px;
+            background-color: var(--accent);
+            animation: fall linear forwards;
+            z-index: 1000;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .reset-btn-wrapper {
+            position: absolute; 
+            bottom: 20px; 
+            right: 20px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- START SCREEN -->
+    <div id="screen-start" class="screen active">
+        <h1>🐦 BIRD JIGSAW ADVENTURE</h1>
+        <h2>Solve, Guess & Learn About Birds!</h2>
+        <div class="mascot" style="font-size: clamp(60px, 10vw, 120px);">🦜</div>
+        <button class="btn accent" onclick="nav('screen-menu')">▶ LET'S PLAY</button>
+        <button class="btn" id="btn-sound-global" onclick="toggleSound()">🔊 SOUND ON</button>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="screen-menu" class="screen">
+        <div class="top-bar">
+            <button class="btn" onclick="nav('screen-start')">⬅ Back</button>
+        </div>
+        <h1>MAIN MENU</h1>
+        <button class="btn secondary" onclick="openSelection()">🔍 EXPLORE BIRDS</button>
+        <button class="btn accent" onclick="playRandom()">🎲 RANDOM PUZZLE</button>
+        <button class="btn" onclick="openCollection()">📖 MY BIRD COLLECTION</button>
+    </div>
+
+    <!-- BIRD SELECTION -->
+    <div id="screen-selection" class="screen">
+        <div class="top-bar">
+            <button class="btn" onclick="nav('screen-menu')">⬅ Back</button>
+            <h2 style="margin:0; align-self:center;">Choose a Bird!</h2>
+            <div style="width:80px;"></div>
+        </div>
+        <div class="grid-container" id="selection-grid"></div>
+    </div>
+
+    <!-- DIFFICULTY SELECTION -->
+    <div id="screen-difficulty" class="screen">
+        <div class="top-bar">
+            <button class="btn" onclick="nav('screen-selection')">⬅ Back</button>
+        </div>
+        <h1>Select Difficulty</h1>
+        <button class="btn secondary" onclick="startPuzzle(2, 2)">🌱 EASY (4 pieces)</button>
+        <button class="btn accent" onclick="startPuzzle(3, 2)">🌟 MEDIUM (6 pieces)</button>
+        <button class="btn" onclick="startPuzzle(3, 3)">🏆 HARD (9 pieces)</button>
+    </div>
+
+    <!-- PUZZLE SCREEN -->
+    <div id="screen-puzzle" class="screen">
+        <div class="top-bar">
+            <button class="btn" onclick="nav('screen-menu')">⬅ Menu</button>
+            <h2 id="puzzle-title" style="margin:0;">Solve the Puzzle!</h2>
+            <button class="btn accent" onmousedown="showHint()" onmouseup="hideHint()" ontouchstart="showHint()" ontouchend="hideHint()">💡 HINT</button>
+        </div>
+        <div id="puzzle-container">
+            <div class="puzzle-main">
+                <div class="board-wrapper" id="puzzle-board">
+                    <div id="hint-overlay"></div>
+                </div>
+                <div class="side-panel">
+                    <div class="reference-box">
+                        <img id="ref-image" class="reference-img" src="" alt="Reference">
+                        <p style="margin-top:5px; font-weight:bold; font-size: 14px;">Reference</p>
+                    </div>
+                    <div class="tray" id="puzzle-tray"></div>
+                </div>
+            </div>
+        </div>
+        <div class="mascot-container">
+            <div class="mascot">🦉</div>
+            <div class="bubble" id="puzzle-msg">Drag the pieces to build the bird!</div>
+        </div>
+    </div>
+
+    <!-- GUESS REVEAL / LEARN SCREEN -->
+    <div id="screen-learn" class="screen">
+        <div class="learn-wrapper">
+            <div class="learn-container">
+                <h1 id="learn-title">GREAT JOB!</h1>
+                <h2 id="learn-guess-msg">🤔 Can you guess this bird?</h2>
+                
+                <img id="learn-image" class="learn-img" src="" alt="Bird">
+                
+                <div id="learn-reveal-area">
+                    <button class="btn accent" onclick="revealBird()">🌟 REVEAL THE ANSWER</button>
+                </div>
+
+                <div id="learn-info-area" style="display: none;">
+                    <h1 id="learn-name" style="color: var(--secondary);">NAME</h1>
+                    <p class="learn-fact" id="learn-fact">Fact goes here.</p>
+                    <div>
+                        <button class="btn secondary" onclick="speakCurrentBird()">🔊 LISTEN AGAIN</button>
+                    </div>
+                </div>
+            </div>
+            <div class="action-bar">
+                <button class="btn" onclick="nav('screen-selection')">🐦 CHOOSE BIRD</button>
+                <button class="btn accent" onclick="playRandom()">➡️ NEXT BIRD</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- COLLECTION SCREEN (Added Reset Button Here) -->
+    <div id="screen-collection" class="screen">
+        <div class="top-bar">
+            <button class="btn" onclick="nav('screen-menu')">⬅ Back</button>
+            <h2 style="margin:0;">My Bird Collection (<span id="collection-count">0/32</span>)</h2>
+            <div style="width:80px;"></div>
+        </div>
+        <div class="grid-container" id="collection-grid"></div>
+        
+        <div class="reset-btn-wrapper">
+            <button class="btn danger" onclick="promptReset()" style="font-size: clamp(12px, 1.5vw, 16px); padding: 8px 15px;">🔄 RESET</button>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- DATABASE ---
+        const BIRD_DATA = [
+            { id: "bee-eater", name: "Bee-eater", image: "bee-eater.webp", fact: "Bee-eaters love to catch and eat flying insects." },
+            { id: "crane", name: "Crane", image: "crane.webp", fact: "Cranes are tall birds with very long legs and necks." },
+            { id: "crow", name: "Crow", image: "crow.webp", fact: "Crows are very smart birds that can solve puzzles." },
+            { id: "cuckoo", name: "Cuckoo", image: "cuckoo.webp", fact: "Cuckoos are known for their special calling sound." },
+            { id: "dove", name: "Dove", image: "dove.webp", fact: "Doves are beautiful birds that make a soft cooing sound." },
+            { id: "duck", name: "Duck", image: "duck.webp", fact: "Ducks have waterproof feathers to stay dry in the pond." },
+            { id: "eagle", name: "Eagle", image: "eagle.webp", fact: "Eagles have amazing eyesight to spot their food from high in the sky." },
+            { id: "emu", name: "Emu", image: "emu.webp", fact: "Emus are very large birds that can run fast but cannot fly." },
+            { id: "flamingo", name: "Flamingo", image: "flamingo.webp", fact: "Flamingos are pink because of the food they eat." },
+            { id: "goose", name: "Goose", image: "goose.webp", fact: "Geese love to fly together in a big V-shape." },
+            { id: "hen", name: "Hen", image: "hen.webp", fact: "Hens are female chickens that lay eggs for us." },
+            { id: "heron", name: "Heron", image: "heron.webp", fact: "Herons stand very still in the water to catch fish." },
+            { id: "hoopoe", name: "Hoopoe", image: "hoopoe.webp", fact: "Hoopoes have a beautiful crown of feathers on their head." },
+            { id: "hornbill", name: "Hornbill", image: "hornbill.webp", fact: "Hornbills have a large, bright beak shaped like a horn." },
+            { id: "kingfisher", name: "Kingfisher", image: "kingfishers_2.webp", fact: "Kingfishers dive quickly into the water to catch small fish." },
+            { id: "koel", name: "Koel", image: "koel.webp", fact: "Koels are known for singing beautifully in the morning." },
+            { id: "myna", name: "Myna", image: "myna.webp", fact: "Myna birds are very clever and can sometimes copy words." },
+            { id: "ostrich", name: "Ostrich", image: "ostrich.webp", fact: "Ostriches are the largest birds and can run super fast!" },
+            { id: "owl", name: "Owl", image: "owl.webp", fact: "Owls stay awake at night and have excellent hearing." },
+            { id: "parrot", name: "Parrot", image: "parrot.webp", fact: "Parrots have bright feathers and can learn to mimic words." },
+            { id: "peacock", name: "Peacock", image: "peacock.webp", fact: "Peacocks can open their tail feathers like a giant, colorful fan." },
+            { id: "pelican", name: "Pelican", image: "pelican.webp", fact: "Pelicans have a huge pouch under their beak to scoop up fish." },
+            { id: "pigeon", name: "Pigeon", image: "pigeon.webp", fact: "Pigeons are very good at finding their way back home." },
+            { id: "puffin", name: "Puffin", image: "puffin.webp", fact: "Puffins have colorful beaks and are excellent swimmers." },
+            { id: "sparrow", name: "Sparrow", image: "sparrow.webp", fact: "Sparrows are small, friendly birds that love to hop around." },
+            { id: "stork", name: "Stork", image: "stork.webp", fact: "Storks build huge nests high up on trees or roofs." },
+            { id: "sunbird", name: "Sunbird", image: "sunbird.webp", fact: "Sunbirds are tiny and love to drink sweet nectar from flowers." },
+            { id: "swan", name: "Swan", image: "swan.webp", fact: "Swans are very graceful birds with long, beautiful necks." },
+            { id: "toucan", name: "Toucan", image: "toucan.webp", fact: "Toucans have giant, colorful beaks that look like a rainbow." },
+            { id: "turkey", name: "Turkey", image: "turkey.webp", fact: "Turkeys make a funny gobble-gobble sound." },
+            { id: "weaver bird", name: "Weaver Bird", image: "weaver bird.webp", fact: "Weaver birds weave dry grass together to build amazing nests." },
+            { id: "woodpecker", name: "Woodpecker", image: "woodpecker.webp", fact: "Woodpeckers tap on tree trunks to find tasty bugs to eat." }
+        ];
+
+        // --- STATE ---
+        let currentBird = null;
+        let soundEnabled = true;
+        let unlockedBirds = JSON.parse(localStorage.getItem('birdAdventureProgress')) || {};
+        let puzzleState = { cols: 0, rows: 0, pieces: [], placedCount: 0, img: null };
+        
+        // --- AUDIO SYNTHESIS ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const actx = new AudioContext();
+
+        function playSynthSound(type) {
+            if (!soundEnabled || actx.state === 'suspended') return;
+            const osc = actx.createOscillator();
+            const gain = actx.createGain();
+            osc.connect(gain);
+            gain.connect(actx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, actx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, actx.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.2, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.1);
+                osc.start(); osc.stop(actx.currentTime + 0.1);
+            } else if (type === 'snap') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, actx.currentTime);
+                osc.frequency.setValueAtTime(600, actx.currentTime + 0.05);
+                gain.gain.setValueAtTime(0.3, actx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, actx.currentTime + 0.15);
+                osc.start(); osc.stop(actx.currentTime + 0.15);
+            } else if (type === 'win') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(300, actx.currentTime);
+                osc.frequency.setValueAtTime(400, actx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(500, actx.currentTime + 0.2);
+                osc.frequency.setValueAtTime(800, actx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.2, actx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, actx.currentTime + 0.6);
+                osc.start(); osc.stop(actx.currentTime + 0.6);
+            }
+        }
+
+        function speak(text, callback) {
+            if (!soundEnabled || !window.speechSynthesis) {
+                if(callback) setTimeout(callback, 1000);
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; 
+            utterance.pitch = 1.2;
+            if(callback) utterance.onend = callback;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- CORE NAVIGATION ---
+        function nav(screenId) {
+            playSynthSound('click');
+            if (actx.state === 'suspended') actx.resume();
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            document.getElementById('btn-sound-global').innerText = soundEnabled ? '🔊 SOUND ON' : '🔇 SOUND OFF';
+            playSynthSound('click');
+        }
+
+        // --- SELECTION, COLLECTION & RESET ---
+        function openSelection() {
+            const grid = document.getElementById('selection-grid');
+            grid.innerHTML = '';
+            const shuffled = [...BIRD_DATA].sort(() => Math.random() - 0.5);
+            shuffled.forEach(bird => {
+                const isUnlocked = unlockedBirds[bird.id];
+                const card = document.createElement('div');
+                card.className = 'card ' + (isUnlocked ? '' : 'locked');
+                card.innerHTML = `
+                    <img src="${bird.image}" alt="${bird.name}">
+                    <div class="status">${isUnlocked ? '✅' : '❓'}</div>
+                `;
+                card.onclick = () => {
+                    currentBird = bird;
+                    nav('screen-difficulty');
+                };
+                grid.appendChild(card);
+            });
+            nav('screen-selection');
+        }
+
+        function openCollection() {
+            const grid = document.getElementById('collection-grid');
+            grid.innerHTML = '';
+            let count = 0;
+            BIRD_DATA.forEach(bird => {
+                const isUnlocked = unlockedBirds[bird.id];
+                if (isUnlocked) count++;
+                const card = document.createElement('div');
+                card.className = 'card ' + (isUnlocked ? '' : 'locked');
+                card.innerHTML = `
+                    <img src="${bird.image}" alt="${bird.name}">
+                    <h3>${isUnlocked ? bird.name : '???'}</h3>
+                    <div class="status">${isUnlocked ? '⭐' : '🔒'}</div>
+                `;
+                grid.appendChild(card);
+            });
+            document.getElementById('collection-count').innerText = `${count}/32`;
+            nav('screen-collection');
+        }
+
+        // Add the logic to reset the entire collection
+        function promptReset() {
+            playSynthSound('click');
+            const confirmReset = confirm("Are you sure you want to reset your entire bird collection? All your discoveries will be lost and returned to black and white!");
+            
+            if (confirmReset) {
+                // Clear the unlocked state
+                unlockedBirds = {};
+                localStorage.removeItem('birdAdventureProgress');
+                
+                // Instantly refresh the collection view
+                openCollection();
+            }
+        }
+
+        function playRandom() {
+            let available = BIRD_DATA.filter(b => (!currentBird || b.id !== currentBird.id));
+            currentBird = available[Math.floor(Math.random() * available.length)];
+            nav('screen-difficulty');
+        }
+
+        // --- PUZZLE ENGINE ---
+        function startPuzzle(cols, rows) {
+            nav('screen-puzzle');
+            document.getElementById('puzzle-msg').innerText = "Drag the pieces to build the bird!";
+            puzzleState = { cols, rows, pieces: [], placedCount: 0, img: new Image() };
+            
+            const board = document.getElementById('puzzle-board');
+            const tray = document.getElementById('puzzle-tray');
+            const refImg = document.getElementById('ref-image');
+            
+            board.innerHTML = '<div id="hint-overlay"></div><div id="puzzle-frame"></div>';
+            tray.innerHTML = '';
+            refImg.src = currentBird.image;
+            document.getElementById('hint-overlay').style.backgroundImage = `url('${currentBird.image}')`;
+
+            puzzleState.img.onload = () => buildPuzzle(board, tray);
+            puzzleState.img.src = currentBird.image;
+        }
+
+        function buildPuzzle(board, tray) {
+            const { cols, rows, img } = puzzleState;
+            const boardRatio = img.width / img.height;
+            const maxWidth = board.clientWidth * 0.85;
+            const maxHeight = board.clientHeight * 0.85;
+            
+            let w = maxWidth;
+            let h = w / boardRatio;
+            if (h > maxHeight) {
+                h = maxHeight;
+                w = h * boardRatio;
+            }
+
+            const pWidth = w / cols;
+            const pHeight = h / rows;
+            const offsetX = (board.clientWidth - w) / 2;
+            const offsetY = (board.clientHeight - h) / 2;
+
+            const frame = document.getElementById('puzzle-frame');
+            frame.style.width = w + 'px';
+            frame.style.height = h + 'px';
+            frame.style.left = offsetX + 'px';
+            frame.style.top = offsetY + 'px';
+
+            const tabs = [];
+            for(let r=0; r<rows; r++) {
+                tabs[r] = [];
+                for(let c=0; c<cols; c++) {
+                    tabs[r][c] = {
+                        top: r === 0 ? 0 : -tabs[r-1][c].bottom,
+                        right: c === cols-1 ? 0 : (Math.random() > 0.5 ? 1 : -1),
+                        bottom: r === rows-1 ? 0 : (Math.random() > 0.5 ? 1 : -1),
+                        left: c === 0 ? 0 : -tabs[r][c-1].right
+                    };
+                }
+            }
+
+            const pieceDataArray = [];
+
+            for(let r=0; r<rows; r++) {
+                for(let c=0; c<cols; c++) {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const tabH = pHeight * 0.25;
+                    const tabW = pWidth * 0.25;
+                    canvas.width = pWidth + tabW * 2;
+                    canvas.height = pHeight + tabH * 2;
+
+                    ctx.beginPath();
+                    ctx.moveTo(tabW, tabH);
+                    
+                    if(tabs[r][c].top !== 0) {
+                        ctx.lineTo(tabW + pWidth/2 - tabW/2, tabH);
+                        ctx.arc(tabW + pWidth/2, tabH, tabW/2, Math.PI, 0, tabs[r][c].top === -1);
+                    }
+                    ctx.lineTo(tabW + pWidth, tabH);
+
+                    if(tabs[r][c].right !== 0) {
+                        ctx.lineTo(tabW + pWidth, tabH + pHeight/2 - tabH/2);
+                        ctx.arc(tabW + pWidth, tabH + pHeight/2, tabH/2, -Math.PI/2, Math.PI/2, tabs[r][c].right === -1);
+                    }
+                    ctx.lineTo(tabW + pWidth, tabH + pHeight);
+
+                    if(tabs[r][c].bottom !== 0) {
+                        ctx.lineTo(tabW + pWidth/2 + tabW/2, tabH + pHeight);
+                        ctx.arc(tabW + pWidth/2, tabH + pHeight, tabW/2, 0, Math.PI, tabs[r][c].bottom === -1);
+                    }
+                    ctx.lineTo(tabW, tabH + pHeight);
+
+                    if(tabs[r][c].left !== 0) {
+                        ctx.lineTo(tabW, tabH + pHeight/2 + tabH/2);
+                        ctx.arc(tabW, tabH + pHeight/2, tabH/2, Math.PI/2, -Math.PI/2, tabs[r][c].left === -1);
+                    }
+                    ctx.closePath();
+                    ctx.clip();
+                    
+                    const imgScale = img.width / w;
+                    ctx.drawImage(
+                        img, 
+                        c * pWidth * imgScale - tabW * imgScale, 
+                        r * pHeight * imgScale - tabH * imgScale, 
+                        canvas.width * imgScale, 
+                        canvas.height * imgScale,
+                        0, 0, canvas.width, canvas.height
+                    );
+
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = "rgba(0,0,0,0.1)";
+                    ctx.stroke();
+
+                    const piece = document.createElement('div');
+                    piece.className = 'puzzle-piece';
+                    piece.style.width = canvas.width + 'px';
+                    piece.style.height = canvas.height + 'px';
+                    piece.appendChild(canvas);
+                    
+                    const targetX = offsetX + c * pWidth - tabW;
+                    const targetY = offsetY + r * pHeight - tabH;
+                    
+                    pieceDataArray.push({
+                        element: piece,
+                        tX: targetX,
+                        tY: targetY
+                    });
+                }
+            }
+
+            pieceDataArray.sort(() => Math.random() - 0.5);
+            
+            const totalPieces = pieceDataArray.length;
+            const colsInTray = Math.ceil(Math.sqrt(totalPieces));
+            const rowsInTray = Math.ceil(totalPieces / colsInTray);
+            
+            pieceDataArray.forEach((data, i) => {
+                const tr = Math.floor(i / colsInTray);
+                const tc = i % colsInTray;
+                
+                const cellW = tray.clientWidth / colsInTray;
+                const cellH = tray.clientHeight / rowsInTray;
+                
+                const startX = (tc * cellW) + (cellW/2) - (parseFloat(data.element.style.width)/2);
+                const startY = (tr * cellH) + (cellH/2) - (parseFloat(data.element.style.height)/2);
+
+                data.element.style.left = startX + 'px';
+                data.element.style.top = startY + 'px';
+                tray.appendChild(data.element);
+
+                setupDrag(data.element, data.tX, data.tY, board, tray);
+                puzzleState.pieces.push(data.element);
+            });
+        }
+
+        function setupDrag(piece, tX, tY, board, tray) {
+            let startX, startY, initLeft, initTop;
+            const threshold = 40; 
+
+            const startDrag = (e) => {
+                if(piece.classList.contains('locked')) return;
+                e.preventDefault();
+                
+                if(piece.parentNode !== board) {
+                    const rect = piece.getBoundingClientRect();
+                    const bRect = board.getBoundingClientRect();
+                    board.appendChild(piece);
+                    piece.style.left = (rect.left - bRect.left) + 'px';
+                    piece.style.top = (rect.top - bRect.top) + 'px';
+                }
+
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                startX = clientX;
+                startY = clientY;
+                initLeft = parseFloat(piece.style.left) || 0;
+                initTop = parseFloat(piece.style.top) || 0;
+                playSynthSound('click');
+
+                document.addEventListener('mousemove', moveDrag);
+                document.addEventListener('touchmove', moveDrag, {passive: false});
+                document.addEventListener('mouseup', endDrag);
+                document.addEventListener('touchend', endDrag);
+            };
+
+            const moveDrag = (e) => {
+                e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                piece.style.left = (initLeft + clientX - startX) + 'px';
+                piece.style.top = (initTop + clientY - startY) + 'px';
+            };
+
+            const endDrag = (e) => {
+                document.removeEventListener('mousemove', moveDrag);
+                document.removeEventListener('touchmove', moveDrag);
+                document.removeEventListener('mouseup', endDrag);
+                document.removeEventListener('touchend', endDrag);
+
+                const currentX = parseFloat(piece.style.left);
+                const currentY = parseFloat(piece.style.top);
+                const dist = Math.hypot(currentX - tX, currentY - tY);
+
+                if(dist < threshold) {
+                    piece.style.left = tX + 'px';
+                    piece.style.top = tY + 'px';
+                    piece.classList.add('locked');
+                    playSynthSound('snap');
+                    puzzleState.placedCount++;
+                    document.getElementById('puzzle-msg').innerText = "Good job! Keep going!";
+                    
+                    if(puzzleState.placedCount === puzzleState.pieces.length) {
+                        handleCompletion();
+                    }
+                } else {
+                    tray.appendChild(piece);
+                    const maxW = Math.max(0, tray.clientWidth - piece.clientWidth);
+                    const maxH = Math.max(0, tray.clientHeight - piece.clientHeight);
+                    piece.style.left = (Math.random() * maxW) + 'px';
+                    piece.style.top = (Math.random() * maxH) + 'px';
+                    document.getElementById('puzzle-msg').innerText = "Oops! Try again.";
+                }
+            };
+
+            piece.addEventListener('mousedown', startDrag);
+            piece.addEventListener('touchstart', startDrag, {passive: false});
+        }
+
+        function showHint() { document.getElementById('hint-overlay').style.opacity = '0.4'; }
+        function hideHint() { document.getElementById('hint-overlay').style.opacity = '0'; }
+
+        // --- COMPLETION & LEARNING ---
+        function handleCompletion() {
+            document.getElementById('puzzle-msg').innerText = "Yay! Puzzle Complete!";
+            playSynthSound('win');
+            
+            for(let i=0; i<50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.top = '-20px';
+                c.style.backgroundColor = ['#FFC107', '#E91E63', '#00BCD4', '#4CAF50'][Math.floor(Math.random()*4)];
+                c.style.animationDuration = (Math.random() * 2 + 1) + 's';
+                document.body.appendChild(c);
+                setTimeout(() => c.remove(), 3000);
+            }
+
+            unlockedBirds[currentBird.id] = true;
+            localStorage.setItem('birdAdventureProgress', JSON.stringify(unlockedBirds));
+
+            setTimeout(() => {
+                document.getElementById('learn-image').src = currentBird.image;
+                document.getElementById('learn-image').style.filter = 'brightness(0)';
+                document.getElementById('learn-title').innerText = "PUZZLE SOLVED!";
+                document.getElementById('learn-guess-msg').style.display = 'block';
+                document.getElementById('learn-reveal-area').style.display = 'block';
+                document.getElementById('learn-info-area').style.display = 'none';
+                
+                nav('screen-learn');
+                speak("Great job! Can you guess the bird?");
+            }, 1500);
+        }
+
+        function revealBird() {
+            document.getElementById('learn-image').style.filter = 'brightness(1)';
+            document.getElementById('learn-image').style.animation = 'pop 0.5s ease-out';
+            document.getElementById('learn-guess-msg').style.display = 'none';
+            document.getElementById('learn-reveal-area').style.display = 'none';
+            
+            const infoArea = document.getElementById('learn-info-area');
+            infoArea.style.display = 'block';
+            infoArea.style.animation = 'pop 0.5s ease-out';
+            
+            document.getElementById('learn-name').innerText = currentBird.name.toUpperCase();
+            document.getElementById('learn-fact').innerText = currentBird.fact;
+            
+            speak(`It's a ${currentBird.name}! ${currentBird.fact}`);
+        }
+
+        function speakCurrentBird() {
+            speak(`It's a ${currentBird.name}! ${currentBird.fact}`);
+        }
+    </script>
+</body>
+</html>

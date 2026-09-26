@@ -1,26 +1,124 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --primary-blue: #1E4FA3;
+    --sky-blue: #2D9CDB;
+    --deep-blue-ink: #1B5E7A;
+    --sky-wash: #EAF6FC;
+    --play-orange: #FF7A30;
+    --ember-orange: #E85D04;
+    --peach-wash: #FFE8D6;
+    --sunshine-yellow: #FFC93C;
+    --light-yellow: #FFE9A8;
+    --gold: #E8A317;
+    --butter-wash: #FFF6DC;
+    --pure-white: #FFFFFF;
+    --warm-white: #FFFDF8;
+  }
+
+  body {
+    background-color: #EAF6FC;
+    color: #1B5E7A;
+    font-family: var(--font-nunito), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-fredoka), var(--font-nunito), cursive, sans-serif;
+    color: #1B5E7A;
+    font-weight: 600;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom Utilities for ChotaPlay */
+.font-fredoka {
+  font-family: var(--font-fredoka), cursive, sans-serif;
+}
+
+.font-nunito {
+  font-family: var(--font-nunito), sans-serif;
+}
+
+/* Brand Colors */
+.bg-sky-wash { background-color: #EAF6FC; }
+.bg-peach-wash { background-color: #FFE8D6; }
+.bg-butter-wash { background-color: #FFF6DC; }
+.bg-play-orange { background-color: #FF7A30; }
+.bg-ember-orange { background-color: #E85D04; }
+.bg-sky-blue { background-color: #2D9CDB; }
+.bg-primary-blue { background-color: #1E4FA3; }
+.bg-deep-blue-ink { background-color: #1B5E7A; }
+.bg-sunshine-yellow { background-color: #FFC93C; }
+.bg-light-yellow { background-color: #FFE9A8; }
+.bg-warm-white { background-color: #FFFDF8; }
+
+.text-deep-blue-ink { color: #1B5E7A; }
+.text-primary-blue { color: #1E4FA3; }
+.text-sky-blue { color: #2D9CDB; }
+.text-play-orange { color: #FF7A30; }
+.text-ember-orange { color: #E85D04; }
+.text-gold { color: #E8A317; }
+
+.border-sky-blue { border-color: #2D9CDB; }
+.border-primary-blue { border-color: #1E4FA3; }
+.border-play-orange { border-color: #FF7A30; }
+.border-sunshine-yellow { border-color: #FFC93C; }
+.border-sky-wash { border-color: #EAF6FC; }
+
+/* Custom shadow for cards */
+.shadow-chota {
+  box-shadow: 0 10px 25px -5px rgba(27, 94, 122, 0.08), 0 8px 10px -6px rgba(27, 94, 122, 0.04);
+}
+
+.shadow-chota-lg {
+  box-shadow: 0 20px 35px -10px rgba(27, 94, 122, 0.12), 0 10px 15px -5px rgba(27, 94, 122, 0.06);
+}
+
+.shadow-chota-hover {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.shadow-chota-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 40px -10px rgba(27, 94, 122, 0.16), 0 12px 18px -4px rgba(27, 94, 122, 0.08);
+}
+
+/* Animations */
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2.5s infinite ease-in-out;
+}
+
+@keyframes spin-pointer-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+.animate-pointer-bob {
+  animation: spin-pointer-bob 1.2s infinite ease-in-out;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #EAF6FC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2D9CDB;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #1E4FA3;
 }

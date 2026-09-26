@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 180" width="100%" height="100%">
+  <defs>
+    <linearGradient id="scale-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FFE082"/>
+      <stop offset="50%" stop-color="#FFCA28"/>
+      <stop offset="100%" stop-color="#FF8F00"/>
+    </linearGradient>
+    <linearGradient id="scale-base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#90CAF9"/>
+      <stop offset="100%" stop-color="#1E88E5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Stand -->
+  <path d="M 90 170 L 170 170 C 165 150 145 140 130 140 C 115 140 95 150 90 170 Z" fill="url(#scale-base)"/>
+  <!-- Central Column -->
+  <rect x="123" y="45" width="14" height="100" rx="4" fill="url(#scale-gold)"/>
+  <!-- Central Pivot Top Jewel -->
+  <circle cx="130" cy="45" r="12" fill="#E91E63"/>
+  <circle cx="130" cy="45" r="7" fill="#FF80AB"/>
+
+  <!-- Balance Beam (slightly tilted to show big vs small effect) -->
+  <g id="beam" transform="rotate(8 130 45)">
+    <rect x="25" y="41" width="210" height="8" rx="4" fill="url(#scale-gold)"/>
+    
+    <!-- Left Pan (Dips lower under BIG) -->
+    <line x1="45" y1="45" x2="35" y2="90" stroke="#FFA000" stroke-width="3"/>
+    <line x1="75" y1="45" x2="85" y2="90" stroke="#FFA000" stroke-width="3"/>
+    <path d="M 25 90 C 25 110 95 110 95 90 Z" fill="url(#scale-gold)"/>
+
+    <!-- Right Pan (Higher up under SMALL) -->
+    <line x1="185" y1="45" x2="175" y2="90" stroke="#FFA000" stroke-width="3"/>
+    <line x1="215" y1="45" x2="225" y2="90" stroke="#FFA000" stroke-width="3"/>
+    <path d="M 165 90 C 165 110 235 110 235 90 Z" fill="url(#scale-gold)"/>
+  </g>
+</svg>

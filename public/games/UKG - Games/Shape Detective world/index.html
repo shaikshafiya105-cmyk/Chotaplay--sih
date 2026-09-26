@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Riya's Magic Shape Builder - CHOTAPLAY UKG Math</title>
+  <meta name="description" content="An interactive, voice-first UKG math adventure to learn and build with shapes with Riya and Little Star!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-app" class="game-wrapper">
+    <!-- Top Navigation & Status Bar -->
+    <header class="game-header">
+      <div class="header-left">
+        <div class="brand-badge">
+          <span class="brand-logo">⭐</span>
+          <span class="brand-title">CHOTAPLAY</span>
+        </div>
+        <h1 class="game-title">Riya's Magic Shape Builder</h1>
+      </div>
+
+      <!-- Shape Inventory Tracker -->
+      <div class="shape-tracker" id="shape-tracker" title="Shapes Discovered">
+        <span class="tracker-label">SHAPES:</span>
+        <div class="tracker-slots" id="tracker-slots">
+          <div class="tracker-slot" data-shape="circle" title="Circle"><svg viewBox="0 0 100 100" class="tracker-icon"><circle cx="50" cy="50" r="40" fill="#00b4d8"/></svg></div>
+          <div class="tracker-slot" data-shape="square" title="Square"><svg viewBox="0 0 100 100" class="tracker-icon"><rect x="15" y="15" width="70" height="70" rx="8" fill="#70e000"/></svg></div>
+          <div class="tracker-slot" data-shape="triangle" title="Triangle"><svg viewBox="0 0 100 100" class="tracker-icon"><polygon points="50,15 88,85 12,85" fill="#ff9e00"/></svg></div>
+          <div class="tracker-slot" data-shape="rectangle" title="Rectangle"><svg viewBox="0 0 100 100" class="tracker-icon"><rect x="10" y="25" width="80" height="50" rx="8" fill="#9d4edd"/></svg></div>
+          <div class="tracker-slot" data-shape="oval" title="Oval"><svg viewBox="0 0 100 100" class="tracker-icon"><ellipse cx="50" cy="50" rx="42" ry="28" fill="#ff4d6d"/></svg></div>
+          <div class="tracker-slot" data-shape="star" title="Star"><svg viewBox="0 0 100 100" class="tracker-icon"><polygon points="50,10 62,38 92,38 67,58 77,88 50,70 23,88 33,58 8,38 38,38" fill="#ffd166"/></svg></div>
+          <div class="tracker-slot" data-shape="heart" title="Heart"><svg viewBox="0 0 100 100" class="tracker-icon"><path d="M50,85 C50,85 15,60 15,35 C15,20 28,12 40,20 C46,25 50,32 50,32 C50,32 54,25 60,20 C72,12 85,20 85,35 C85,60 50,85 50,85 Z" fill="#f72585"/></svg></div>
+          <div class="tracker-slot" data-shape="diamond" title="Diamond"><svg viewBox="0 0 100 100" class="tracker-icon"><polygon points="50,12 88,50 50,88 12,50" fill="#48cae4"/></svg></div>
+        </div>
+      </div>
+
+      <!-- Controls & Menu -->
+      <div class="header-controls">
+        <button id="btn-stages" class="ctrl-btn" title="Choose Stage" aria-label="Stages Menu">
+          <span class="ctrl-icon">🗺️</span>
+          <span class="ctrl-text">Stages</span>
+        </button>
+        <button id="btn-sound" class="ctrl-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <span class="ctrl-icon">🔊</span>
+        </button>
+        <button id="btn-voice" class="ctrl-btn" title="Toggle Voice" aria-label="Toggle Voice">
+          <span class="ctrl-icon">🗣️</span>
+        </button>
+        <button id="btn-freeplay" class="ctrl-btn highlight-btn" title="Free Play Workshop" aria-label="Magic Workshop">
+          <span class="ctrl-icon">🎨</span>
+          <span class="ctrl-text">Workshop</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stage Navigation Dropdown Modal -->
+    <div id="stages-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2>🌟 Magical Stages Map</h2>
+          <button id="close-stages" class="close-btn" aria-label="Close">✖</button>
+        </div>
+        <div class="stages-grid" id="stages-grid">
+          <button class="stage-card" data-stage="intro">
+            <span class="stage-num">0</span>
+            <span class="stage-icon">⚙️</span>
+            <span class="stage-name">Broken Machine</span>
+          </button>
+          <button class="stage-card" data-stage="toolbox">
+            <span class="stage-num">1</span>
+            <span class="stage-icon">🧰</span>
+            <span class="stage-name">Shape Toolbox</span>
+          </button>
+          <button class="stage-card" data-stage="hunt">
+            <span class="stage-num">2</span>
+            <span class="stage-icon">🔍</span>
+            <span class="stage-name">Shape Hunt</span>
+          </button>
+          <button class="stage-card" data-stage="puzzle">
+            <span class="stage-num">3</span>
+            <span class="stage-icon">🧩</span>
+            <span class="stage-name">Shape Puzzle</span>
+          </button>
+          <button class="stage-card" data-stage="house">
+            <span class="stage-num">4</span>
+            <span class="stage-icon">🏡</span>
+            <span class="stage-name">House Builder</span>
+          </button>
+          <button class="stage-card" data-stage="robot">
+            <span class="stage-num">5</span>
+            <span class="stage-icon">🤖</span>
+            <span class="stage-name">Magic Robot</span>
+          </button>
+          <button class="stage-card" data-stage="shadow">
+            <span class="stage-num">6</span>
+            <span class="stage-icon">👥</span>
+            <span class="stage-name">Shape Shadow</span>
+          </button>
+          <button class="stage-card" data-stage="sorter">
+            <span class="stage-num">7</span>
+            <span class="stage-icon">🧺</span>
+            <span class="stage-name">Shape Sorter</span>
+          </button>
+          <button class="stage-card" data-stage="transform">
+            <span class="stage-num">8</span>
+            <span class="stage-icon">✨</span>
+            <span class="stage-name">Real World Shapes</span>
+          </button>
+          <button class="stage-card" data-stage="rocket">
+            <span class="stage-num">9</span>
+            <span class="stage-icon">🚀</span>
+            <span class="stage-name">Rocket Builder</span>
+          </button>
+          <button class="stage-card" data-stage="restoration">
+            <span class="stage-num">10</span>
+            <span class="stage-icon">🏆</span>
+            <span class="stage-name">Grand Celebration</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Game Viewport -->
+    <main class="game-viewport" id="game-viewport">
+
+      <!-- SCENE 0: INTRO / BROKEN MACHINE -->
+      <section id="scene-intro" class="scene active">
+        <div class="intro-backdrop">
+          <div class="clouds-bg">
+            <div class="cloud cloud-1"></div>
+            <div class="cloud cloud-2"></div>
+            <div class="cloud cloud-3"></div>
+          </div>
+          <div class="workshop-scenery">
+            <div class="scenery-item unfinished-house"></div>
+            <div class="scenery-item unfinished-tree"></div>
+            <div class="scenery-item unfinished-robot"></div>
+          </div>
+        </div>
+
+        <div class="machine-hero">
+          <div class="machine-structure">
+            <div class="machine-funnel">
+              <span class="smoke-puff p1"></span>
+              <span class="smoke-puff p2"></span>
+            </div>
+            <div class="machine-body">
+              <div class="machine-gauge">
+                <div class="gauge-needle broken"></div>
+              </div>
+              <div class="machine-gears">
+                <div class="gear gear-big broken-gear">⚙️</div>
+                <div class="gear gear-small">⚙️</div>
+              </div>
+              <div class="machine-slots">
+                <div class="broken-slot pulse-slot">❓</div>
+                <div class="broken-slot pulse-slot">❓</div>
+                <div class="broken-slot pulse-slot">❓</div>
+              </div>
+              <div class="machine-sparks" id="machine-sparks"></div>
+            </div>
+            <div class="machine-pipe"></div>
+          </div>
+          <div class="machine-banner">
+            <h2>THE MAGIC SHAPE MACHINE</h2>
+            <p class="status-alert">⚠️ STATUS: BROKEN! MISSING ALL SHAPES!</p>
+          </div>
+        </div>
+
+        <div class="intro-actions">
+          <button id="btn-start-adventure" class="giant-play-btn pulse-glow">
+            <span class="btn-shine"></span>
+            <span class="btn-icon">✨</span>
+            <span class="btn-text">START BUILDING!</span>
+            <span class="btn-icon">🔨</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- SCENE 1: SHAPE TOOLBOX (DISCOVERY) -->
+      <section id="scene-toolbox" class="scene">
+        <div class="scene-header-bar">
+          <h2>🧰 Shape Toolbox: Tap & Discover!</h2>
+          <p class="instruction-text">Tap each shape to hear its magical name and learn its superpowers!</p>
+        </div>
+        <div class="toolbox-grid" id="toolbox-grid">
+          <!-- Populated dynamically with 8 interactive shape cards -->
+        </div>
+        <div class="scene-bottom-nav">
+          <button class="nav-arrow-btn next-btn" data-next="hunt">
+            <span>Next: Shape Hunt</span> ➡️
+          </button>
+        </div>
+      </section>
+
+      <!-- SCENE 2: SHAPE HUNT (GARDEN EXPLORATION) -->
+      <section id="scene-hunt" class="scene">
+        <div class="scene-header-bar">
+          <h2 id="hunt-title">🔍 Magical Garden Shape Hunt</h2>
+          <div class="hunt-prompt-banner" id="hunt-prompt-banner">
+            <span class="prompt-speaker" id="btn-repeat-hunt">🔊</span>
+            <span class="prompt-text" id="hunt-prompt-text">Can you find the CIRCLE?</span>
+          </div>
+        </div>
+        <div class="garden-hunt-stage" id="garden-hunt-stage">
+          <!-- Scenic elements with hidden clickable shapes -->
+        </div>
+        <div class="hunt-score-bar">
+          <span id="hunt-progress-text">Find 3 shapes to repair the Garden!</span>
+          <div class="hunt-dots" id="hunt-dots"></div>
+        </div>
+      </section>
+
+      <!-- SCENE 3: SHAPE PUZZLE (CUTOUT REPAIR) -->
+      <section id="scene-puzzle" class="scene">
+        <div class="scene-header-bar">
+          <h2 id="puzzle-title">🧩 Shape Puzzle: Fix the Missing Piece!</h2>
+          <p class="instruction-text" id="puzzle-instruction">Drag or tap the correct shape to fix the object!</p>
+        </div>
+        <div class="puzzle-workspace">
+          <div class="puzzle-target-area" id="puzzle-target-area">
+            <!-- Dynamic incomplete object with missing shape drop zone -->
+          </div>
+          <div class="puzzle-choices-tray" id="puzzle-choices-tray">
+            <!-- 3 draggable/tappable shape options -->
+          </div>
+        </div>
+        <div class="puzzle-pagination" id="puzzle-pagination"></div>
+      </section>
+
+      <!-- SCENE 4: HOUSE BUILDER -->
+      <section id="scene-house" class="scene">
+        <div class="scene-header-bar">
+          <h2>🏡 Build a Magic House!</h2>
+          <p class="instruction-text">Drag shapes to build walls, roof, door, windows, and sunshine!</p>
+        </div>
+        <div class="builder-stage house-builder-layout">
+          <div class="blueprint-canvas" id="house-canvas">
+            <div class="sun-zone drop-target" data-accept="circle" data-part="sun" title="Sun"></div>
+            <div class="roof-zone drop-target" data-accept="triangle" data-part="roof" title="Roof"></div>
+            <div class="wall-zone drop-target" data-accept="square" data-part="wall" title="Walls"></div>
+            <div class="window-zone drop-target" data-accept="square" data-part="window" title="Window"></div>
+            <div class="door-zone drop-target" data-accept="rectangle" data-part="door" title="Door"></div>
+            <div class="ground-grass">
+              <div class="flower-slot drop-target" data-accept="heart" data-part="flower" title="Flower"></div>
+              <div class="bush-slot drop-target" data-accept="oval" data-part="bush" title="Bush"></div>
+            </div>
+          </div>
+          <div class="builder-toolbox" id="house-toolbox">
+            <h3>Shapes Palette</h3>
+            <div class="palette-items" id="house-palette"></div>
+            <button id="btn-reset-house" class="action-btn small-btn">🔄 Restart House</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 5: ROBOT BUILDER -->
+      <section id="scene-robot" class="scene">
+        <div class="scene-header-bar">
+          <h2>🤖 Build the Shape Robot!</h2>
+          <p class="instruction-text">Fit the body parts and wake up our friendly dancing robot!</p>
+        </div>
+        <div class="builder-stage robot-builder-layout">
+          <div class="robot-assembly-zone" id="robot-assembly-zone">
+            <!-- Robot blueprint zones -->
+            <div class="robot-part-zone antenna-zone drop-target" data-accept="triangle" data-part="antenna"></div>
+            <div class="robot-part-zone head-zone drop-target" data-accept="square" data-part="head"></div>
+            <div class="robot-part-zone eye-left-zone drop-target" data-accept="circle" data-part="eye-left"></div>
+            <div class="robot-part-zone eye-right-zone drop-target" data-accept="circle" data-part="eye-right"></div>
+            <div class="robot-part-zone body-zone drop-target" data-accept="rectangle" data-part="body"></div>
+            <div class="robot-part-zone core-zone drop-target" data-accept="heart" data-part="core"></div>
+            <div class="robot-part-zone arm-left-zone drop-target" data-accept="rectangle" data-part="arm-left"></div>
+            <div class="robot-part-zone arm-right-zone drop-target" data-accept="rectangle" data-part="arm-right"></div>
+            <div class="robot-part-zone leg-left-zone drop-target" data-accept="rectangle" data-part="leg-left"></div>
+            <div class="robot-part-zone leg-right-zone drop-target" data-accept="rectangle" data-part="leg-right"></div>
+          </div>
+          <div class="builder-toolbox" id="robot-toolbox">
+            <h3>Robot Parts</h3>
+            <div class="palette-items" id="robot-palette"></div>
+            <button id="btn-reset-robot" class="action-btn small-btn">🔄 Reset Robot</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 6: SHAPE SHADOW (SILHOUETTE PUZZLE) -->
+      <section id="scene-shadow" class="scene">
+        <div class="scene-header-bar">
+          <h2>👥 Shape Shadow Mystery</h2>
+          <p class="instruction-text">Which magical shape matches the glowing mystery shadow?</p>
+        </div>
+        <div class="shadow-stage">
+          <div class="shadow-podium">
+            <div class="shadow-spotlight"></div>
+            <div class="mystery-silhouette" id="mystery-silhouette">
+              <!-- SVG shadow geometry -->
+            </div>
+            <div class="shadow-smoke" id="shadow-smoke"></div>
+          </div>
+          <div class="shadow-choices" id="shadow-choices">
+            <!-- 3 interactive cards -->
+          </div>
+        </div>
+        <div class="shadow-pagination" id="shadow-pagination"></div>
+      </section>
+
+      <!-- SCENE 7: SHAPE SORTER (BASKETS) -->
+      <section id="scene-sorter" class="scene">
+        <div class="scene-header-bar">
+          <h2>🧺 Magical Shape Sorter</h2>
+          <p class="instruction-text">Drag each floating shape gem into its matching basket!</p>
+        </div>
+        <div class="sorter-stage">
+          <div class="sorter-conveyor" id="sorter-conveyor">
+            <div class="conveyor-belt"></div>
+            <div class="shapes-stream" id="shapes-stream">
+              <!-- Incoming draggable shapes -->
+            </div>
+          </div>
+          <div class="sorter-baskets" id="sorter-baskets">
+            <!-- 3 or 4 glowing sorting baskets -->
+          </div>
+        </div>
+        <div class="sorter-score-bar">
+          <span id="sorter-counter">Sorted: 0 / 6</span>
+        </div>
+      </section>
+
+      <!-- SCENE 8: REAL WORLD SHAPE TRANSFORMATIONS -->
+      <section id="scene-transform" class="scene">
+        <div class="scene-header-bar">
+          <h2>✨ Real World Shape Transformations!</h2>
+          <p class="instruction-text">Tap the magic wand or click any shape to transform it into real-world objects!</p>
+        </div>
+        <div class="transform-gallery" id="transform-gallery">
+          <!-- 8 cards that morph on tap -->
+        </div>
+        <div class="scene-bottom-nav">
+          <button class="nav-arrow-btn next-btn" data-next="rocket">
+            <span>Next: Rocket Builder</span> 🚀
+          </button>
+        </div>
+      </section>
+
+      <!-- SCENE 9: ROCKET BUILDER & BLAST OFF (WOW FINALE) -->
+      <section id="scene-rocket" class="scene">
+        <div class="scene-header-bar">
+          <h2 id="rocket-title">🚀 Rocket Builder & Cosmic Launch!</h2>
+          <p class="instruction-text" id="rocket-instruction">Assemble the rocket to blast off to the stars!</p>
+        </div>
+        <div class="rocket-launchpad" id="rocket-launchpad">
+          <div class="space-stars-bg" id="space-stars-bg"></div>
+          <div class="launch-tower">
+            <div class="rocket-frame" id="rocket-frame">
+              <div class="rocket-drop-zone nose-zone drop-target" data-accept="triangle" data-part="nose" title="Triangle Nose Cone"></div>
+              <div class="rocket-drop-zone body-zone drop-target" data-accept="rectangle" data-part="body" title="Rectangle Body"></div>
+              <div class="rocket-drop-zone window-zone drop-target" data-accept="circle" data-part="window" title="Circle Window"></div>
+              <div class="rocket-drop-zone fin-left-zone drop-target" data-accept="triangle" data-part="fin-left" title="Triangle Fin"></div>
+              <div class="rocket-drop-zone fin-right-zone drop-target" data-accept="triangle" data-part="fin-right" title="Triangle Fin"></div>
+              <div class="rocket-drop-zone booster-zone drop-target" data-accept="oval" data-part="booster" title="Oval Booster Flame"></div>
+              <div class="exhaust-flame hidden" id="exhaust-flame"></div>
+            </div>
+            <div class="launch-pad-base"></div>
+          </div>
+          <div class="rocket-toolbox" id="rocket-toolbox">
+            <h3>Rocket Parts</h3>
+            <div class="palette-items" id="rocket-palette"></div>
+            <button id="btn-launch-rocket" class="giant-play-btn launch-btn hidden pulse-glow">
+              <span>🚀 3... 2... 1... LAUNCH!</span>
+            </button>
+          </div>
+        </div>
+        <div class="countdown-overlay hidden" id="countdown-overlay">
+          <div class="countdown-number" id="countdown-number">3</div>
+        </div>
+      </section>
+
+      <!-- SCENE 10: GRAND RESTORATION & DIPLOMA -->
+      <section id="scene-restoration" class="scene">
+        <div class="celebration-hero">
+          <div class="restored-machine-wrapper">
+            <div class="magic-rainbow-beam" id="rainbow-beam"></div>
+            <div class="restored-machine">
+              <div class="machine-core-glow active-glow">
+                <span class="spinning-stars">🌟</span>
+              </div>
+              <div class="restored-slots" id="restored-slots"></div>
+            </div>
+          </div>
+          <div class="celebration-diploma">
+            <div class="diploma-badge">🏆 MASTER SHAPE BUILDER</div>
+            <h2>Congratulations, Shape Builder!</h2>
+            <p>You repaired the Shape Machine and restored the Magical Shape World!</p>
+            <div class="restored-world-preview">
+              <span class="world-item house-icon">🏡</span>
+              <span class="world-item robot-icon">🤖</span>
+              <span class="world-item rocket-icon">🚀</span>
+              <span class="world-item tree-icon">🌳</span>
+              <span class="world-item stars-icon">✨</span>
+            </div>
+            <div class="diploma-actions">
+              <button id="btn-open-workshop" class="giant-play-btn pulse-glow">
+                <span>🎨 Enter Free Play Workshop</span>
+              </button>
+              <button id="btn-play-again" class="action-btn">
+                <span>🔄 Play Again from Start</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCENE 11: FREE PLAY WORKSHOP (CREATIVE SANDBOX) -->
+      <section id="scene-freeplay" class="scene">
+        <div class="scene-header-bar">
+          <h2>🎨 Magic Shape Workshop (Free Play Studio)</h2>
+          <p class="instruction-text">Drag, resize, rotate, and create anything you imagine using shapes!</p>
+        </div>
+        <div class="workshop-container">
+          <!-- Left Shape Drawer -->
+          <aside class="workshop-sidebar">
+            <h3>Shapes</h3>
+            <div class="workshop-shape-stamps" id="workshop-shape-stamps">
+              <button class="stamp-btn" data-shape="circle" title="Add Circle"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#00b4d8"/></svg><span>Circle</span></button>
+              <button class="stamp-btn" data-shape="square" title="Add Square"><svg viewBox="0 0 100 100"><rect x="15" y="15" width="70" height="70" rx="8" fill="#70e000"/></svg><span>Square</span></button>
+              <button class="stamp-btn" data-shape="triangle" title="Add Triangle"><svg viewBox="0 0 100 100"><polygon points="50,15 88,85 12,85" fill="#ff9e00"/></svg><span>Triangle</span></button>
+              <button class="stamp-btn" data-shape="rectangle" title="Add Rectangle"><svg viewBox="0 0 100 100"><rect x="10" y="25" width="80" height="50" rx="8" fill="#9d4edd"/></svg><span>Rectangle</span></button>
+              <button class="stamp-btn" data-shape="oval" title="Add Oval"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="50" rx="42" ry="28" fill="#ff4d6d"/></svg><span>Oval</span></button>
+              <button class="stamp-btn" data-shape="star" title="Add Star"><svg viewBox="0 0 100 100"><polygon points="50,10 62,38 92,38 67,58 77,88 50,70 23,88 33,58 8,38 38,38" fill="#ffd166"/></svg><span>Star</span></button>
+              <button class="stamp-btn" data-shape="heart" title="Add Heart"><svg viewBox="0 0 100 100"><path d="M50,85 C50,85 15,60 15,35 C15,20 28,12 40,20 C46,25 50,32 50,32 C50,32 54,25 60,20 C72,12 85,20 85,35 C85,60 50,85 50,85 Z" fill="#f72585"/></svg><span>Heart</span></button>
+              <button class="stamp-btn" data-shape="diamond" title="Add Diamond"><svg viewBox="0 0 100 100"><polygon points="50,12 88,50 50,88 12,50" fill="#48cae4"/></svg><span>Diamond</span></button>
+            </div>
+            <div class="color-palette-bar">
+              <h4>Colors</h4>
+              <div class="color-swatches" id="color-swatches">
+                <button class="swatch active" style="background:#ff4d6d" data-color="#ff4d6d"></button>
+                <button class="swatch" style="background:#ff9e00" data-color="#ff9e00"></button>
+                <button class="swatch" style="background:#ffd166" data-color="#ffd166"></button>
+                <button class="swatch" style="background:#70e000" data-color="#70e000"></button>
+                <button class="swatch" style="background:#00b4d8" data-color="#00b4d8"></button>
+                <button class="swatch" style="background:#9d4edd" data-color="#9d4edd"></button>
+                <button class="swatch" style="background:#f72585" data-color="#f72585"></button>
+                <button class="swatch" style="background:#3a0ca3" data-color="#3a0ca3"></button>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main Creative Canvas -->
+          <div class="workshop-canvas-area">
+            <div class="workshop-toolbar">
+              <div class="template-selector">
+                <span>Template:</span>
+                <button class="tmpl-btn active" data-tmpl="blank">Blank</button>
+                <button class="tmpl-btn" data-tmpl="house">House</button>
+                <button class="tmpl-btn" data-tmpl="robot">Robot</button>
+                <button class="tmpl-btn" data-tmpl="rocket">Rocket</button>
+                <button class="tmpl-btn" data-tmpl="tree">Tree</button>
+                <button class="tmpl-btn" data-tmpl="butterfly">Butterfly</button>
+              </div>
+              <div class="canvas-actions">
+                <button id="btn-workshop-animate" class="tool-action-btn" title="Animate Shapes">✨ Dance!</button>
+                <button id="btn-workshop-clear" class="tool-action-btn danger" title="Clear Canvas">🗑️ Clear</button>
+              </div>
+            </div>
+            <div class="creative-sandbox" id="creative-sandbox">
+              <div class="template-watermark" id="template-watermark"></div>
+              <!-- User spawned shapes placed here -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Interactive Character Stage Bar (Riya & Little Star) -->
+    <footer class="character-bar" id="character-bar">
+      <!-- Little Star Character -->
+      <div class="char-container char-star" id="char-star" title="Little Star">
+        <svg viewBox="0 0 120 120" class="star-svg">
+          <defs>
+            <radialGradient id="star-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff8cc" />
+              <stop offset="60%" stop-color="#ffd166" />
+              <stop offset="100%" stop-color="#f48c06" />
+            </radialGradient>
+            <filter id="glow-filter" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <g class="star-body-group" filter="url(#glow-filter)">
+            <polygon points="60,10 74,44 110,44 80,68 92,104 60,82 28,104 40,68 10,44 46,44" fill="url(#star-glow)" stroke="#ffba08" stroke-width="3" />
+            <!-- Star Face -->
+            <ellipse cx="48" cy="56" rx="4" ry="6" fill="#2b2d42" class="star-eye eye-left" />
+            <ellipse cx="72" cy="56" rx="4" ry="6" fill="#2b2d42" class="star-eye eye-right" />
+            <circle cx="50" cy="54" r="1.5" fill="#fff" />
+            <circle cx="74" cy="54" r="1.5" fill="#fff" />
+            <!-- Rosy Cheeks -->
+            <circle cx="40" cy="64" r="4" fill="#ff758f" opacity="0.7" />
+            <circle cx="80" cy="64" r="4" fill="#ff758f" opacity="0.7" />
+            <!-- Star Mouth -->
+            <path d="M52,66 Q60,74 68,66" stroke="#d00000" stroke-width="2.5" fill="none" stroke-linecap="round" class="star-mouth" />
+          </g>
+          <polygon points="60,2 63,10 70,10 64,15 67,22 60,18 53,22 56,15 50,10 57,10" fill="#fff" class="star-halo-sparkle" />
+        </svg>
+      </div>
+
+      <!-- Dialogue Speech Bubble -->
+      <div class="speech-bubble-wrapper">
+        <div class="speech-bubble" id="speech-bubble">
+          <button class="speech-audio-btn" id="btn-replay-voice" title="Replay Voice">🔊</button>
+          <div class="bubble-content">
+            <span class="speaker-name" id="speaker-name">Little Star:</span>
+            <p class="speech-text" id="speech-text">Oh no! The Shape Machine is broken!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Riya Character -->
+      <div class="char-container char-riya" id="char-riya" title="Riya">
+        <svg viewBox="0 0 160 220" class="riya-svg">
+          <defs>
+            <linearGradient id="riya-skin" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#ffdfba" />
+              <stop offset="100%" stop-color="#f8c291" />
+            </linearGradient>
+            <linearGradient id="riya-dress" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#f72585" />
+              <stop offset="100%" stop-color="#7209b7" />
+            </linearGradient>
+            <linearGradient id="riya-hair" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#3d1e11" />
+              <stop offset="100%" stop-color="#241007" />
+            </linearGradient>
+          </defs>
+
+          <!-- Legs & Shoes -->
+          <rect x="62" y="170" width="12" height="32" rx="6" fill="#ffdfba" />
+          <rect x="86" y="170" width="12" height="32" rx="6" fill="#ffdfba" />
+          <ellipse cx="68" cy="204" rx="14" ry="7" fill="#ff006e" />
+          <ellipse cx="92" cy="204" rx="14" ry="7" fill="#ff006e" />
+
+          <!-- Dress / Builder Outfit -->
+          <path d="M50,118 L110,118 L122,175 L38,175 Z" fill="url(#riya-dress)" />
+          <rect x="52" y="152" width="56" height="8" rx="4" fill="#ffd166" />
+          <polygon points="80,148 83,156 90,156 84,161 87,169 80,164 73,169 76,161 70,156 77,156" fill="#ffbe0b" />
+
+          <!-- Left Arm & Hand -->
+          <g class="riya-arm arm-left">
+            <path d="M50,122 Q30,140 38,160" stroke="#ffdfba" stroke-width="12" stroke-linecap="round" fill="none" />
+            <circle cx="38" cy="160" r="7" fill="#ffdfba" />
+          </g>
+
+          <!-- Right Arm & Hand (Interactive gesture) -->
+          <g class="riya-arm arm-right" id="riya-right-arm">
+            <path d="M110,122 Q130,135 125,155" stroke="#ffdfba" stroke-width="12" stroke-linecap="round" fill="none" id="riya-arm-path" />
+            <circle cx="125" cy="155" r="7" fill="#ffdfba" id="riya-hand-circle" />
+          </g>
+
+          <!-- Hair Bun Left & Right -->
+          <circle cx="44" cy="50" r="20" fill="url(#riya-hair)" />
+          <circle cx="116" cy="50" r="20" fill="url(#riya-hair)" />
+          <!-- Star Hair Clips -->
+          <polygon points="44,38 46,43 51,43 47,46 49,51 44,48 39,51 41,46 37,43 42,43" fill="#ffd166" />
+          <polygon points="116,38 118,43 123,43 119,46 121,51 116,48 111,51 113,46 109,43 114,43" fill="#ffd166" />
+
+          <!-- Head & Face -->
+          <circle cx="80" cy="75" r="38" fill="url(#riya-skin)" />
+          <!-- Hair Bangs -->
+          <path d="M42,65 Q80,45 118,65 Q80,28 42,65 Z" fill="url(#riya-hair)" />
+
+          <!-- Eyes -->
+          <ellipse cx="66" cy="75" rx="5.5" ry="8" fill="#241007" class="riya-eye eye-left" />
+          <ellipse cx="94" cy="75" rx="5.5" ry="8" fill="#241007" class="riya-eye eye-right" />
+          <circle cx="68" cy="72" r="2" fill="#fff" />
+          <circle cx="96" cy="72" r="2" fill="#fff" />
+          <!-- Eyelashes -->
+          <path d="M60,68 Q66,64 72,68" stroke="#241007" stroke-width="1.8" fill="none" />
+          <path d="M88,68 Q94,64 100,68" stroke="#241007" stroke-width="1.8" fill="none" />
+
+          <!-- Rosy Cheeks -->
+          <ellipse cx="56" cy="85" rx="6" ry="3.5" fill="#ff758f" opacity="0.6" />
+          <ellipse cx="104" cy="85" rx="6" ry="3.5" fill="#ff758f" opacity="0.6" />
+
+          <!-- Nose -->
+          <circle cx="80" cy="81" r="2" fill="#e79f6e" />
+
+          <!-- Mouth -->
+          <path d="M72,90 Q80,99 88,90 Z" fill="#c9184a" class="riya-mouth" id="riya-mouth" />
+        </svg>
+      </div>
+    </footer>
+
+    <!-- Celebration Confetti & Sparkle Canvas -->
+    <canvas id="confetti-canvas" class="confetti-overlay"></canvas>
+
+    <!-- Touch / Mouse Drag Ghost Element -->
+    <div id="drag-ghost" class="drag-ghost hidden"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

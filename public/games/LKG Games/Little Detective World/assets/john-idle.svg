@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300" width="100%" height="100%">
+  <defs>
+    <radialGradient id="skin" cx="45%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FFE0BD"/>
+      <stop offset="100%" stop-color="#F3C398"/>
+    </radialGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6B3A19"/>
+      <stop offset="100%" stop-color="#451F07"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#29B6F6"/>
+      <stop offset="100%" stop-color="#0288D1"/>
+    </linearGradient>
+    <linearGradient id="shorts" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D7CCC8"/>
+      <stop offset="100%" stop-color="#A1887F"/>
+    </linearGradient>
+    <linearGradient id="shoe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E1F5FE"/>
+      <stop offset="100%" stop-color="#03A9F4"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Ground Shadow -->
+  <ellipse cx="100" cy="285" rx="55" ry="10" fill="rgba(0,0,0,0.15)"/>
+
+  <!-- Legs -->
+  <path d="M 75 195 L 75 245 L 88 245 L 90 195 Z" fill="url(#skin)"/>
+  <path d="M 112 195 L 112 245 L 125 245 L 127 195 Z" fill="url(#skin)"/>
+  <!-- Socks -->
+  <rect x="73" y="240" width="16" height="15" rx="3" fill="#81D4FA"/>
+  <rect x="111" y="240" width="16" height="15" rx="3" fill="#81D4FA"/>
+  <!-- Shoes -->
+  <path d="M 65 262 C 65 252 82 250 92 254 C 98 257 98 268 92 272 C 80 274 65 272 65 262 Z" fill="url(#shoe)"/>
+  <path d="M 108 262 C 108 252 125 250 135 254 C 141 257 141 268 135 272 C 123 274 108 272 108 262 Z" fill="url(#shoe)"/>
+  <ellipse cx="80" cy="263" rx="8" ry="3" fill="#ffffff" opacity="0.8"/>
+  <ellipse cx="123" cy="263" rx="8" ry="3" fill="#ffffff" opacity="0.8"/>
+
+  <!-- Shorts -->
+  <path d="M 68 150 L 132 150 L 136 200 L 108 202 L 100 170 L 92 202 L 64 200 Z" fill="url(#shorts)" filter="url(#shadow)"/>
+  <!-- Pocket lines -->
+  <rect x="70" y="165" width="16" height="18" rx="3" fill="#8D6E63" opacity="0.5"/>
+  <rect x="114" y="165" width="16" height="18" rx="3" fill="#8D6E63" opacity="0.5"/>
+
+  <!-- Torso / Shirt -->
+  <path d="M 60 100 L 140 100 L 135 155 L 65 155 Z" fill="url(#shirt)" filter="url(#shadow)"/>
+  <!-- Rocket Graphic on Shirt -->
+  <g transform="translate(100, 125) scale(0.6) rotate(25)">
+    <path d="M 0 -22 C 8 -12 8 10 0 16 C -8 10 -8 -12 0 -22 Z" fill="#FFF"/>
+    <path d="M 0 -22 C 4 -18 4 -12 0 -10 C -4 -12 -4 -18 0 -22 Z" fill="#E53935"/>
+    <circle cx="0" cy="0" r="4" fill="#0288D1"/>
+    <!-- Fins -->
+    <path d="M -6 6 L -14 14 L -6 14 Z" fill="#FB8C00"/>
+    <path d="M 6 6 L 14 14 L 6 14 Z" fill="#FB8C00"/>
+    <!-- Flame -->
+    <path d="M -4 16 C 0 26 0 26 4 16 Z" fill="#FFEB3B"/>
+  </g>
+
+  <!-- Left Arm (pointing up friendly) -->
+  <path d="M 60 105 L 42 125 L 36 110 C 35 105 45 95 55 100 Z" fill="url(#skin)"/>
+  <!-- Right Arm (gesturing / welcoming) -->
+  <path d="M 138 105 L 160 120 L 170 100 C 172 90 155 85 142 98 Z" fill="url(#skin)"/>
+  <!-- Sleeves -->
+  <path d="M 58 98 L 48 118 L 65 122 L 70 100 Z" fill="url(#shirt)"/>
+  <path d="M 142 98 L 152 118 L 135 122 L 130 100 Z" fill="url(#shirt)"/>
+  <!-- Wristband -->
+  <rect x="36" y="118" width="8" height="6" rx="2" fill="#FF7043"/>
+
+  <!-- Neck -->
+  <rect x="90" y="88" width="20" height="15" rx="4" fill="url(#skin)"/>
+
+  <!-- Head -->
+  <ellipse cx="100" cy="62" rx="42" ry="40" fill="url(#skin)" filter="url(#shadow)"/>
+
+  <!-- Ears -->
+  <circle cx="58" cy="65" r="10" fill="url(#skin)"/>
+  <circle cx="58" cy="65" r="6" fill="#F3C398"/>
+  <circle cx="142" cy="65" r="10" fill="url(#skin)"/>
+  <circle cx="142" cy="65" r="6" fill="#F3C398"/>
+
+  <!-- Hair -->
+  <path d="M 55 55 C 50 30 75 10 100 12 C 120 14 140 22 145 42 C 150 48 145 60 140 62 C 135 45 125 35 105 32 C 85 30 70 42 62 58 Z" fill="url(#hair)"/>
+  <path d="M 90 12 C 95 0 115 5 110 18 Z" fill="url(#hair)"/>
+  <path d="M 70 18 C 72 8 88 12 84 22 Z" fill="url(#hair)"/>
+
+  <!-- Eyes -->
+  <!-- Left Eye -->
+  <ellipse cx="85" cy="62" rx="7" ry="9" fill="#2D1500"/>
+  <circle cx="83" cy="59" r="3" fill="#FFFFFF"/>
+  <circle cx="87" cy="65" r="1.5" fill="#FFFFFF"/>
+  <!-- Right Eye -->
+  <ellipse cx="115" cy="62" rx="7" ry="9" fill="#2D1500"/>
+  <circle cx="113" cy="59" r="3" fill="#FFFFFF"/>
+  <circle cx="117" cy="65" r="1.5" fill="#FFFFFF"/>
+
+  <!-- Eyebrows -->
+  <path d="M 78 49 Q 85 45 92 48" stroke="#451F07" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M 108 48 Q 115 45 122 49" stroke="#451F07" stroke-width="3" stroke-linecap="round" fill="none"/>
+
+  <!-- Rosy Cheeks -->
+  <ellipse cx="73" cy="72" rx="8" ry="5" fill="#FF8A80" opacity="0.5"/>
+  <ellipse cx="127" cy="72" rx="8" ry="5" fill="#FF8A80" opacity="0.5"/>
+
+  <!-- Cute Nose -->
+  <path d="M 98 67 Q 100 71 103 69" stroke="#E09E73" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+
+  <!-- Big Cheerful Smile -->
+  <path d="M 88 77 Q 100 90 112 77" stroke="#C2185B" stroke-width="3" stroke-linecap="round" fill="#FFF"/>
+  <path d="M 93 81 Q 100 87 107 81" fill="#FF5252"/>
+</svg>

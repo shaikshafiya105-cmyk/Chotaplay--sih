@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="ChotaPlay Word World - Interactive Educational Game Suite for LKG, UKG, and Class 1 classrooms.">
+  <title>ChotaPlay Word World — Educational Game Suite</title>
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/hub.css">
+  <link rel="stylesheet" href="css/lkg.css">
+  <link rel="stylesheet" href="css/ukg.css">
+  <link rel="stylesheet" href="css/class1.css">
+</head>
+<body>
+
+  <!-- Animated Environment Backdrop -->
+  <div class="environment-bg" aria-hidden="true">
+    <div class="sun-glow"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="rolling-hills"></div>
+  </div>
+
+  <!-- Particle & Confetti Celebration Layer -->
+  <canvas id="particlesCanvas"></canvas>
+
+  <!-- Main Application Wrapper -->
+  <div id="app">
+    <!-- Header Navigation -->
+    <header class="chota-header">
+      <div class="brand-wrapper" id="btnBrandHome" title="Return to ChotaPlay Home">
+        <div class="brand-logo-badge">ChotaPlay</div>
+        <div class="suite-title">Word World</div>
+        <div class="grade-pill-tag" id="headerGradeBadge" style="display: none;">LKG</div>
+      </div>
+
+      <div class="header-actions">
+        <button class="btn-quit-game" id="btnQuitGame" title="Quit Game & Return to 3 Games Menu" style="display: none;">
+          <span class="quit-icon">🚪</span>
+          <span class="quit-text">Quit Game</span>
+        </button>
+        <button class="icon-btn" id="btnToggleSound" title="Mute / Unmute Audio" aria-label="Toggle Audio">🔊</button>
+        <button class="icon-btn" id="btnToggleFullscreen" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">⛶</button>
+      </div>
+    </header>
+
+    <!-- Main Game Viewport -->
+    <main class="game-viewport" id="gameViewport">
+      <!-- Game Stage Injected Dynamically -->
+    </main>
+
+    <!-- Teacher Interactive Control Bar -->
+    <footer class="teacher-control-bar" id="teacherControlBar" style="display: none;">
+      <div class="teacher-indicator">
+        <span class="teacher-badge">TEACHER BAR</span>
+        <div class="progress-info" id="teacherProgressTitle">A — Apple (1 / 26)</div>
+      </div>
+
+      <div class="teacher-core-controls">
+        <button class="btn-teacher btn-prev" id="btnTeacherPrev" title="Previous Lesson (Left Arrow)">
+          <span>◀ PREVIOUS</span>
+        </button>
+        <button class="btn-teacher btn-repeat" id="btnTeacherRepeat" title="Repeat Audio & Lesson (Spacebar)">
+          <span>🔁 REPEAT</span>
+        </button>
+        <button class="btn-teacher btn-next" id="btnTeacherNext" title="Next Lesson (Right Arrow)">
+          <span>NEXT ▶</span>
+        </button>
+      </div>
+
+      <div class="teacher-right-actions">
+        <button class="btn-drawer-toggle" id="btnToggleDrawer" title="Quick Jumper Drawer">
+          <span>☰ Direct Jump</span>
+        </button>
+        <button class="btn-teacher-exit" id="btnTeacherExit" title="Exit Game & Return to 3 Games Menu">
+          <span>🚪 Exit to Games</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Direct Lesson Jumper Modal / Drawer -->
+  <div class="drawer-backdrop" id="drawerBackdrop">
+    <div class="drawer-modal">
+      <div class="drawer-header">
+        <div class="drawer-title" id="drawerTitle">Direct Jump</div>
+        <button class="icon-btn" id="btnCloseDrawer" aria-label="Close Drawer">✕</button>
+      </div>
+      <div class="drawer-grid" id="drawerGrid">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Zero-CORS Standalone Bundle (Runs offline and directly via double-click file:///) -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 280" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mach-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5C6BC0"/>
+      <stop offset="50%" stop-color="#3949AB"/>
+      <stop offset="100%" stop-color="#283593"/>
+    </linearGradient>
+    <linearGradient id="mach-panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#26C6DA"/>
+      <stop offset="100%" stop-color="#00838F"/>
+    </linearGradient>
+    <radialGradient id="mach-dome" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFF9C4"/>
+      <stop offset="60%" stop-color="#FFD54F"/>
+      <stop offset="100%" stop-color="#FFB300"/>
+    </radialGradient>
+    <filter id="glow-mach">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#80DEEA" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Machine Feet / Base -->
+  <rect x="50" y="240" width="40" height="25" rx="6" fill="#1A237E"/>
+  <rect x="230" y="240" width="40" height="25" rx="6" fill="#1A237E"/>
+  <rect x="30" y="225" width="260" height="25" rx="8" fill="#303F9F"/>
+
+  <!-- Main Machine Body -->
+  <rect x="40" y="80" width="240" height="150" rx="24" fill="url(#mach-body)" stroke="#7986CB" stroke-width="4"/>
+
+  <!-- Top Magic Energy Dome -->
+  <path d="M 110 80 C 110 40 210 40 210 80 Z" fill="url(#mach-dome)" filter="url(#glow-mach)"/>
+  <circle cx="160" cy="50" r="10" fill="#FFF" opacity="0.8"/>
+  <line x1="160" y1="20" x2="160" y2="40" stroke="#FFD54F" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="160" cy="16" r="6" fill="#FF5252"/>
+
+  <!-- Center Screen / Stage -->
+  <rect x="70" y="105" width="180" height="100" rx="14" fill="url(#mach-panel)" stroke="#E0F7FA" stroke-width="3"/>
+  <path d="M 75 110 L 245 110 L 220 150 L 75 150 Z" fill="#FFF" opacity="0.15"/>
+
+  <!-- Side Knobs & Magic Tubes -->
+  <circle cx="65" cy="215" r="8" fill="#FF5252"/>
+  <circle cx="85" cy="215" r="8" fill="#FFEB3B"/>
+  <circle cx="105" cy="215" r="8" fill="#69F0AE"/>
+
+  <!-- Power Gauge Slots -->
+  <rect x="135" y="210" width="120" height="12" rx="6" fill="#1A237E"/>
+  <circle cx="145" cy="216" r="4" fill="#FFD700"/>
+  <circle cx="165" cy="216" r="4" fill="#FFD700"/>
+  <circle cx="185" cy="216" r="4" fill="#FFD700"/>
+  <circle cx="205" cy="216" r="4" fill="#FFD700"/>
+  <circle cx="225" cy="216" r="4" fill="#FFD700"/>
+
+  <!-- Fun Sparkle Coils on Left & Right -->
+  <path d="M 40 120 C 20 120 20 140 40 140 C 20 140 20 160 40 160" stroke="#FFD54F" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M 280 120 C 300 120 300 140 280 140 C 300 140 300 160 280 160" stroke="#FFD54F" stroke-width="5" fill="none" stroke-linecap="round"/>
+</svg>

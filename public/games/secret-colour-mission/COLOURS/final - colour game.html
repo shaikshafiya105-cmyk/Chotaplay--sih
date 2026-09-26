@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌈 Colour Bubble Adventure</title>
+    <style>
+        :root {
+            --bg-color: #87CEEB;
+            --text-color: #ffffff;
+            --bubble-size: 70px;
+            --font-main: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        .screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.5s ease; opacity: 0; pointer-events: none; z-index: 10;
+        }
+        .screen.active { opacity: 1; pointer-events: auto; }
+        .hidden { display: none !important; }
+
+        .title-main { font-size: 4rem; color: #fff; text-shadow: 3px 3px 0 #ff6b6b, -2px -2px 0 #4ecdc4; margin-bottom: 10px; text-align: center; }
+        .subtitle { font-size: 2rem; color: #333; margin-bottom: 20px; }
+        .ui-btn { position: absolute; top: 20px; right: 20px; font-size: 2rem; background: #fff; border: none; border-radius: 50%; width: 60px; height: 60px; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 100;}
+        
+        .btn-primary { font-size: 2rem; padding: 15px 30px; border-radius: 50px; background: #FFD700; border: 5px solid #FFA500; color: #D2691E; cursor: pointer; font-family: var(--font-main); font-weight: bold; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 10px 0 #FFA500; z-index: 20; position: relative; margin: 20px auto 0 auto;}
+        .btn-primary:active { transform: translateY(10px); box-shadow: 0 0 0 #FFA500; }
+        
+        #btn-next-colour { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); margin: 0; z-index: 200; }
+        #btn-next-colour:active { transform: translate(-50%, 10px); box-shadow: 0 0 0 #FFA500; }
+
+        #star-character { position: absolute; bottom: 1vh; left: 1vh; display: flex; flex-direction: column; align-items: center; z-index: 100; transition: all 0.5s; pointer-events: none; transform: scale(0.85); transform-origin: bottom left;}
+        .star-body { font-size: 5rem; animation: float 3s infinite ease-in-out; }
+        #speech-bubble { background: #fff; padding: 15px 25px; border-radius: 20px; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; border: 3px solid #FFD700; position: relative; max-width: 300px; text-align: center;}
+        #speech-bubble::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); border-width: 10px 10px 0; border-style: solid; border-color: #FFD700 transparent transparent transparent; }
+
+        .bubble { 
+            width: var(--bubble-size); height: var(--bubble-size); border-radius: 50%; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 2rem; font-weight: bold; color: white; 
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5); 
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.1); 
+        }
+        
+        .bubble.solid { border: 4px solid rgba(255,255,255,0.5); }
+        .bubble.red { background: radial-gradient(circle at 30% 30%, #ff6b6b, #ff0000); }
+        .bubble.yellow { background: radial-gradient(circle at 30% 30%, #ffeb3b, #ffd700); }
+        .bubble.blue { background: radial-gradient(circle at 30% 30%, #6688ff, #0000dd); } 
+        .bubble.lightblue { background: radial-gradient(circle at 30% 30%, #e0ffff, #87ceeb); color: #333; text-shadow: none;} 
+        .bubble.green { background: radial-gradient(circle at 30% 30%, #43e97b, #38f9d7); }
+        .bubble.orange { background: radial-gradient(circle at 30% 30%, #ff9a44, #fc6076); }
+        .bubble.purple { background: radial-gradient(circle at 30% 30%, #e0c3fc, #8ec5fc); }
+        .bubble.pink { background: radial-gradient(circle at 30% 30%, #ff9a9e, #fecfef); }
+        .bubble.brown { background: radial-gradient(circle at 30% 30%, #d4a373, #a27035); }
+        .bubble.black { background: radial-gradient(circle at 30% 30%, #434343, #000000); }
+        .bubble.white { background: radial-gradient(circle at 30% 30%, #ffffff, #e0e0e0); color: #333; text-shadow: none; border: 2px solid #ccc;}
+        .bubble.grey { background: radial-gradient(circle at 30% 30%, #bdc3c7, #2c3e50); }
+        
+        .game-bubble { position: absolute; transform: translate(-50%, -50%); }
+        .bubble-burst { transform: translate(-50%, -50%) scale(1.5); opacity: 0; transition: all 0.2s ease-out; }
+        .bubble-drop { transform: translate(-50%, 800px) !important; opacity: 0; transition: transform 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53), opacity 0.6s ease-in; }
+
+        #game-area { position: relative; width: 620px; height: 80vh; background: rgba(255,255,255,0.4); border-radius: 20px; overflow: hidden; border: 5px solid #fff; }
+        #bubble-grid { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;}
+        #shooter-area { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 100%; display: flex; justify-content: center; z-index: 10; pointer-events: none;}
+        #aim-guide { position: absolute; bottom: 40px; width: 4px; height: 150px; background: rgba(255,255,255,0.5); transform-origin: bottom center; border-radius: 2px; }
+
+        #learning-content { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 20px; background: rgba(255,255,255,0.6); padding: 40px; border-radius: 30px;
+        }
+        .learning-word { font-size: 5rem; font-weight: bold; text-transform: uppercase; text-shadow: 2px 2px 0 #fff; letter-spacing: 2px;}
+        .intro-img { max-width: 180px; max-height: 180px; border-radius: 20px; border: 5px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.2); object-fit: contain; background: #fff;}
+        
+        #garden-screen { padding: 0; justify-content: center; }
+        
+        #garden-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            grid-auto-rows: 1fr; 
+            gap: 1.5vh; 
+            width: 95%; 
+            max-width: 1300px; 
+            align-content: start;
+            margin-bottom: 80px; 
+        }
+        
+        .color-group-box {
+            background: #ffffff;
+            border: 4px solid;
+            border-radius: 15px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .box-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+        
+        .box-images {
+            display: flex;
+            flex-direction: row; 
+            flex-wrap: nowrap; 
+            gap: 10px;
+            justify-content: center;
+            align-items: flex-end;
+            width: 100%;
+        }
+        
+        .garden-item-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            flex: 1 1 0; 
+            min-width: 0;
+        }
+        
+        .garden-img {
+            width: 100%; 
+            max-width: 65px; 
+            aspect-ratio: 1/1; 
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            object-fit: contain; 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .garden-img-label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #000;
+            text-transform: capitalize;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    </style>
+</head>
+<body>
+    <button id="audio-toggle" class="ui-btn">🔊</button>
+    <div id="star-character" class="hidden">
+        <div class="star-body">⭐</div>
+        <div id="speech-bubble" class="hidden">Let's explore!</div>
+    </div>
+
+    <div id="start-screen" class="screen active">
+        <div class="clouds"></div>
+        <h1 class="title-main">🌈 COLOUR BUBBLE ADVENTURE</h1>
+        <h3 class="subtitle">A CHOTAPLAY Learning Experience!</h3>
+        <button id="btn-start" class="btn-primary">🌟 LET'S EXPLORE</button>
+    </div>
+
+    <div id="learning-screen" class="screen hidden">
+        <div id="learning-content"></div>
+    </div>
+
+    <div id="game-screen" class="screen hidden">
+        <div id="game-area">
+            <div id="bubble-grid"></div>
+            <div id="shooter-area"><div id="aim-guide"></div></div>
+            <div id="current-bubble" class="bubble game-bubble" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="garden-screen" class="screen hidden">
+        <h2 class="title-main" style="margin-top: 10px; margin-bottom: 20px; font-size: 3.5rem;">🌸 MY COLOUR GARDEN</h2>
+        <div id="garden-grid"></div>
+        <button id="btn-next-colour" class="btn-primary" style="display:none;">🌟 EXPLORE NEXT</button>
+    </div>
+
+    <div id="world-complete-screen" class="screen hidden">
+        <h1 class="title-main">🎉 AMAZING!</h1>
+        <h3 class="subtitle">You discovered the colours!</h3>
+        <div id="completed-colours-display" style="display:flex; flex-wrap:wrap; justify-content:center; max-width:800px;"></div>
+        <button id="btn-play-again" class="btn-primary">🔁 PLAY AGAIN</button>
+    </div>
+
+    <script>
+        const colorsData = [
+            { id: "red", name: "Red", hex: "#FF0000", realWorldImages: [ { name: "Apple", image: "apple.webp" }, { name: "Rose", image: "rose.webp" }, { name: "Strawberry", image: "strawberry.jpeg" } ], learned: false },
+            { id: "yellow", name: "Yellow", hex: "#FFD700", realWorldImages: [ { name: "Banana", image: "banana.webp" }, { name: "Corn", image: "corn.webp" }, { name: "Sunflower", image: "sunflower.webp" } ], learned: false },
+            { id: "blue", name: "Blue", hex: "#0000FF", realWorldImages: [ { name: "Blueberry", image: "blueberry.webp" }, { name: "Butterfly", image: "butteerfly.webp" } ], learned: false },
+            { id: "green", name: "Green", hex: "#008000", realWorldImages: [ { name: "Cucumber", image: "cucumber.webp" }, { name: "Tree", image: "green-tree.webp" }, { name: "Leaf", image: "leaf.webp" } ], learned: false },
+            { id: "orange", name: "Orange", hex: "#FFA500", realWorldImages: [ { name: "Orange", image: "orange.webp" }, { name: "Carrot", image: "carrot.jpeg" }, { name: "Pumpkin", image: "pumpkin.jpeg" } ], learned: false },
+            { id: "purple", name: "Purple", hex: "#800080", realWorldImages: [ { name: "Grapes", image: "grapes.webp" }, { name: "Lavender", image: "lavende.webp" } ], learned: false },
+            { id: "pink", name: "Pink", hex: "#FFC0CB", realWorldImages: [ { name: "Flower", image: "pink flower.webp" }, { name: "Cupcake", image: "pink-cupcake.webp" }, { name: "Ribbon", image: "pink-ribbon.webp" } ], learned: false },
+            { id: "brown", name: "Brown", hex: "#8B4513", realWorldImages: [ { name: "Teddy Bear", image: "brown teddy.webp" }, { name: "Potato", image: "potato.webp" }, { name: "Table", image: "wooden table.webp" } ], learned: false },
+            { id: "black", name: "Black", hex: "#000000", realWorldImages: [ { name: "Cat", image: "black-cat.webp" }, { name: "Shoe", image: "black.webp" }, { name: "Pen", image: "black pen.webp" } ], learned: false },
+            { id: "white", name: "White", hex: "#FFFFFF", realWorldImages: [ { name: "Clouds", image: "clouds.webp" }, { name: "Eggs", image: "eggs.webp" }, { name: "Milk", image: "milk.webp" } ], learned: false },
+            { id: "grey", name: "Grey", hex: "#808080", realWorldImages: [ { name: "Elephant", image: "elephant.webp" }, { name: "Stone", image: "stone.webp" }, { name: "Spoon", image: "spoon.webp" } ], learned: false },
+            { id: "lightblue", name: "Light Blue", hex: "#ADD8E6", realWorldImages: [ { name: "Sky", image: "sky.webp" } ], learned: false }
+        ];
+
+        let audioEnabled = true;
+        let currentColorIndex = 0;
+
+        const screens = {
+            start: document.getElementById('start-screen'),
+            learning: document.getElementById('learning-screen'),
+            game: document.getElementById('game-screen'),
+            garden: document.getElementById('garden-screen'),
+            complete: document.getElementById('world-complete-screen')
+        };
+        const starCharacter = document.getElementById('star-character');
+        const speechBubble = document.getElementById('speech-bubble');
+        const learningContent = document.getElementById('learning-content');
+
+        // --- AUDIO ENGINE ---
+        function speak(text, cancelPrevious = true) {
+            if (!audioEnabled) return null;
+            if (cancelPrevious) window.speechSynthesis.cancel(); 
+            
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-GB';
+            utterance.rate = 0.9; 
+            utterance.pitch = 1.2; 
+            
+            const voices = speechSynthesis.getVoices();
+            const femaleVoice = voices.find(v => v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Google UK English Female'));
+            if (femaleVoice) utterance.voice = femaleVoice;
+            
+            window.speechSynthesis.speak(utterance);
+            return utterance; 
+        }
+
+        document.getElementById('audio-toggle').addEventListener('click', (e) => {
+            audioEnabled = !audioEnabled;
+            e.target.innerText = audioEnabled ? '🔊' : '🔇';
+            if(audioEnabled) speak("Audio turned on!");
+            else window.speechSynthesis.cancel();
+        });
+
+        function setStarMessage(text, doSpeak = true) {
+            speechBubble.innerText = text;
+            speechBubble.classList.remove('hidden');
+            if(doSpeak) speak(text, true);
+        }
+
+        function showScreen(screenName) {
+            Object.values(screens).forEach(s => s.classList.remove('active'));
+            screens[screenName].classList.remove('hidden');
+            setTimeout(() => screens[screenName].classList.add('active'), 50);
+        }
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            if (audioEnabled) {
+                const unlock = new SpeechSynthesisUtterance('');
+                window.speechSynthesis.speak(unlock);
+                speak("Welcome to Colour Bubble Adventure!");
+            }
+            setStarMessage("Welcome to Colour Bubble Adventure!", false);
+            
+            setTimeout(() => {
+                starCharacter.classList.remove('hidden');
+                startColorMission();
+            }, 3000); 
+        });
+
+        function startColorMission() {
+            if(currentColorIndex >= colorsData.length) { endWorld(); return; }
+            const color = colorsData[currentColorIndex];
+            
+            showScreen('learning');
+            learningContent.innerHTML = `
+                <div class="bubble solid ${color.id}" style="width: 150px; height: 150px; position: relative;"></div>
+                <div class="learning-word" style="color: ${color.hex};">${color.name}</div>
+            `;
+            setStarMessage(`Look! This is ${color.name}.`);
+            
+            setTimeout(() => {
+                setStarMessage(`Can you see these ${color.name} things?`);
+                learningContent.innerHTML = `
+                    <div class="color-group-box" style="border-color: ${color.hex}; background: transparent; box-shadow: none; border-width: 6px; padding: 20px; flex-direction: column;">
+                        <div class="box-images" style="gap: 20px;">
+                            ${color.realWorldImages.map(img => `<img src="${img.image}" class="intro-img" alt="${img.name}" onerror="this.style.display='none'">`).join('')}
+                        </div>
+                    </div>
+                    <div class="learning-word" style="color: ${color.hex};">${color.name}</div>
+                `;
+                
+                setTimeout(() => {
+                    setStarMessage(`Now, let's find ${color.name}!`);
+                    initBubbleGrid(color);
+                }, 5000);
+                
+            }, 4000);
+        }
+
+        // --- BUBBLE ENGINE ---
+        const gameArea = document.getElementById('game-area');
+        const gridArea = document.getElementById('bubble-grid');
+        const currentBubble = document.getElementById('current-bubble');
+        const aimGuide = document.getElementById('aim-guide');
+        
+        const maxCols = 8;
+        const maxRows = 12;
+        const bSize = 70;
+        const rowHeight = 60; 
+        
+        let board = [];
+        let targetColorObj;
+        let isProcessing = false; 
+        let angle = 0;
+
+        const gridPatterns = [
+            [
+                ['A','A','B','B','B','B','A','A'],
+                ['A','A','B','B','B','A','A'],
+                ['A','T','T','T','T','T','A','A'],
+                ['0','C','C','C','C','C','0'],
+                ['0','0','C','C','C','C','0','0'],
+                ['0','0','C','C','C','0','0']
+            ],
+            [
+                ['B','B','T','T','T','T','B','B'],
+                ['B','B','T','T','T','B','B'],
+                ['B','T','T','A','A','T','T','B'],
+                ['T','T','A','A','A','T','T'],
+                ['T','0','0','C','C','0','0','T'],
+                ['0','0','0','C','0','0','0']
+            ],
+            [
+                ['A','A','A','A','A','A','A','A'],
+                ['B','B','B','T','B','B','B'],
+                ['B','B','T','T','T','B','B','B'],
+                ['C','C','T','T','T','C','C'],
+                ['C','0','T','T','T','T','0','C'],
+                ['0','0','0','T','0','0','0']
+            ],
+            [
+                ['T','T','B','B','B','B','T','T'],
+                ['T','T','B','B','B','T','T'],
+                ['A','A','B','C','C','B','A','A'],
+                ['A','0','0','C','0','0','A'],
+                ['T','T','0','0','0','0','T','T'],
+                ['T','T','0','0','0','T','T']
+            ]
+        ];
+
+        function initBubbleGrid(targetColor) {
+            showScreen('game');
+            gridArea.innerHTML = '';
+            targetColorObj = targetColor;
+            board = Array(maxRows).fill().map(() => Array(maxCols).fill(null));
+            
+            const otherColors = colorsData.slice(0, Math.max(4, currentColorIndex + 1)).map(c => c.id).filter(id => id !== targetColor.id);
+            
+            const charColorMap = {
+                'T': targetColor.id,
+                'A': otherColors[0 % otherColors.length],
+                'B': otherColors[1 % otherColors.length],
+                'C': otherColors[2 % otherColors.length],
+                '0': null
+            };
+
+            const pattern = gridPatterns[currentColorIndex % gridPatterns.length];
+
+            for(let r = 0; r < pattern.length; r++) {
+                for(let c = 0; c < pattern[r].length; c++) {
+                    let char = pattern[r][c];
+                    let colorToSpawn = charColorMap[char];
+                    if(colorToSpawn) {
+                        createBubbleObj(r, c, colorToSpawn);
+                    }
+                }
+            }
+            
+            loadShooterBubble();
+        }
+
+        function getCoords(r, c) {
+            const xOffset = (r % 2 !== 0) ? (bSize / 2) : 0;
+            const x = (c * bSize) + (bSize / 2) + xOffset;
+            const y = (r * rowHeight) + (bSize / 2);
+            return { x, y };
+        }
+
+        function createBubbleObj(r, c, colorId) {
+            const coords = getCoords(r, c);
+            const el = document.createElement('div');
+            el.className = `bubble game-bubble ${colorId}`;
+            el.style.left = `${coords.x}px`;
+            el.style.top = `${coords.y}px`;
+            gridArea.appendChild(el);
+            board[r][c] = { r, c, color: colorId, el: el };
+        }
+
+        function loadShooterBubble() {
+            let exposedColors = new Set();
+            for (let r = 0; r < maxRows; r++) {
+                const colsInRow = r % 2 === 0 ? maxCols : maxCols - 1;
+                for (let c = 0; c < colsInRow; c++) {
+                    if (board[r][c]) {
+                        let neighbors = getNeighbors(r, c);
+                        if (neighbors.length < 6) exposedColors.add(board[r][c].color);
+                    }
+                }
+            }
+            
+            let colorsArray = Array.from(exposedColors);
+            if(colorsArray.length === 0) {
+                for(let r=0; r<maxRows; r++) {
+                    for(let c=0; c<maxCols; c++) {
+                        if(board[r][c]) colorsArray.push(board[r][c].color);
+                    }
+                }
+            }
+            if(colorsArray.length === 0) colorsArray = [targetColorObj.id];
+
+            let colorId;
+            if (colorsArray.includes(targetColorObj.id) && Math.random() < 0.75) {
+                colorId = targetColorObj.id;
+            } else {
+                colorId = colorsArray[Math.floor(Math.random() * colorsArray.length)];
+            }
+
+            currentBubble.className = `bubble game-bubble ${colorId}`;
+            currentBubble.dataset.color = colorId;
+            currentBubble.style.left = `${gameArea.clientWidth / 2}px`;
+            currentBubble.style.top = `${gameArea.clientHeight - 40}px`;
+            currentBubble.style.display = 'flex';
+        }
+
+        gameArea.addEventListener('mousemove', (e) => updateAim(e.clientX, e.clientY));
+        gameArea.addEventListener('touchmove', (e) => updateAim(e.touches[0].clientX, e.touches[0].clientY));
+        gameArea.addEventListener('click', shootBubble);
+
+        function updateAim(clientX, clientY) {
+            if(isProcessing) return; 
+            const gameRect = gameArea.getBoundingClientRect();
+            const shooterX = gameRect.left + gameRect.width / 2;
+            const shooterY = gameRect.bottom - 40;
+            const dx = clientX - shooterX;
+            const dy = shooterY - clientY;
+            angle = Math.atan2(dx, dy) * (180 / Math.PI);
+            angle = Math.max(-75, Math.min(75, angle)); 
+            aimGuide.style.transform = `rotate(${angle}deg)`;
+        }
+
+        function shootBubble() {
+            if(isProcessing) return; 
+            isProcessing = true;
+            
+            const colorId = currentBubble.dataset.color;
+            let currentX = gameArea.clientWidth / 2;
+            let currentY = gameArea.clientHeight - 40;
+            const speed = 18;
+            const rad = angle * (Math.PI / 180);
+            let dx = Math.sin(rad) * speed;
+            let dy = -Math.cos(rad) * speed; 
+            
+            function step() {
+                currentX += dx;
+                currentY += dy;
+                
+                if (currentX <= bSize/2) { currentX = bSize/2; dx = -dx; } 
+                else if (currentX >= gameArea.clientWidth - bSize/2) { currentX = gameArea.clientWidth - bSize/2; dx = -dx; }
+                
+                currentBubble.style.left = `${currentX}px`;
+                currentBubble.style.top = `${currentY}px`;
+                
+                let collision = false;
+                if (currentY <= bSize/2) {
+                    collision = true;
+                } else {
+                    for (let r=0; r<maxRows; r++) {
+                        for (let c=0; c<maxCols; c++) {
+                            if (board[r][c]) {
+                                const bCoords = getCoords(r, c);
+                                const dist = Math.hypot(bCoords.x - currentX, bCoords.y - currentY);
+                                if (dist <= bSize - 5) { collision = true; break; }
+                            }
+                        }
+                        if(collision) break;
+                    }
+                }
+                
+                if (collision) snapAndProcess(currentX, currentY, colorId);
+                else requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        }
+
+        function getNeighbors(r, c) {
+            const dirsEven = [[0,-1], [0,1], [-1,-1], [-1,0], [1,-1], [1,0]];
+            const dirsOdd = [[0,-1], [0,1], [-1,0], [-1,1], [1,0], [1,1]];
+            const dirs = (r % 2 === 0) ? dirsEven : dirsOdd;
+            const neighbors = [];
+            for (let [dr, dc] of dirs) {
+                let nr = r + dr, nc = c + dc;
+                if (nr >= 0 && nr < maxRows && nc >= 0 && nc < maxCols && board[nr][nc]) neighbors.push(board[nr][nc]);
+            }
+            return neighbors;
+        }
+
+        function snapAndProcess(hitX, hitY, colorId) {
+            currentBubble.style.display = 'none'; 
+            let bestDist = Infinity, bestR = -1, bestC = -1;
+            
+            for (let r=0; r<maxRows; r++) {
+                const colsInRow = r % 2 === 0 ? maxCols : maxCols - 1;
+                for (let c=0; c<colsInRow; c++) {
+                    if (!board[r][c]) {
+                        const coords = getCoords(r, c);
+                        const dist = Math.hypot(coords.x - hitX, coords.y - hitY);
+                        if (dist < bestDist) { bestDist = dist; bestR = r; bestC = c; }
+                    }
+                }
+            }
+            
+            if (bestR !== -1) {
+                createBubbleObj(bestR, bestC, colorId);
+                let matched = [];
+                let visited = new Set();
+                let queue = [board[bestR][bestC]];
+                visited.add(`${bestR},${bestC}`);
+                
+                while(queue.length > 0) {
+                    let curr = queue.shift();
+                    matched.push(curr);
+                    let neighbors = getNeighbors(curr.r, curr.c);
+                    for (let n of neighbors) {
+                        if (n.color === colorId && !visited.has(`${n.r},${n.c}`)) {
+                            visited.add(`${n.r},${n.c}`);
+                            queue.push(n);
+                        }
+                    }
+                }
+                
+                if (matched.length >= 3) {
+                    let isTargetMatch = (colorId === targetColorObj.id);
+                    
+                    matched.forEach(m => {
+                        m.el.classList.add('bubble-burst');
+                        board[m.r][m.c] = null;
+                        setTimeout(() => m.el.remove(), 250);
+                    });
+                    
+                    setTimeout(() => dropFloatingBubbles(isTargetMatch), 300);
+                } else {
+                    // FIX 2: Voice is correctly enabled for missed shots 
+                    const phrases = ["Almost!", "Keep trying!", "Oops!", "Aim carefully!"];
+                    const chosen = phrases[Math.floor(Math.random() * phrases.length)];
+                    setStarMessage(`${chosen} Find ${targetColorObj.name}!`, true);
+                    finalizeTurn();
+                }
+            } else finalizeTurn();
+        }
+
+        // FIX 1: Cleaned up Audio Timing so "Great job" and "Look at them fall" don't overlap
+        function dropFloatingBubbles(isTargetMatch) {
+            let connected = new Set();
+            let queue = [];
+            
+            for (let c=0; c<maxCols; c++) {
+                if (board[0][c]) { queue.push(board[0][c]); connected.add(`0,${c}`); }
+            }
+            
+            while(queue.length > 0) {
+                let curr = queue.shift();
+                let neighbors = getNeighbors(curr.r, curr.c);
+                for (let n of neighbors) {
+                    if (!connected.has(`${n.r},${n.c}`)) {
+                        connected.add(`${n.r},${n.c}`);
+                        queue.push(n);
+                    }
+                }
+            }
+            
+            let didDrop = false;
+            for (let r=1; r<maxRows; r++) {
+                const colsInRow = r % 2 === 0 ? maxCols : maxCols - 1;
+                for (let c=0; c<colsInRow; c++) {
+                    if (board[r][c] && !connected.has(`${r},${c}`)) {
+                        let b = board[r][c];
+                        b.el.classList.add('bubble-drop');
+                        board[r][c] = null;
+                        setTimeout(() => b.el.remove(), 600);
+                        didDrop = true;
+                    }
+                }
+            }
+            
+            if(didDrop) {
+                if(isTargetMatch) setStarMessage("Great job! Look at them fall!", true);
+                else setStarMessage("Wow! Look at them fall!", true);
+            } else {
+                if(isTargetMatch) setStarMessage("Great job!", true);
+            }
+
+            setTimeout(finalizeTurn, didDrop ? 650 : 50);
+        }
+
+        function finalizeTurn() {
+            let targetLeft = false;
+            for(let r=0; r<maxRows; r++) {
+                for(let c=0; c<maxCols; c++) {
+                    if(board[r][c] && board[r][c].color === targetColorObj.id) {
+                        targetLeft = true; break;
+                    }
+                }
+                if(targetLeft) break;
+            }
+
+            if(!targetLeft) {
+                setTimeout(() => {
+                    setStarMessage("You did it!", true);
+                    setTimeout(completeColorMission, 2500); 
+                }, 500);
+            } else {
+                loadShooterBubble();
+                isProcessing = false;
+            }
+        }
+
+        function completeColorMission() {
+            window.speechSynthesis.cancel(); 
+            
+            const color = colorsData[currentColorIndex];
+            color.learned = true; 
+            
+            showScreen('garden');
+            updateGardenDisplay();
+            
+            const nextBtn = document.getElementById('btn-next-colour');
+            nextBtn.style.display = 'none'; 
+            
+            let imgIndex = 0;
+            
+            function narrateNext() {
+                if(imgIndex < color.realWorldImages.length) {
+                    let img = color.realWorldImages[imgIndex];
+                    let article = /^[aeiou]/i.test(img.name) ? 'an' : 'a';
+                    let text = `This is ${article} ${img.name}. It is in ${color.name} colour.`;
+                    
+                    document.querySelectorAll('.garden-img').forEach(el => {
+                        el.style.transform = 'scale(1)';
+                        el.style.zIndex = '1';
+                        el.style.borderColor = '#ddd';
+                    });
+                    
+                    let currentEls = document.querySelectorAll(`.garden-img[data-name="${img.name}"]`);
+                    currentEls.forEach(el => {
+                        el.style.transform = 'scale(1.3)';
+                        el.style.zIndex = '10';
+                        el.style.borderColor = '#FFD700'; 
+                    });
+                    
+                    let utterance = speak(text, true);
+                    
+                    if (utterance && audioEnabled) {
+                        utterance.onend = () => {
+                            imgIndex++;
+                            setTimeout(narrateNext, 1200); 
+                        };
+                        utterance.onerror = () => {
+                            imgIndex++;
+                            setTimeout(narrateNext, 1200); 
+                        };
+                    } else {
+                        setTimeout(() => {
+                            imgIndex++;
+                            narrateNext();
+                        }, 3500);
+                    }
+                    
+                    speechBubble.innerText = text;
+                    speechBubble.classList.remove('hidden');
+                } else {
+                    document.querySelectorAll('.garden-img').forEach(el => {
+                        el.style.transform = 'scale(1)';
+                        el.style.zIndex = '1';
+                        el.style.borderColor = '#ddd';
+                    });
+                    
+                    setStarMessage(`You did it! Look at your Colour Garden!`, true);
+                    nextBtn.style.display = 'block';
+                    currentColorIndex++;
+                    isProcessing = false;
+                }
+            }
+            
+            setTimeout(narrateNext, 1000); 
+        }
+
+        function updateGardenDisplay() {
+            const grid = document.getElementById('garden-grid');
+            const learnedColors = colorsData.filter(c => c.learned);
+            
+            grid.innerHTML = learnedColors.map(c => `
+                <div class="color-group-box" style="border-color: ${c.hex}">
+                    <div class="box-title" style="color: ${c.hex}">${c.name}</div>
+                    <div class="box-images">
+                        ${c.realWorldImages.map(img => `
+                            <div class="garden-item-wrapper">
+                                <img src="${img.image}" class="garden-img" data-name="${img.name}" alt="${img.name}" onerror="this.style.display='none'">
+                                <div class="garden-img-label">${img.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('btn-next-colour').addEventListener('click', () => {
+            startColorMission();
+        });
+
+        function endWorld() {
+            showScreen('complete');
+            setStarMessage("You discovered all the colours! Fantastic!", true);
+            const completedContainer = document.getElementById('completed-colours-display');
+            completedContainer.innerHTML = colorsData.map(c => `
+                <div class="bubble solid ${c.id}" style="position:relative; display:inline-flex; margin:10px;"></div>
+            `).join('');
+        }
+
+        document.getElementById('btn-play-again').addEventListener('click', () => {
+            currentColorIndex = 0;
+            colorsData.forEach(c => c.learned = false);
+            startColorMission();
+        });
+    </script>
+</body>
+</html>

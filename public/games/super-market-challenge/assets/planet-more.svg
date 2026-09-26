@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" width="100%" height="100%">
+  <defs>
+    <radialGradient id="p1-body" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#BA68C8"/>
+      <stop offset="60%" stop-color="#7B1FA2"/>
+      <stop offset="100%" stop-color="#4A148C"/>
+    </radialGradient>
+    <linearGradient id="p1-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#80DEEA"/>
+      <stop offset="50%" stop-color="#00BCD4"/>
+      <stop offset="100%" stop-color="#006064"/>
+    </linearGradient>
+    <filter id="p1-glow">
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#E1BEE7" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <!-- Back of Ring -->
+  <ellipse cx="120" cy="120" rx="105" ry="32" fill="none" stroke="url(#p1-ring)" stroke-width="12" transform="rotate(-18 120 120)" opacity="0.7"/>
+
+  <!-- Planet Sphere -->
+  <circle cx="120" cy="120" r="75" fill="url(#p1-body)" filter="url(#p1-glow)"/>
+
+  <!-- Swirls / Craters -->
+  <ellipse cx="90" cy="90" rx="18" ry="12" fill="#9C27B0" opacity="0.6" transform="rotate(-15 90 90)"/>
+  <ellipse cx="145" cy="145" rx="22" ry="14" fill="#9C27B0" opacity="0.6" transform="rotate(-25 145 145)"/>
+  <ellipse cx="150" cy="85" rx="12" ry="8" fill="#CE93D8" opacity="0.4"/>
+  <ellipse cx="80" cy="140" rx="14" ry="9" fill="#CE93D8" opacity="0.4"/>
+
+  <!-- Front of Ring (clipped by angle) -->
+  <path d="M 20 152 C 45 190 195 140 220 88" fill="none" stroke="url(#p1-ring)" stroke-width="12" stroke-linecap="round"/>
+
+  <!-- Cute Eyes on Planet -->
+  <circle cx="102" cy="115" r="5" fill="#FFF"/>
+  <circle cx="103" cy="115" r="3" fill="#311B92"/>
+  <circle cx="138" cy="115" r="5" fill="#FFF"/>
+  <circle cx="139" cy="115" r="3" fill="#311B92"/>
+  <ellipse cx="92" cy="122" rx="6" ry="4" fill="#FF80AB" opacity="0.7"/>
+  <ellipse cx="148" cy="122" rx="6" ry="4" fill="#FF80AB" opacity="0.7"/>
+  <path d="M 115 125 Q 120 132 125 125" stroke="#FFF" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+</svg>

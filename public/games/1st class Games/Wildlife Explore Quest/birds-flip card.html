@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bird Memory Adventure</title>
+    <style>
+        /* =========================================
+           CSS: DESIGN & LAYOUT (NO SCROLLING)
+           ========================================= */
+        :root {
+            --primary-bg: #e0f7fa;
+            --card-bg: #ffffff;
+            --text-main: #004d40;
+            --accent: #ff9800;
+            --success: #4caf50;
+            --discovery: #9c27b0;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--primary-bg);
+            color: var(--text-main);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* PREVENTS ALL SCROLLING */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Utility */
+        .hidden { display: none !important; }
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 2vh 3vw;
+            font-size: clamp(1.2rem, 3vh, 2rem);
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.1s, background-color 0.2s;
+            margin: 1vh;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:active { transform: scale(0.95); }
+
+        /* Audio Toggle */
+        #audio-toggle {
+            position: absolute;
+            top: 2vh;
+            right: 2vw;
+            background: white;
+            color: var(--text-main);
+            padding: 1vh 1.5vw;
+            border-radius: 30px;
+            font-size: clamp(0.9rem, 2vh, 1.2rem);
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        /* Screens */
+        .screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2vh 2vw;
+            text-align: center;
+        }
+
+        /* Start Screen */
+        #start-screen h1 { font-size: clamp(2.5rem, 8vh, 5rem); color: var(--text-main); margin-bottom: 2vh; }
+        #start-screen h2 { font-size: clamp(1.5rem, 4vh, 3rem); color: var(--accent); margin-bottom: 3vh; }
+        #start-screen p { font-size: clamp(1.2rem, 3vh, 2rem); margin-bottom: 5vh; }
+
+        /* Game Screen Layout (Header -> Flexible Grid -> Footer) */
+        #game-screen {
+            justify-content: space-between;
+        }
+
+        #game-header {
+            flex: 0 0 auto;
+            height: 6vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1vh;
+        }
+        #game-message { 
+            font-size: clamp(1.5rem, 4vh, 2.5rem); 
+            font-weight: bold; 
+            color: var(--accent); 
+        }
+
+        /* Grid Wrapper dynamically shrinks/grows but forces 1:1 aspect ratio */
+        #grid-wrapper {
+            flex: 1 1 auto;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 0; /* Important for flex shrinking */
+        }
+
+        #grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 1.5vmin; /* Scales perfectly with viewport size */
+            height: 100%;
+            max-height: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 100%;
+        }
+
+        /* Cards */
+        .card {
+            background-color: transparent;
+            width: 100%;
+            height: 100%;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
+        }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.wrong-shake { animation: shake 0.4s; }
+
+        /* Matched styling - Highlights green then vanishes */
+        .card.highlight-match .card-front {
+            border: 4px solid var(--success);
+            box-shadow: 0 0 15px var(--success);
+        }
+        .card.matched {
+            opacity: 0;
+            visibility: hidden; /* Keeps the grid gap intact but hides element */
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #4db6ac, #00897b);
+            border: 3px solid #ffffff;
+            color: rgba(255,255,255,0.3);
+            font-size: clamp(2rem, 6vmin, 4rem);
+        }
+        .card-back::after { content: '🍃'; }
+
+        .card-front {
+            background-color: var(--card-bg);
+            transform: rotateY(180deg);
+            border: 3px solid var(--accent);
+        }
+        
+        /* IMAGE FIX: Object-fit contain ensures nothing is ever cropped */
+        .card-front img {
+            width: 100%;
+            height: 70%;
+            object-fit: contain; /* Prevents cropping */
+            padding: 10px; /* Gives image breathing room */
+            background-color: #f8f9fa; /* Uniform background */
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .card-front .bird-name {
+            height: 30%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(0.8rem, 2.5vmin, 1.8rem);
+            font-weight: bold;
+            color: var(--text-main);
+            text-transform: uppercase;
+            background-color: var(--card-bg);
+        }
+
+        /* Result Bar (Fixed at bottom) */
+        #result-bar {
+            flex: 0 0 auto;
+            width: 95vw;
+            max-width: 1000px;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5vh 2vw;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 1.5vh;
+            margin-bottom: 1vh;
+            min-height: 12vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        #result-header { 
+            font-size: clamp(1rem, 2.5vh, 1.5rem); 
+            font-weight: bold; 
+            margin-bottom: 1vh; 
+            color: var(--text-main); 
+        }
+        #birds-found-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1vh 1vw;
+            justify-content: center;
+        }
+        .found-bird-pill {
+            background: var(--primary-bg);
+            padding: 0.5vh 1.5vw;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: clamp(0.9rem, 2.5vh, 1.3rem);
+            border: 2px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            animation: popIn 0.3s ease-out;
+        }
+
+        /* Discovery Overlay */
+        #discovery-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            color: white;
+            animation: fadeIn 0.3s;
+        }
+        #discovery-overlay h2 { font-size: clamp(2rem, 6vh, 4rem); color: var(--accent); margin-bottom: 2vh; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        #discovery-overlay img { width: clamp(150px, 40vmin, 400px); height: clamp(150px, 40vmin, 400px); object-fit: contain; border-radius: 20px; border: 5px solid white; background: white; margin: 3vh 0; }
+        #discovery-overlay h3 { font-size: clamp(2.5rem, 8vh, 5rem); text-transform: uppercase; margin-bottom: 4vh; }
+
+        /* Victory Screen */
+        #victory-screen h1 { font-size: clamp(3rem, 8vh, 5rem); margin-bottom: 1vh;}
+        #victory-screen h2 { font-size: clamp(1.5rem, 4vh, 3rem); margin-bottom: 3vh;}
+        
+        #victory-birds {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 2vmin;
+            margin-bottom: 4vh;
+            width: 90vw;
+            max-width: 800px;
+            height: 50vh;
+        }
+        .victory-bird {
+            background: white;
+            padding: 1vh;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-size: clamp(0.8rem, 2.5vh, 1.2rem);
+        }
+        .victory-bird img { 
+            width: 100%; 
+            height: 60%; 
+            object-fit: contain; /* Prevents victory screen crop */
+            border-radius: 5px; 
+            margin-bottom: 5px; 
+        }
+        .discovery-highlight { border: 4px solid var(--discovery); background: #f3e5f5; }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Toggle -->
+    <div id="audio-toggle" onclick="toggleAudio()">🔊 Audio: ON</div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen">
+        <h1>🐦 BIRD MEMORY ADVENTURE</h1>
+        <h2>Match • Remember • Learn!</h2>
+        <p>"Can you find all the matching birds?"</p>
+        <button class="btn" onclick="startGame()">▶ START GAME</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen hidden">
+        <div id="game-header">
+            <div id="game-message">Let's find the matching birds!</div>
+        </div>
+        
+        <!-- Grid Wrapper prevents overflow while maintaining 1:1 aspect ratio -->
+        <div id="grid-wrapper">
+            <div id="grid-container">
+                <!-- Cards injected via JS -->
+            </div>
+        </div>
+
+        <div id="result-bar">
+            <div id="result-header">🌟 Birds Found: <span id="birds-count">0</span> / 8</div>
+            <div id="birds-found-list">
+                <!-- Found birds injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- DISCOVERY OVERLAY -->
+    <div id="discovery-overlay" class="hidden">
+        <h2>✨ NEW BIRD DISCOVERED!</h2>
+        <img id="discovery-img" src="" alt="Discovery Bird">
+        <h3 id="discovery-name">Bird Name</h3>
+        <button class="btn" onclick="closeDiscovery()">Continue Playing</button>
+    </div>
+
+    <!-- VICTORY SCREEN -->
+    <div id="victory-screen" class="screen hidden">
+        <h1>🎉 AMAZING!</h1>
+        <h2>You found all 8 birds!</h2>
+        
+        <div id="victory-birds">
+            <!-- Populated via JS -->
+        </div>
+
+        <div>
+            <button class="btn" onclick="startGame()">🎮 PLAY AGAIN</button>
+            <button class="btn" style="background-color: var(--text-main);" onclick="showScreen('start-screen')">🏠 BACK TO START</button>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           JAVASCRIPT: GAME DATA & LOGIC
+           ========================================= */
+
+        const birdDatabase = [
+            // --- FAMILIAR POOL ---
+            { id: "crane", name: "Crane", alternateName: "", image: "crane.webp", category: "familiar" },
+            { id: "crow", name: "Crow", alternateName: "", image: "crow.webp", category: "familiar" },
+            { id: "cuckoo", name: "Cuckoo", alternateName: "", image: "cuckoo.webp", category: "familiar" },
+            { id: "dove", name: "Dove", alternateName: "", image: "dove.webp", category: "familiar" },
+            { id: "duck", name: "Duck", alternateName: "", image: "duck.webp", category: "familiar" },
+            { id: "eagle", name: "Eagle", alternateName: "", image: "eagle.webp", category: "familiar" },
+            { id: "flamingo", name: "Flamingo", alternateName: "", image: "flamingo.webp", category: "familiar" },
+            { id: "goose", name: "Goose", alternateName: "", image: "goose.webp", category: "familiar" },
+            { id: "hen", name: "Hen", alternateName: "Chicken", image: "hen.webp", category: "familiar" },
+            { id: "kingfisher", name: "Kingfisher", alternateName: "", image: "kingfishers.webp", category: "familiar" },
+            { id: "koel", name: "Koel", alternateName: "Asian Koel", image: "koel.webp", category: "familiar" },
+            { id: "myna", name: "Myna", alternateName: "", image: "myna.webp", category: "familiar" },
+            { id: "owl", name: "Owl", alternateName: "", image: "owl.webp", category: "familiar" },
+            { id: "parrot", name: "Parrot", alternateName: "", image: "parrot.webp", category: "familiar" },
+            { id: "peacock", name: "Peacock", alternateName: "", image: "peacock.webp", category: "familiar" },
+            { id: "pigeon", name: "Pigeon", alternateName: "", image: "pigeon.webp", category: "familiar" },
+            { id: "sparrow", name: "Sparrow", alternateName: "", image: "sparrow.webp", category: "familiar" },
+            { id: "swan", name: "Swan", alternateName: "", image: "swan.webp", category: "familiar" },
+            { id: "turkey", name: "Turkey", alternateName: "", image: "turkey.webp", category: "familiar" },
+            { id: "woodpecker", name: "Woodpecker", alternateName: "", image: "woodpecker.webp", category: "familiar" },
+            
+            // --- DISCOVERY POOL ---
+            { id: "bee-eater", name: "Bee-eater", alternateName: "", image: "bee-eater.webp", category: "discovery" },
+            { id: "emu", name: "Emu", alternateName: "", image: "emu.webp", category: "discovery" },
+            { id: "heron", name: "Heron", alternateName: "", image: "heron.webp", category: "discovery" },
+            { id: "hoopoe", name: "Hoopoe", alternateName: "", image: "hoopoe.webp", category: "discovery" },
+            { id: "hornbill", name: "Hornbill", alternateName: "Great Hornbill", image: "hornbill.webp", category: "discovery" },
+            { id: "ostrich", name: "Ostrich", alternateName: "", image: "ostrich.webp", category: "discovery" },
+            { id: "pelican", name: "Pelican", alternateName: "", image: "pelican.webp", category: "discovery" },
+            { id: "puffin", name: "Puffin", alternateName: "", image: "puffin.webp", category: "discovery" },
+            { id: "stork", name: "Stork", alternateName: "", image: "stork.webp", category: "discovery" },
+            { id: "sunbird", name: "Sunbird", alternateName: "", image: "sunbird.webp", category: "discovery" },
+            { id: "toucan", name: "Toucan", alternateName: "", image: "toucan.webp", category: "discovery" },
+            { id: "weaver-bird", name: "Weaver Bird", alternateName: "", image: "weaver bird.webp", category: "discovery" }
+        ];
+
+        let currentRoundBirds = [];
+        let deck = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let isLocked = false;
+        let audioEnabled = true;
+        let previousDiscoveryId = null;
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            document.getElementById('audio-toggle').innerText = audioEnabled ? "🔊 Audio: ON" : "🔇 Audio: OFF";
+        }
+
+        function playAudio(text) {
+            if (!audioEnabled) return;
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9; 
+                utterance.pitch = 1.1; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function updateMessage(text) {
+            document.getElementById('game-message').innerText = text;
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+
+        function startGame() {
+            matchedPairs = 0;
+            flippedCards = [];
+            isLocked = false;
+            document.getElementById('birds-found-list').innerHTML = '';
+            document.getElementById('birds-count').innerText = '0';
+            updateMessage("Let's find the matching birds!");
+            
+            // Audio no longer triggers forcefully on start click.
+            
+            selectBirdsForRound();
+            createAndShuffleDeck();
+            renderGrid();
+            showScreen('game-screen');
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function selectBirdsForRound() {
+            const familiarBirds = shuffleArray(birdDatabase.filter(b => b.category === 'familiar'));
+            let discoveryBirds = shuffleArray(birdDatabase.filter(b => b.category === 'discovery'));
+
+            if (previousDiscoveryId && discoveryBirds.length > 1) {
+                if (discoveryBirds[0].id === previousDiscoveryId) {
+                    discoveryBirds.push(discoveryBirds.shift());
+                }
+            }
+
+            const selectedFamiliar = familiarBirds.slice(0, 7);
+            const selectedDiscovery = discoveryBirds[0];
+            previousDiscoveryId = selectedDiscovery.id;
+
+            currentRoundBirds = [...selectedFamiliar, selectedDiscovery];
+        }
+
+        function createAndShuffleDeck() {
+            deck = [];
+            currentRoundBirds.forEach(bird => {
+                deck.push({ ...bird, instanceId: bird.id + "-1" });
+                deck.push({ ...bird, instanceId: bird.id + "-2" });
+            });
+            deck = shuffleArray(deck);
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('grid-container');
+            grid.innerHTML = ''; 
+
+            deck.forEach((cardData, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.dataset.birdId = cardData.id;
+                
+                card.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-back"></div>
+                        <div class="card-front">
+                            <img src="${cardData.image}" alt="${cardData.name}">
+                            <div class="bird-name">${cardData.name}</div>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => handleCardClick(card, cardData));
+                grid.appendChild(card);
+            });
+        }
+
+        function handleCardClick(cardElement, cardData) {
+            if (isLocked || cardElement.classList.contains('flipped') || cardElement.classList.contains('matched') || cardElement.classList.contains('highlight-match')) {
+                return;
+            }
+
+            cardElement.classList.add('flipped');
+            flippedCards.push({ element: cardElement, data: cardData });
+
+            if (flippedCards.length === 1) {
+                updateMessage("Now find the same bird!");
+            } else if (flippedCards.length === 2) {
+                isLocked = true; 
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            const isMatch = card1.data.id === card2.data.id;
+
+            if (isMatch) {
+                handleMatch(card1, card2);
+            } else {
+                handleMismatch(card1, card2);
+            }
+        }
+
+        function handleMatch(card1, card2) {
+            const bird = card1.data;
+            matchedPairs++;
+
+            // Give a visual green glow while showing the cards
+            card1.element.classList.add('highlight-match');
+            card2.element.classList.add('highlight-match');
+
+            if (bird.category === 'discovery') {
+                updateMessage(`✨ NEW BIRD DISCOVERED!`);
+                setTimeout(() => showDiscoveryAlert(bird), 800); 
+            } else {
+                updateMessage(`✨ Great Match!`);
+                playAudio(`Great job! ${bird.name}`);
+                
+                // Wait 2 full seconds so kids can see both cards
+                // Then remove from grid and add to Result Bar
+                setTimeout(() => {
+                    card1.element.classList.add('matched');
+                    card2.element.classList.add('matched');
+                    addBirdToResultBar(bird);
+                    finalizeMatchTurn();
+                }, 2000); 
+            }
+        }
+
+        function handleMismatch(card1, card2) {
+            updateMessage("Try again!");
+            playAudio("Try again!");
+            
+            card1.element.classList.add('wrong-shake');
+            card2.element.classList.add('wrong-shake');
+
+            setTimeout(() => {
+                card1.element.classList.remove('flipped', 'wrong-shake');
+                card2.element.classList.remove('flipped', 'wrong-shake');
+                updateMessage("Where is the same bird?");
+                flippedCards = [];
+                isLocked = false;
+            }, 1200); 
+        }
+
+        function finalizeMatchTurn() {
+            flippedCards = [];
+            isLocked = false;
+            document.getElementById('birds-count').innerText = matchedPairs;
+
+            if (matchedPairs === 8) {
+                setTimeout(showVictoryScreen, 1000);
+            } else {
+                setTimeout(() => updateMessage("Find the next pair!"), 1500);
+            }
+        }
+
+        function addBirdToResultBar(bird) {
+            const list = document.getElementById('birds-found-list');
+            const pill = document.createElement('div');
+            pill.className = 'found-bird-pill';
+            pill.innerHTML = `✅ ${bird.name}`;
+            list.appendChild(pill);
+        }
+
+        function showDiscoveryAlert(bird) {
+            document.getElementById('discovery-img').src = bird.image;
+            document.getElementById('discovery-name').innerText = bird.name;
+            const overlay = document.getElementById('discovery-overlay');
+            overlay.classList.remove('hidden');
+            
+            playAudio(`${bird.name}!`);
+        }
+
+        function closeDiscovery() {
+            document.getElementById('discovery-overlay').classList.add('hidden');
+            const bird = flippedCards[0].data; 
+            
+            // Apply disappearance to grid cards
+            flippedCards[0].element.classList.add('matched');
+            flippedCards[1].element.classList.add('matched');
+
+            addBirdToResultBar(bird);
+            finalizeMatchTurn();
+        }
+
+        function showVictoryScreen() {
+            playAudio("Amazing! You found all eight birds!");
+            const victoryContainer = document.getElementById('victory-birds');
+            victoryContainer.innerHTML = '';
+
+            currentRoundBirds.forEach(bird => {
+                const div = document.createElement('div');
+                div.className = 'victory-bird';
+                if (bird.category === 'discovery') {
+                    div.classList.add('discovery-highlight');
+                    div.innerHTML = `
+                        <div style="color: var(--discovery);">🌟 NEW</div>
+                        <img src="${bird.image}" alt="${bird.name}">
+                        <div>${bird.name}</div>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <img src="${bird.image}" alt="${bird.name}">
+                        <div style="margin-top: 5px;">${bird.name}</div>
+                    `;
+                }
+                victoryContainer.appendChild(div);
+            });
+
+            showScreen('victory-screen');
+        }
+
+    </script>
+</body>
+</html>

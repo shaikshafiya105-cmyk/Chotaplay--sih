@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" width="100%" height="100%">
+  <defs>
+    <radialGradient id="ban-grad" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#FFF59D"/>
+      <stop offset="50%" stop-color="#FFEB3B"/>
+      <stop offset="100%" stop-color="#FBC02D"/>
+    </radialGradient>
+    <filter id="ban-shadow">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <!-- Banana Curve -->
+  <path d="M 28 35 
+           C 22 75, 45 130, 115 138 
+           C 135 140, 145 130, 138 120 
+           C 125 100, 75 85, 52 40 
+           C 45 25, 34 22, 28 35 Z" 
+        fill="url(#ban-grad)" filter="url(#ban-shadow)"/>
+  
+  <!-- Banana tips -->
+  <path d="M 28 35 C 26 28, 30 20, 36 22 C 34 28, 32 32, 28 35 Z" fill="#689F38"/>
+  <circle cx="137" cy="122" r="3.5" fill="#5D4037"/>
+
+  <!-- Rib / Highlight -->
+  <path d="M 38 42 C 55 80, 95 110, 130 120" stroke="#FFF9C4" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.7"/>
+
+  <!-- Cute Face -->
+  <circle cx="65" cy="85" r="4" fill="#3E2723"/>
+  <circle cx="64" cy="83" r="1.5" fill="#FFF"/>
+  <circle cx="82" cy="95" r="4" fill="#3E2723"/>
+  <circle cx="81" cy="93" r="1.5" fill="#FFF"/>
+  <ellipse cx="58" cy="92" rx="4" ry="2.5" fill="#FF8A80" opacity="0.6"/>
+  <ellipse cx="88" cy="102" rx="4" ry="2.5" fill="#FF8A80" opacity="0.6"/>
+  <path d="M 70 94 Q 75 102 80 98" stroke="#E65100" stroke-width="2" stroke-linecap="round" fill="none"/>
+</svg>

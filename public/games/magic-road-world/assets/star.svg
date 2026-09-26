@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <!-- Star Gradient -->
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFF9A6" />
+      <stop offset="60%" stop-color="#FFD700" />
+      <stop offset="100%" stop-color="#FFA500" />
+    </radialGradient>
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <!-- Cheek blush gradient -->
+    <radialGradient id="blushGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF6B8B" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#FF6B8B" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- Outer Aura / Magic Glow -->
+  <circle cx="100" cy="100" r="90" fill="#FFE57F" opacity="0.25" filter="url(#softGlow)" />
+  
+  <!-- 5-Point Cute Star Body -->
+  <polygon points="100,12 126,68 188,74 141,116 154,178 100,146 46,178 59,116 12,74 74,68" 
+           fill="url(#starGlow)" 
+           stroke="#FF8F00" 
+           stroke-width="5" 
+           stroke-linejoin="round"
+           filter="url(#softGlow)" />
+
+  <!-- Star Highlights -->
+  <path d="M 100,24 Q 112,65 150,78 Q 120,105 100,135" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.6" />
+
+  <!-- Big Cheerful Anime Eyes -->
+  <!-- Left Eye -->
+  <ellipse cx="78" cy="98" rx="10" ry="14" fill="#3E2723" />
+  <circle cx="75" cy="92" r="5" fill="#FFFFFF" />
+  <circle cx="82" cy="104" r="2.5" fill="#FFFFFF" />
+  
+  <!-- Right Eye -->
+  <ellipse cx="122" cy="98" rx="10" ry="14" fill="#3E2723" />
+  <circle cx="119" cy="92" r="5" fill="#FFFFFF" />
+  <circle cx="126" cy="104" r="2.5" fill="#FFFFFF" />
+
+  <!-- Rosy Cheeks -->
+  <ellipse cx="62" cy="112" rx="10" ry="6" fill="url(#blushGlow)" />
+  <ellipse cx="138" cy="112" rx="10" ry="6" fill="url(#blushGlow)" />
+
+  <!-- Cute Open Smiling Mouth -->
+  <path d="M 90,110 Q 100,126 110,110 Z" fill="#D81B60" stroke="#AD1457" stroke-width="2" />
+  <!-- Tongue -->
+  <path d="M 94,116 Q 100,124 106,116 Z" fill="#FF80AB" />
+
+  <!-- Little Sparkles around -->
+  <g fill="#FFFDE7" opacity="0.9">
+    <!-- Top right sparkle -->
+    <path d="M 170,30 Q 175,35 180,35 Q 175,35 170,40 Q 170,35 165,35 Q 170,35 170,30 Z" />
+    <!-- Bottom left sparkle -->
+    <path d="M 30,140 Q 34,144 38,144 Q 34,144 30,148 Q 30,144 26,144 Q 30,144 30,140 Z" />
+  </g>
+</svg>

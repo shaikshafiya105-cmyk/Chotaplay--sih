@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ChotaPlay — Safety Heroes | "Think Safe. Stay Safe!"</title>
+  <meta name="description" content="A vibrant, funny and interactive preschool safety game for children aged 3-6. Learn 7 essential safety rules with Riya, John and Little Star!">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-app">
+    <!-- TOP HEADER / PROGRESS BAR -->
+    <header id="top-bar" class="hidden">
+      <div class="brand-badge">
+        <span class="brand-logo">🌟</span>
+        <div class="brand-text">
+          <span class="title-main">SAFETY HEROES</span>
+          <span class="title-sub">Think Safe. Stay Safe!</span>
+        </div>
+      </div>
+
+      <div class="stars-counter-container" id="stars-tracker">
+        <div class="stars-label">
+          <span class="star-icon">⭐</span>
+          <span class="stars-text">SAFETY STARS:</span>
+          <span id="star-count-badge" class="star-count-num">0 / 7</span>
+        </div>
+        <div class="star-slots" id="star-slots-row">
+          <div class="star-slot" data-index="1" title="Road Safety">⭐</div>
+          <div class="star-slot" data-index="2" title="Electric Safety">⭐</div>
+          <div class="star-slot" data-index="3" title="Fire Safety">⭐</div>
+          <div class="star-slot" data-index="4" title="Stranger Safety">⭐</div>
+          <div class="star-slot" data-index="5" title="Water Safety">⭐</div>
+          <div class="star-slot" data-index="6" title="Walking Safely">⭐</div>
+          <div class="star-slot" data-index="7" title="Emergency Help">⭐</div>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <button id="btn-sound" class="icon-btn" title="Toggle Sound" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-voice" class="icon-btn" title="Toggle Voice" aria-label="Toggle Voice">
+          <span id="voice-icon">🗣️</span>
+        </button>
+        <button id="btn-town-map" class="icon-btn" title="View Safety Town Map" aria-label="Safety Town Map">
+          <span>🗺️</span>
+        </button>
+        <button id="btn-restart" class="icon-btn" title="Restart to Main Menu" aria-label="Menu">
+          <span>🏠</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEWPORT CONTAINER -->
+    <main id="game-stage">
+
+      <!-- ==================== SCREEN 1: START SCREEN ==================== -->
+      <section id="screen-start" class="screen-view active">
+        <div class="start-bg-decorations">
+          <div class="cloud cloud-1"></div>
+          <div class="cloud cloud-2"></div>
+          <div class="cloud cloud-3"></div>
+          <div class="sun-glow"></div>
+          <div class="rainbow-arc"></div>
+          <div class="floating-mini-stars">
+            <span class="fstar fstar-1">✨</span>
+            <span class="fstar fstar-2">⭐</span>
+            <span class="fstar fstar-3">🌟</span>
+            <span class="fstar fstar-4">✨</span>
+          </div>
+        </div>
+
+        <div class="start-content">
+          <div class="game-logo-wrapper">
+            <div class="shield-badge-icon">🛡️⭐</div>
+            <h1 class="game-main-title">SAFETY HEROES</h1>
+            <p class="game-tagline">"Think Safe. Stay Safe!"</p>
+          </div>
+
+          <!-- CHARACTER HERO LINEUP -->
+          <div class="hero-lineup">
+            <!-- RIYA -->
+            <div class="character-card riya-preview" id="preview-riya">
+              <div class="char-avatar-box">
+                <img src="assets/characters/riya.jpg" alt="Riya" class="char-img-asset" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="char-svg-fallback riya-avatar" style="display:none;"></div>
+              </div>
+              <div class="char-name-tag riya-tag">Riya 🌸</div>
+              <p class="char-desc">Curious & Smart</p>
+            </div>
+
+            <!-- LITTLE STAR (CENTER) -->
+            <div class="character-card star-preview" id="preview-star">
+              <div class="char-avatar-box glowing-pulse">
+                <img src="assets/characters/star.jpg" alt="Little Star" class="char-img-asset" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="char-svg-fallback star-avatar" style="display:none;"></div>
+              </div>
+              <div class="char-name-tag star-tag">Little Star ⭐</div>
+              <p class="char-desc">Safety Guide</p>
+            </div>
+
+            <!-- JOHN -->
+            <div class="character-card john-preview" id="preview-john">
+              <div class="char-avatar-box">
+                <img src="assets/characters/john.jpg" alt="John" class="char-img-asset" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div class="char-svg-fallback john-avatar" style="display:none;"></div>
+              </div>
+              <div class="char-name-tag john-tag">John 🚀</div>
+              <p class="char-desc">Playful & Energetic</p>
+            </div>
+          </div>
+
+          <!-- START ACTION -->
+          <div class="start-action-container">
+            <button id="btn-start-game" class="btn-hero-huge pulse-anim">
+              <span class="btn-icon">🚀</span>
+              <span class="btn-text">START ADVENTURE</span>
+              <span class="btn-sparkle">✨</span>
+            </button>
+            <div class="quick-resume-box hidden" id="quick-resume-box">
+              <button id="btn-resume-game" class="btn-secondary-pill">
+                ⭐ Resume Mission <span id="resume-mission-num">1</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 2: MISSION ACTIVE STAGE ==================== -->
+      <section id="screen-mission" class="screen-view">
+        <!-- SCENERY BACKGROUND (DYNAMICALLY SWITCHED) -->
+        <div id="mission-environment" class="mission-env-container env-road">
+          <div id="env-backdrop-layer"></div>
+          <div id="env-interactive-layer"></div>
+          <div id="env-effects-layer"></div>
+        </div>
+
+        <!-- CHARACTERS STAGE LAYER (RESPONSIVE FLEX CONTAINER) -->
+        <div id="characters-stage" class="characters-stage-area">
+          <!-- LITTLE STAR GUIDE (FLOATING TOP-RIGHT) -->
+          <div id="actor-star" class="actor actor-star float-glow">
+            <div class="safety-star-wand" id="star-wand">⭐</div>
+            <div class="speech-bubble active" id="bubble-star">
+              <span class="bubble-text">What should we do?</span>
+            </div>
+            <div class="character-visual-box star-stage-box">
+              <img src="assets/characters/star.jpg" alt="Little Star" class="stage-char-img">
+            </div>
+          </div>
+
+          <!-- ADULT / HELPER (WHEN NEEDED) -->
+          <div id="actor-helper" class="actor actor-helper hidden">
+            <div class="speech-bubble" id="bubble-helper">
+              <span class="bubble-text">I'm right here to help!</span>
+            </div>
+            <div class="character-visual-box helper-stage-box helper-sprite"></div>
+          </div>
+
+          <!-- MAIN DUO: RIYA & JOHN -->
+          <div class="main-duo-container">
+            <!-- RIYA CONTAINER -->
+            <div id="actor-riya" class="actor actor-riya idle">
+              <div class="speech-bubble" id="bubble-riya">
+                <span class="bubble-text">Let's think!</span>
+              </div>
+              <div class="character-visual-box riya-stage-box">
+                <img src="assets/characters/riya.jpg" alt="Riya" class="stage-char-img">
+              </div>
+            </div>
+
+            <!-- JOHN CONTAINER -->
+            <div id="actor-john" class="actor actor-john idle">
+              <div class="speech-bubble" id="bubble-john">
+                <span class="bubble-text">Wait... what is safe?</span>
+              </div>
+              <div class="character-visual-box john-stage-box">
+                <img src="assets/characters/john.jpg" alt="John" class="stage-char-img">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- WOW TRANSFORMATION OVERLAY (EFFECTS) -->
+        <div id="wow-overlay" class="wow-effects-layer hidden">
+          <div class="wow-glow-shield"></div>
+          <div class="wow-banner-pop" id="wow-banner">
+            <span class="wow-badge">✨ SAFE ACTION! ✨</span>
+            <h2 class="wow-title" id="wow-rule-title">Safe Crossing!</h2>
+          </div>
+          <div class="confetti-sparks" id="mini-sparks"></div>
+        </div>
+
+        <!-- GENTLE THINKING OVERLAY (ON WRONG GUESS) -->
+        <div id="gentle-think-overlay" class="gentle-overlay hidden">
+          <div class="gentle-card">
+            <div class="gentle-star-icon bounce-soft">⭐</div>
+            <div class="gentle-message" id="gentle-message-text">Oops! Let's think safely.</div>
+            <div class="gentle-hint" id="gentle-hint-text">Let's try again together!</div>
+          </div>
+        </div>
+
+        <!-- MISSION DOCK: INSTRUCTION & DECISION CARDS -->
+        <div id="mission-ui-dock" class="mission-dock">
+          <!-- MISSION HEADER PILL -->
+          <div class="mission-info-bar">
+            <div class="mission-badge-chip">
+              <span class="mission-chip-icon" id="mission-chip-icon">🚦</span>
+              <span class="mission-chip-text" id="mission-chip-title">Mission 1: Road Safety</span>
+            </div>
+            <div class="mission-instruction" id="mission-instruction-text">
+              Look at the road! What should Riya and John do?
+            </div>
+          </div>
+
+          <!-- CHOICES CARDS CONTAINER (2 OR 3 LARGE CARDS) -->
+          <div class="choices-container" id="choices-container">
+            <!-- Dynamic Choice Cards Rendered Here -->
+          </div>
+        </div>
+
+        <!-- STAR REWARD POPUP MODAL -->
+        <div id="modal-reward" class="reward-modal-backdrop hidden">
+          <div class="reward-modal-card pop-in">
+            <div class="reward-sparkles-bg">✨ 🌟 ✨</div>
+            <div class="reward-star-giant bounce-spin">⭐</div>
+            <h2 class="reward-title">SAFETY STAR EARNED!</h2>
+            <p class="reward-subtitle" id="reward-subtitle-text">You helped keep everyone safe!</p>
+            <div class="reward-progress-bar">
+              <span class="progress-fill" id="reward-progress-fill"></span>
+            </div>
+            <div class="reward-stars-text" id="reward-stars-text">SAFETY STARS: 1 / 7</div>
+            <button id="btn-next-mission" class="btn-hero-large pulse-anim">
+              <span>NEXT ADVENTURE</span>
+              <span class="btn-arrow">➡️</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== SCREEN 3: SAFETY TOWN PROGRESSION MAP ==================== -->
+      <div id="modal-town-map" class="town-modal-backdrop hidden">
+        <div class="town-modal-card">
+          <div class="town-header">
+            <h2>🗺️ Safety Town Map</h2>
+            <button id="btn-close-town" class="close-pill-btn">✕ Close</button>
+          </div>
+          <p class="town-subtitle">Every safe choice protects a zone in Safety Town!</p>
+          <div class="town-grid" id="town-grid-zones">
+            <!-- 7 Town Zones dynamically rendered -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== SCREEN 4: GRAND FINALE CELEBRATION ==================== -->
+      <section id="screen-finale" class="screen-view">
+        <canvas id="confetti-canvas"></canvas>
+
+        <div class="finale-content">
+          <!-- GIANT SHIELD ASCENSION -->
+          <div class="finale-shield-hero" id="finale-shield">
+            <div class="giant-safety-shield">⭐🛡️</div>
+            <div class="shield-aura"></div>
+          </div>
+
+          <div class="finale-dialogue-box">
+            <div class="dialogue-character-faces">
+              <div class="d-face riya-mini-face">🌸 Riya: "We made safe choices!"</div>
+              <div class="d-face john-mini-face">🚀 John: "Now I know what to do!"</div>
+              <div class="d-face star-mini-face">⭐ Little Star: "Think safe. Stay safe!"</div>
+            </div>
+            <div class="dialogue-chorus">
+              "SAFETY HEROES!" 🌟
+            </div>
+          </div>
+
+          <!-- CERTIFICATE CARD -->
+          <div class="certificate-card pop-in">
+            <div class="cert-crown">🏆</div>
+            <h1 class="cert-title">OFFICIAL SAFETY HERO</h1>
+            <p class="cert-subtitle">7 / 7 SAFETY MISSIONS COMPLETED</p>
+            <div class="cert-stars-row">
+              ⭐ ⭐ ⭐ ⭐ ⭐ ⭐ ⭐
+            </div>
+            <div class="cert-badge-ribbon">
+              <span>🌟 CERTIFIED SAFE HERO 🌟</span>
+            </div>
+            <div class="cert-actions">
+              <button id="btn-play-again" class="btn-hero-large">
+                <span>🔄 PLAY ADVENTURE AGAIN</span>
+              </button>
+              <button id="btn-print-cert" class="btn-secondary-pill">
+                <span>🖨️ Print Certificate</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

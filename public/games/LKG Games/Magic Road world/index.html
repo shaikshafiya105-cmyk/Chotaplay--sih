@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>John's Line Magic Adventure | ChotaPlay</title>
+  <meta name="description" content="A magical children's educational game where drawing standing, sleeping, and slanting lines brings magical towers, bridges, slides, and rockets to life!">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container" class="game-container stage-intro-active">
+    
+    <!-- Top Navigation Bar -->
+    <header class="game-header">
+      <div class="brand-badge" id="brand-badge">
+        <span class="brand-logo">🌟</span>
+        <span class="brand-name">CHOTAPLAY</span>
+      </div>
+
+      <!-- Stage Selector / Progress Bar -->
+      <nav class="stage-progress" id="stage-progress" aria-label="Game Stages">
+        <button class="progress-step active" id="step-intro" data-stage="intro" title="Home Intro">
+          <span class="step-icon">🏰</span>
+        </button>
+        <div class="progress-connector"></div>
+        <button class="progress-step" id="step-standing" data-stage="standing" title="Standing Line (Tower)">
+          <span class="step-icon">│</span>
+        </button>
+        <div class="progress-connector"></div>
+        <button class="progress-step" id="step-sleeping" data-stage="sleeping" title="Sleeping Line (Bridge)">
+          <span class="step-icon">─</span>
+        </button>
+        <div class="progress-connector"></div>
+        <button class="progress-step" id="step-left-slant" data-stage="left-slant" title="Left Slanting Line (Slide)">
+          <span class="step-icon">╲</span>
+        </button>
+        <div class="progress-connector"></div>
+        <button class="progress-step" id="step-right-slant" data-stage="right-slant" title="Right Slanting Line (Rocket)">
+          <span class="step-icon">╱</span>
+        </button>
+        <div class="progress-connector"></div>
+        <button class="progress-step" id="step-brush" data-stage="brush" title="Magic Brush Sandbox">
+          <span class="step-icon">🎨</span>
+        </button>
+      </nav>
+
+      <!-- Audio & Utility Controls -->
+      <div class="header-controls">
+        <button id="btn-sound" class="btn-icon" aria-label="Toggle Sound" title="Sound FX">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-voice" class="btn-icon" aria-label="Toggle Voice" title="Voiceover">
+          <span id="voice-icon">🗣️</span>
+        </button>
+        <button id="btn-home" class="btn-icon" aria-label="Restart Adventure" title="Home">
+          <span>🏠</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Game Viewport -->
+    <main id="game-stage" class="game-stage">
+      
+      <!-- Parallax Animated Background -->
+      <div class="stage-background" id="stage-bg">
+        <div class="sky-gradient"></div>
+        <div class="stars-layer" id="stars-layer"></div>
+        <div class="cloud-layer cloud-1"></div>
+        <div class="cloud-layer cloud-2"></div>
+        <div class="cloud-layer cloud-3"></div>
+        <div class="hills-layer hill-back"></div>
+        <div class="hills-layer hill-mid"></div>
+        <div class="hills-layer hill-front"></div>
+        <div class="ground-layer"></div>
+      </div>
+
+      <!-- ==========================================
+           SCENE 0: INTRODUCTION
+           ========================================== -->
+      <section id="scene-intro" class="scene active">
+        <div class="intro-content">
+          <div class="title-banner">
+            <span class="chotaplay-tag">✨ CHOTAPLAY PRESENTS ✨</span>
+            <h1 class="main-title">
+              <span class="title-word title-john">JOHN'S</span>
+              <span class="title-word title-magic">LINE MAGIC</span>
+              <span class="title-word title-adventure">ADVENTURE</span>
+            </h1>
+          </div>
+
+          <div class="intro-preview-cards">
+            <button class="preview-card" data-stage="standing">
+              <div class="line-badge standing-badge">│</div>
+              <div class="magic-obj-icon">🏰</div>
+              <div class="obj-label">Standing Line</div>
+            </button>
+            <button class="preview-card" data-stage="sleeping">
+              <div class="line-badge sleeping-badge">─</div>
+              <div class="magic-obj-icon">🌉</div>
+              <div class="obj-label">Sleeping Line</div>
+            </button>
+            <button class="preview-card" data-stage="left-slant">
+              <div class="line-badge slant-left-badge">╲</div>
+              <div class="magic-obj-icon">🛝</div>
+              <div class="obj-label">Left Slanting</div>
+            </button>
+            <button class="preview-card" data-stage="right-slant">
+              <div class="line-badge slant-right-badge">╱</div>
+              <div class="magic-obj-icon">🚀</div>
+              <div class="obj-label">Right Slanting</div>
+            </button>
+          </div>
+
+          <button id="btn-start-magic" class="btn-magic-start pulse-btn">
+            <span class="magic-wand-icon">🪄</span>
+            <span class="btn-text">START MAGIC!</span>
+            <span class="sparkle-tail">✨</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 1: STANDING LINE (TOWER)
+           ========================================== -->
+      <section id="scene-standing" class="scene">
+        <div class="scene-backdrop tower-backdrop">
+          <div class="tower-stage" id="tower-stage">
+            <div class="tower-foundation"></div>
+            <div class="tower-silhouette" id="tower-silhouette">
+              <div class="silhouette-beam"></div>
+            </div>
+            <div class="tower-magical" id="tower-magical">
+              <div class="tower-base-block">
+                <div class="tower-door"></div>
+                <div class="tower-stone-line"></div>
+              </div>
+              <div class="tower-spire">
+                <div class="tower-window"></div>
+                <div class="tower-flag">🚩</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 2: SLEEPING LINE (BRIDGE)
+           ========================================== -->
+      <section id="scene-sleeping" class="scene">
+        <div class="scene-backdrop bridge-backdrop">
+          <div class="river-container">
+            <div class="river-water">
+              <div class="river-wave wave-1"></div>
+              <div class="river-wave wave-2"></div>
+              <div class="river-fish fish-1">🐟</div>
+              <div class="river-fish fish-2">🐠</div>
+            </div>
+            <div class="river-bank bank-left"></div>
+            <div class="river-bank bank-right"></div>
+            
+            <div class="bridge-silhouette" id="bridge-silhouette">
+              <div class="silhouette-plank"></div>
+            </div>
+            <div class="bridge-magical" id="bridge-magical">
+              <div class="bridge-deck">
+                <div class="bridge-railing"></div>
+                <div class="bridge-lanterns">
+                  <span>🏮</span><span>🏮</span><span>🏮</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 3: LEFT SLANTING LINE (SLIDE)
+           ========================================== -->
+      <section id="scene-left-slant" class="scene">
+        <div class="scene-backdrop slide-backdrop">
+          <div class="slide-stage" id="slide-stage">
+            <div class="slide-platform">
+              <div class="play-ladder">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <div class="play-canopy">⛺</div>
+            </div>
+            <div class="slide-silhouette" id="slide-silhouette">
+              <div class="silhouette-ramp"></div>
+            </div>
+            <div class="slide-magical" id="slide-magical">
+              <div class="slide-chute">
+                <div class="slide-curve"></div>
+              </div>
+              <div class="slide-landing">
+                <div class="ball-pit">🪅 ✨ 🌸</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 4: RIGHT SLANTING LINE (ROCKET)
+           ========================================== -->
+      <section id="scene-right-slant" class="scene">
+        <div class="scene-backdrop rocket-backdrop">
+          <div class="rocket-stage" id="rocket-stage">
+            <div class="launch-pad">
+              <div class="launch-tower"></div>
+            </div>
+            <div class="rocket-silhouette" id="rocket-silhouette">
+              <div class="silhouette-path"></div>
+            </div>
+            <!-- Rocket Ship -->
+            <div class="rocket-ship" id="rocket-ship">
+              <div class="rocket-nose"></div>
+              <div class="rocket-cabin">
+                <div class="rocket-porthole">
+                  <div class="john-pilot-face"></div>
+                </div>
+              </div>
+              <div class="rocket-fins"></div>
+              <div class="rocket-thruster">
+                <div class="rocket-flame" id="rocket-flame"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Rocket Launch Countdown Overlay -->
+          <div class="countdown-overlay" id="countdown-overlay">
+            <div class="countdown-number" id="countdown-number">3</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 5: MAGIC LINE BRUSH (SANDBOX)
+           ========================================== -->
+      <section id="scene-brush" class="scene">
+        <div class="scene-backdrop brush-backdrop">
+          <div class="sandbox-canvas-layer" id="sandbox-objects"></div>
+          <div class="brush-toolbar">
+            <div class="toolbar-title">🎨 MAGIC LINE BRUSH</div>
+            <div class="brush-legend">
+              <div class="legend-item" data-type="vertical"><span class="line-sym">│</span> Tower 🏰</div>
+              <div class="legend-item" data-type="horizontal"><span class="line-sym">─</span> Bridge 🌉</div>
+              <div class="legend-item" data-type="left-slant"><span class="line-sym">╲</span> Slide 🛝</div>
+              <div class="legend-item" data-type="right-slant"><span class="line-sym">╱</span> Rocket 🚀</div>
+            </div>
+            <div class="toolbar-actions">
+              <button id="btn-clear-brush" class="btn-tool" title="Clear Canvas">🧹 Clear</button>
+              <button id="btn-finish-adventure" class="btn-magic-start btn-small" title="Celebrate!">🌟 Finish!</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCENE 6: FINAL CELEBRATION
+           ========================================== -->
+      <section id="scene-celebration" class="scene">
+        <div class="celebration-backdrop">
+          <div class="confetti-container" id="confetti-container"></div>
+          <div class="celebration-card">
+            <div class="celebration-crown">👑</div>
+            <h2 class="celebration-title">🌟 LINE MAGIC MASTER! 🌟</h2>
+            <p class="celebration-subtitle">You brought all four magical lines back to Line Magic Land!</p>
+            
+            <div class="celebration-trophies">
+              <div class="trophy-item">
+                <span class="t-icon">🏰</span>
+                <span class="t-line">Standing Line</span>
+              </div>
+              <div class="trophy-item">
+                <span class="t-icon">🌉</span>
+                <span class="t-line">Sleeping Line</span>
+              </div>
+              <div class="trophy-item">
+                <span class="t-icon">🛝</span>
+                <span class="t-line">Left Slanting</span>
+              </div>
+              <div class="trophy-item">
+                <span class="t-icon">🚀</span>
+                <span class="t-line">Right Slanting</span>
+              </div>
+            </div>
+
+            <div class="celebration-actions">
+              <button id="btn-play-again" class="btn-magic-start pulse-btn">
+                <span>🔄</span> Play Adventure Again
+              </button>
+              <button id="btn-sandbox-mode" class="btn-secondary">
+                <span>🎨</span> Magic Brush Sandbox
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           DRAWING & CANVAS OVERLAY
+           ========================================== -->
+      <div class="canvas-container" id="canvas-container">
+        <!-- Interactive Drawing Canvas -->
+        <canvas id="draw-canvas"></canvas>
+        <!-- Particle & Sparkle Effect Canvas -->
+        <canvas id="fx-canvas"></canvas>
+        
+        <!-- Guided Tracing Animation Indicator -->
+        <div class="guide-line-overlay" id="guide-overlay">
+          <svg class="guide-svg" id="guide-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <path id="guide-path" class="guide-path" d="M 50 15 L 50 85" />
+          </svg>
+          <div class="magic-hand" id="magic-hand">
+            <span class="hand-cursor">🪄</span>
+            <span class="hand-glow">✨</span>
+          </div>
+        </div>
+
+        <!-- Success Flash Overlay -->
+        <div class="line-success-flash" id="success-flash"></div>
+      </div>
+
+      <!-- ==========================================
+           CHARACTERS LAYER (JOHN & LITTLE STAR)
+           ========================================== -->
+      <div class="characters-layer" id="characters-layer">
+        
+        <!-- John Character -->
+        <div class="character-john" id="char-john" aria-label="John Character">
+          <img src="assets/john.png" alt="John" class="john-img" id="john-img" />
+          <div class="john-shadow"></div>
+        </div>
+
+        <!-- Little Star Character -->
+        <div class="character-star" id="char-star" aria-label="Little Star Character">
+          <img src="assets/star.svg" alt="Little Star" class="star-img" id="star-img" />
+          <div class="star-aura"></div>
+        </div>
+
+        <!-- Dynamic Dialogue Bubble -->
+        <div class="dialogue-bubble" id="dialogue-bubble" role="status" aria-live="polite">
+          <div class="speaker-tag" id="speaker-tag">Little Star</div>
+          <div class="dialogue-text" id="dialogue-text">"Welcome to Line Magic Land!"</div>
+          <div class="bubble-arrow"></div>
+        </div>
+
+      </div>
+
+      <!-- ==========================================
+           BOTTOM ACTION PROMPT BANNER
+           ========================================== -->
+      <div class="action-banner" id="action-banner">
+        <div class="banner-symbol" id="banner-symbol">│</div>
+        <div class="banner-instruction" id="banner-instruction">
+          <span class="instruction-title" id="instruction-title">Standing Line</span>
+          <span class="instruction-desc" id="instruction-desc">Draw straight up and down!</span>
+        </div>
+        <button id="btn-hint" class="btn-hint" title="Show Hint">
+          <span>💡 Hint</span>
+        </button>
+        <button id="btn-next-stage" class="btn-next-stage hidden" title="Continue to Next Magic">
+          <span>Next Magic ➡️</span>
+        </button>
+      </div>
+
+      <!-- Success Toast Notification -->
+      <div class="toast-feedback" id="toast-feedback">
+        <span class="toast-icon">✨</span>
+        <span class="toast-message" id="toast-message">Standing line!</span>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Game Logic Script -->
+  <script src="script.js"></script>
+</body>
+</html>

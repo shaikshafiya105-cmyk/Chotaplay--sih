@@ -1,0 +1,1578 @@
+/* ==========================================================================
+   RIYA'S NUMBER SPACE MISSION 🚀 - CHOTAPLAY
+   Premium Child-Friendly Educational Game Stylesheet
+   ========================================================================== */
+
+:root {
+  --bg-space-dark: #09061c;
+  --bg-space-mid: #150f38;
+  --bg-space-light: #241457;
+  
+  --color-gold: #ffcf25;
+  --color-gold-glow: #ffe066;
+  --color-cyan: #00e5ff;
+  --color-cyan-glow: #80f2ff;
+  --color-pink: #ff4081;
+  --color-pink-glow: #ff80ab;
+  --color-purple: #9c27b0;
+  --color-emerald: #00e676;
+  --color-orange: #ff9100;
+  
+  --text-light: #ffffff;
+  --text-muted: #b8b3db;
+  
+  --font-main: 'Fredoka', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Nunito', 'Fredoka', cursive, sans-serif;
+  
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-pill: 9999px;
+  
+  --shadow-glow-gold: 0 0 25px rgba(255, 207, 37, 0.55);
+  --shadow-glow-cyan: 0 0 25px rgba(0, 229, 255, 0.55);
+  --shadow-glow-pink: 0 0 25px rgba(255, 64, 129, 0.55);
+  --shadow-card: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* RESET & BASE */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-space-dark);
+  font-family: var(--font-main);
+  color: var(--text-light);
+}
+
+/* CANVAS BACKGROUND */
+#space-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* MAIN APP WRAPPER */
+#game-app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 1;
+  background: radial-gradient(circle at 50% 30%, rgba(36, 20, 87, 0.6) 0%, rgba(9, 6, 28, 0.95) 100%);
+}
+
+/* ==========================================================================
+   TOP HUD
+   ========================================================================== */
+.hud-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  background: rgba(18, 12, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.12);
+  z-index: 10;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff4081, #7c4dff);
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(255, 64, 129, 0.3);
+}
+
+.brand-logo {
+  font-size: 1.2rem;
+  animation: spinSlow 12s linear infinite;
+}
+
+.hud-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 207, 37, 0.6);
+  color: var(--text-light);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hud-pill-btn:hover, .hud-pill-btn:active {
+  transform: scale(1.05);
+  background: rgba(255, 207, 37, 0.2);
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.hud-pill-btn .badge {
+  background: var(--color-gold);
+  color: #1a1000;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.hud-circle-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hud-circle-btn:hover {
+  transform: scale(1.12);
+  background: rgba(0, 229, 255, 0.25);
+  border-color: var(--color-cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.pulse-hint {
+  animation: pulseScale 2s infinite ease-in-out;
+}
+
+/* CENTER MISSION TARGET CARD */
+.mission-target-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: rgba(36, 20, 87, 0.85);
+  border: 3px solid var(--color-gold);
+  padding: 6px 20px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.number-bubble {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffe066, #ff9100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(255, 145, 0, 0.6);
+  animation: floatSmall 3s ease-in-out infinite;
+}
+
+#current-number-display {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #2b1100;
+  line-height: 1;
+}
+
+.target-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.target-name {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--color-gold);
+  text-shadow: 0 0 10px rgba(255, 207, 37, 0.7);
+}
+
+.quantity-meter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 22px;
+  max-width: 320px;
+  flex-wrap: wrap;
+}
+
+.q-dot {
+  font-size: 1.1rem;
+  line-height: 1;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 4px rgba(255, 207, 37, 0.5));
+}
+
+.q-dot.empty {
+  opacity: 0.3;
+  filter: grayscale(1);
+  transform: scale(0.85);
+}
+
+.q-dot.filled {
+  opacity: 1;
+  transform: scale(1.2);
+  animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ==========================================================================
+   GAME STAGE (MAIN PLAYFIELD)
+   ========================================================================== */
+#game-stage {
+  flex: 1;
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  padding: 16px 24px;
+  gap: 20px;
+}
+
+/* CHARACTERS SIDEBAR */
+#characters-sidebar {
+  width: 240px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 5;
+}
+
+.character-card {
+  position: relative;
+}
+
+.character-speech-bubble {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  color: #1a0f38;
+  padding: 12px 16px;
+  border-radius: 18px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+  margin-bottom: 12px;
+  border: 3px solid var(--color-pink);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.character-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 36px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid var(--color-pink);
+}
+
+.bubble-mini-btn {
+  background: var(--color-pink);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.bubble-mini-btn:hover {
+  transform: scale(1.15);
+}
+
+.character-avatar {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.3), rgba(0, 229, 255, 0.3));
+  border: 4px solid white;
+  box-shadow: var(--shadow-glow-cyan);
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.character-avatar:hover {
+  transform: scale(1.08) rotate(3deg);
+}
+
+.char-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.badge-indicator {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background: #110d29;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 1rem;
+  border: 2px solid var(--color-gold);
+}
+
+/* LITTLE STAR & SHIP COMPANIONS */
+.star-card {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+
+.little-star-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 3px solid var(--color-gold);
+  background: rgba(255, 207, 37, 0.2);
+  box-shadow: var(--shadow-glow-gold);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.star-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.spaceship-dock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(25, 14, 56, 0.85);
+  border: 2px solid rgba(0, 229, 255, 0.4);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.ship-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--color-cyan);
+}
+
+.energy-core-indicator {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-cyan);
+}
+
+#core-percent {
+  font-size: 1.1rem;
+  color: var(--color-gold);
+}
+
+/* ==========================================================================
+   MISSION PLAY AREA
+   ========================================================================== */
+.mission-area {
+  flex: 1;
+  position: relative;
+  background: radial-gradient(ellipse at center, rgba(38, 22, 92, 0.5) 0%, rgba(13, 8, 38, 0.8) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.6), var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mission-content {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.particle-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20;
+}
+
+/* ==========================================================================
+   GAME MECHANICS STYLES
+   ========================================================================== */
+
+/* 1. STAR CATCHING MECHANIC (Mechanic A) */
+.star-field-mechanic {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cosmic-star-item {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  cursor: pointer;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+  filter: drop-shadow(0 0 15px rgba(255, 207, 37, 0.8));
+  touch-action: manipulation;
+  border-radius: 50%;
+}
+
+.cosmic-star-item:hover {
+  transform: scale(1.25) rotate(15deg);
+  filter: drop-shadow(0 0 25px rgba(255, 240, 100, 1));
+}
+
+.cosmic-star-item.collected {
+  pointer-events: none;
+  animation: collectStar 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* 2. PLANET ORBIT MECHANIC (Mechanic B) */
+.planet-orbit-mechanic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.central-cosmic-sun {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff9c4, #ffb300, #ff6f00);
+  box-shadow: 0 0 50px rgba(255, 179, 0, 0.9), 0 0 100px rgba(255, 111, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+  z-index: 4;
+  animation: pulseScale 3s infinite ease-in-out;
+}
+
+.orbit-rings-container {
+  position: absolute;
+  width: 480px;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px dashed rgba(0, 229, 255, 0.4);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.15);
+  pointer-events: none;
+}
+
+.orbit-slot {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 3px dashed rgba(255, 207, 37, 0.6);
+  background: rgba(255, 207, 37, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.orbit-slot.filled {
+  border-style: solid;
+  border-color: var(--color-emerald);
+  background: rgba(0, 230, 118, 0.2);
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.6);
+}
+
+.orbiting-active {
+  animation: rotateOrbit 16s linear infinite;
+}
+
+.planet-tray {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  background: rgba(18, 12, 46, 0.85);
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  z-index: 10;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.tray-planet-item {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+}
+
+.tray-planet-item:hover {
+  transform: scale(1.3);
+}
+
+.tray-planet-item.used {
+  opacity: 0.25;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+/* 3. ALIEN CRYSTAL FEEDER (Mechanic C) */
+.alien-feeder-mechanic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px 40px;
+}
+
+.alien-creature-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 5;
+}
+
+.alien-avatar-big {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a7ffeb, #64ffda, #00b0ff);
+  border: 5px solid white;
+  box-shadow: 0 0 30px rgba(100, 255, 218, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 5rem;
+  position: relative;
+  animation: floatSmall 3s ease-in-out infinite;
+}
+
+.alien-energy-pod {
+  background: rgba(18, 12, 46, 0.9);
+  border: 3px solid var(--color-cyan);
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: var(--color-cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.pod-meter {
+  font-size: 1.2rem;
+  color: var(--color-gold);
+}
+
+.crystals-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  max-width: 440px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.crystal-item {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.2), rgba(0, 229, 255, 0.2));
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.crystal-item:hover {
+  transform: scale(1.2) translateY(-6px);
+  border-color: var(--color-cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.crystal-item.fed {
+  opacity: 0.2;
+  transform: scale(0.7);
+  pointer-events: none;
+}
+
+/* 4. ROCKET FUEL MATRIX (Mechanic D) */
+.fuel-matrix-mechanic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 10px 20px;
+}
+
+.rocket-core-panel {
+  background: rgba(18, 12, 46, 0.9);
+  border: 3px solid var(--color-gold);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.core-title {
+  font-family: var(--font-display);
+  color: var(--color-gold);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.fuel-slots-grid {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+}
+
+.fuel-slot {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  border: 2px dashed rgba(255, 207, 37, 0.5);
+  background: rgba(255, 207, 37, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition: all 0.3s;
+}
+
+.fuel-slot.filled {
+  border-style: solid;
+  border-color: var(--color-gold);
+  background: linear-gradient(135deg, rgba(255, 207, 37, 0.4), rgba(255, 145, 0, 0.4));
+  box-shadow: 0 0 15px rgba(255, 207, 37, 0.7);
+  animation: popIn 0.3s ease;
+}
+
+.fuel-cells-depot {
+  display: grid;
+  gap: 8px;
+  max-width: 380px;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-lg);
+  border: 2px solid rgba(255, 207, 37, 0.3);
+  justify-items: center;
+  align-items: center;
+}
+
+.fuel-cell-chip {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffe066, #ff9100);
+  border: 2px solid white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(255, 145, 0, 0.5);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.fuel-cell-chip:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 20px rgba(255, 207, 37, 0.9);
+}
+
+.fuel-cell-chip.inserted {
+  opacity: 0.2;
+  pointer-events: none;
+  transform: scale(0.8);
+}
+
+/* 5. NUMBER STAR PATH (Mechanic E) */
+.star-path-mechanic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.path-canvas-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.path-star-node {
+  position: absolute;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff4081, #7c4dff);
+  border: 3px solid white;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 5;
+}
+
+.path-star-node:hover {
+  transform: scale(1.25);
+  box-shadow: var(--shadow-glow-pink);
+}
+
+.path-star-node.active-next {
+  border-color: var(--color-gold);
+  background: linear-gradient(135deg, #ffe066, #ff9100);
+  color: #1a0f38;
+  animation: pulseScale 1.5s infinite;
+  box-shadow: var(--shadow-glow-gold);
+}
+
+.path-star-node.connected {
+  background: linear-gradient(135deg, #00e676, #00b0ff);
+  border-color: #e0f7fa;
+  box-shadow: 0 0 15px rgba(0, 230, 118, 0.7);
+  pointer-events: none;
+}
+
+/* 6. SPACE TRAIN MECHANIC (Mechanic F) */
+.space-train-mechanic {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+}
+
+.train-track-area {
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.train-locomotive {
+  font-size: 4rem;
+  filter: drop-shadow(0 0 15px rgba(255, 64, 129, 0.6));
+  animation: floatSmall 2s ease-in-out infinite;
+}
+
+.train-wagons-list {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.train-wagon {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  border: 2px dashed rgba(0, 229, 255, 0.5);
+  background: rgba(0, 229, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  transition: all 0.3s;
+}
+
+.train-wagon.loaded {
+  border-style: solid;
+  border-color: var(--color-cyan);
+  background: rgba(0, 229, 255, 0.25);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.cargo-dispatch-zone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  max-width: 600px;
+  background: rgba(18, 12, 46, 0.8);
+  padding: 12px 24px;
+  border-radius: var(--radius-pill);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.cargo-crate {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cargo-crate:hover {
+  transform: scale(1.25);
+}
+
+.cargo-crate.loaded {
+  opacity: 0.2;
+  pointer-events: none;
+  transform: scale(0.7);
+}
+
+/* ==========================================================================
+   FOOTER CONTROLS
+   ========================================================================== */
+#game-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 24px;
+  background: rgba(18, 12, 46, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-top: 2px solid rgba(255, 255, 255, 0.12);
+  z-index: 10;
+}
+
+.footer-count-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.count-label {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.count-numbers {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--color-gold);
+}
+
+.count-progress-bar {
+  width: 140px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.12);
+  overflow: hidden;
+}
+
+.count-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff4081, #ffcf25);
+  border-radius: var(--radius-pill);
+  transition: width 0.3s ease;
+}
+
+.footer-hint {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-cyan-glow);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+}
+
+.footer-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-nav-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.footer-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--color-gold);
+}
+
+.nav-current-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   MODALS & OVERLAYS
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(6, 4, 18, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-card {
+  position: relative;
+  background: linear-gradient(135deg, rgba(29, 17, 69, 0.95), rgba(14, 8, 38, 0.98));
+  border: 3px solid rgba(255, 207, 37, 0.5);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), var(--shadow-glow-gold);
+  max-width: 680px;
+  width: 100%;
+  padding: 36px 40px;
+  text-align: center;
+  transform: scale(0.92);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.modal-overlay.active .modal-card {
+  transform: scale(1);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: var(--color-pink);
+  border-color: white;
+  transform: scale(1.15);
+}
+
+/* START MODAL */
+.start-title {
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1.15;
+  margin: 8px 0;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.highlight-text {
+  background: linear-gradient(135deg, #ffe066, #ff4081, #00e5ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.start-subtitle {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.start-hero-illustration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.hero-character {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.hero-character img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-riya {
+  border-color: var(--color-pink);
+  box-shadow: var(--shadow-glow-pink);
+}
+
+.hero-star {
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-glow-gold);
+  width: 80px;
+  height: 80px;
+}
+
+.hero-ship {
+  border-color: var(--color-cyan);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.story-preview-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px dashed rgba(255, 207, 37, 0.4);
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-gold-glow);
+  margin-bottom: 24px;
+}
+
+.super-start-btn {
+  background: linear-gradient(135deg, #ff4081, #ff9100, #ffcf25);
+  border: 4px solid #ffffff;
+  color: #1a082e;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  padding: 16px 44px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 30px rgba(255, 64, 129, 0.5), var(--shadow-glow-gold);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  letter-spacing: 1px;
+}
+
+.super-start-btn:hover {
+  transform: scale(1.08) translateY(-4px);
+  box-shadow: 0 15px 40px rgba(255, 64, 129, 0.8), var(--shadow-glow-gold);
+}
+
+.start-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pill-badge {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* CONSTELLATION MAP MODAL */
+.constellation-card {
+  max-width: 860px;
+}
+
+.constellation-sky {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: radial-gradient(circle at 50% 50%, #170d38 0%, #080417 100%);
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  margin: 16px 0;
+  overflow: hidden;
+}
+
+.constellation-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.constellation-nodes-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.constellation-star-node {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 900;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.constellation-star-node.lit {
+  background: var(--color-gold);
+  color: #1a0f38;
+  border-color: white;
+  box-shadow: 0 0 15px var(--color-gold);
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.constellation-status {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-gauge {
+  width: 80%;
+  height: 14px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.gauge-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4081, #00e5ff, #ffcf25);
+  border-radius: var(--radius-pill);
+  transition: width 0.4s ease;
+}
+
+/* NUMBER GRID DRAWER */
+.number-grid-selector {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.num-grid-btn {
+  height: 64px;
+  border-radius: var(--radius-md);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.num-grid-btn:hover {
+  transform: scale(1.12);
+  border-color: var(--color-cyan);
+  background: rgba(0, 229, 255, 0.2);
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+.num-grid-btn.completed {
+  border-color: var(--color-gold);
+  background: rgba(255, 207, 37, 0.2);
+  color: var(--color-gold);
+}
+
+.num-grid-btn.current {
+  border-color: var(--color-pink);
+  background: linear-gradient(135deg, #ff4081, #7c4dff);
+  box-shadow: var(--shadow-glow-pink);
+  color: white;
+}
+
+/* LEVEL COMPLETE BANNER */
+.level-complete-banner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  background: linear-gradient(135deg, rgba(36, 20, 87, 0.98), rgba(18, 10, 48, 0.98));
+  border: 4px solid var(--color-gold);
+  border-radius: var(--radius-lg);
+  padding: 30px 50px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), var(--shadow-glow-gold);
+  z-index: 90;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.level-complete-banner.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.celebrate-badge {
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--color-gold);
+  text-shadow: 0 0 20px rgba(255, 207, 37, 0.8);
+}
+
+#celebrate-title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  color: white;
+  margin: 6px 0;
+}
+
+#celebrate-subtitle {
+  color: var(--color-cyan-glow);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   GRAND FINALE MODAL (NUMBER 20)
+   ========================================================================== */
+.finale-card {
+  max-width: 820px;
+  background: linear-gradient(135deg, #1f0f4a, #0d0624);
+  border: 4px solid var(--color-gold);
+}
+
+.crown-badge {
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--color-gold);
+  font-size: 1rem;
+}
+
+.finale-title {
+  font-family: var(--font-display);
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: var(--color-gold);
+  text-shadow: var(--shadow-glow-gold);
+  margin: 6px 0;
+}
+
+.hyperspace-viewport {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  background: radial-gradient(circle, #2b115b, #070314);
+  border-radius: var(--radius-md);
+  border: 2px solid var(--color-cyan);
+  overflow: hidden;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flying-rocket-group {
+  position: relative;
+  z-index: 5;
+  animation: rocketHyperspace 3s infinite ease-in-out;
+}
+
+.finale-ship-img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid white;
+  box-shadow: 0 0 30px var(--color-cyan);
+}
+
+.finale-riya-cheer {
+  position: absolute;
+  bottom: 12px;
+  left: 24px;
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-pink);
+  animation: bounceSoft 1s infinite alternate;
+}
+
+.finale-star-cheer {
+  position: absolute;
+  top: 16px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--color-gold);
+  animation: floatSmall 2s infinite ease-in-out;
+}
+
+.cheer-riya-img, .cheer-star-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.all-numbers-board {
+  margin: 16px 0;
+}
+
+.all-numbers-board h4 {
+  color: var(--color-cyan-glow);
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.numbers-roll-grid {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+.roll-num-badge {
+  background: rgba(255, 207, 37, 0.2);
+  border: 2px solid var(--color-gold);
+  color: var(--color-gold);
+  border-radius: 8px;
+  padding: 6px 0;
+  font-weight: 900;
+  font-size: 1.1rem;
+  animation: popIn 0.3s ease;
+}
+
+.finale-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.finale-sub-btn {
+  font-size: 1.1rem;
+  padding: 12px 24px;
+}
+
+/* ==========================================================================
+   KEYFRAME ANIMATIONS
+   ========================================================================== */
+@keyframes floatSmall {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes bounceSoft {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-12px); }
+}
+
+@keyframes pulseScale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotateOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.4); opacity: 0; }
+  70% { transform: scale(1.25); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes collectStar {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4) translateY(-30px); opacity: 0.9; }
+  100% { transform: scale(0.2) translate(-200px, 150px); opacity: 0; }
+}
+
+@keyframes rocketHyperspace {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.05) rotate(2deg); }
+}
+
+/* ==========================================================================
+   RESPONSIVENESS (MOBILE, TABLET, DESKTOP)
+   ========================================================================== */
+@media (max-width: 900px) {
+  #characters-sidebar {
+    width: 180px;
+  }
+  .character-avatar {
+    width: 90px;
+    height: 90px;
+  }
+  .little-star-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  .mission-target-card {
+    padding: 4px 14px;
+  }
+  .number-bubble {
+    width: 48px;
+    height: 48px;
+  }
+  #current-number-display {
+    font-size: 1.7rem;
+  }
+  .target-name {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 650px) {
+  #game-stage {
+    flex-direction: column;
+    padding: 10px;
+  }
+  #characters-sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
+  .character-speech-bubble {
+    display: none;
+  }
+  .number-grid-selector {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
