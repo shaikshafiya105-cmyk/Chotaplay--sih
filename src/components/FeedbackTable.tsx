@@ -172,8 +172,15 @@ export function FeedbackTable({ feedbackList }: FeedbackTableProps) {
               })
             ) : (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-gray-500 font-medium">
-                  No feedback records found matching your filter.
+                <td colSpan={5} className="py-12 text-center text-[#1B5E7A]/70 font-medium">
+                  {feedbackList.length === 0 ? (
+                    <div className="space-y-1">
+                      <p className="font-semibold text-base text-[#1B5E7A]">No student feedback submitted yet.</p>
+                      <p className="text-xs text-[#1B5E7A]/60">Teacher-submitted student observations will appear here once recorded.</p>
+                    </div>
+                  ) : (
+                    <p>No feedback records found matching your filter.</p>
+                  )}
                 </td>
               </tr>
             )}

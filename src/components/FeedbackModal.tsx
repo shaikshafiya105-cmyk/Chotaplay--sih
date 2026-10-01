@@ -16,7 +16,7 @@ interface FeedbackModalProps {
 export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: FeedbackModalProps) {
   const { addFeedback, teacher } = useApp();
   const [studentName, setStudentName] = useState('');
-  const [classSection, setClassSection] = useState('Section A');
+  const [classSection, setClassSection] = useState('');
   const [status, setStatus] = useState<FeedbackStatus>('Understood');
   const [notes, setNotes] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -28,9 +28,9 @@ export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: 
     if (!studentName.trim()) return;
 
     addFeedback({
-      teacherId: teacher?.id || 'TCH-2026',
+      teacherId: teacher?.id || 'TCH-TEACHER',
       studentName: studentName.trim(),
-      classSection: classSection,
+      classSection: classSection.trim() || 'General',
       status: status,
       topicId: topicId,
       topicName: topicName,
@@ -42,6 +42,7 @@ export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: 
     setTimeout(() => {
       setIsSubmitted(false);
       setStudentName('');
+      setClassSection('');
       setNotes('');
       onClose();
     }, 1200);
@@ -114,7 +115,7 @@ export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: 
               <input
                 type="text"
                 required
-                placeholder="e.g. Aarav Sharma"
+                placeholder="Enter student name"
                 value={studentName}
                 onChange={e => setStudentName(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl border-2 border-[#2D9CDB]/40 focus:border-[#FF7A30] focus:outline-none bg-[#FFFDF8] text-[#1B5E7A] font-medium text-sm"
@@ -128,7 +129,7 @@ export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: 
               </label>
               <input
                 type="text"
-                placeholder="e.g. LKG - Lotus or Section A"
+                placeholder="e.g. Section A or Lotus"
                 value={classSection}
                 onChange={e => setClassSection(e.target.value)}
                 className="w-full px-4 py-3 rounded-2xl border-2 border-[#2D9CDB]/40 focus:border-[#FF7A30] focus:outline-none bg-[#FFFDF8] text-[#1B5E7A] font-medium text-sm"
@@ -165,7 +166,7 @@ export function FeedbackModal({ isOpen, onClose, topicId, topicName, classId }: 
               </label>
               <textarea
                 rows={2}
-                placeholder="Teacher observations regarding this student..."
+                placeholder="Enter teacher observations regarding this student..."
                 value={notes}
                 onChange={e => setNotes(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-2xl border-2 border-[#2D9CDB]/40 focus:border-[#FF7A30] focus:outline-none bg-[#FFFDF8] text-[#1B5E7A] font-medium text-sm resize-none"

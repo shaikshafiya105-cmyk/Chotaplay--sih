@@ -61,57 +61,18 @@ const defaultTeacher: TeacherUser = {
   isLoggedIn: false
 };
 
-const initialSampleFeedback: FeedbackItem[] = [
-  {
-    id: 'fb-sample-1',
-    teacherId: 'TCH-2026',
-    studentName: 'Aarav Sharma',
-    classSection: 'LKG - Lotus',
-    status: 'Understood',
-    topicId: 'lkg-eng-1',
-    topicName: 'Alphabet Phonics A-E',
-    classId: 'lkg',
-    notes: 'Recognized all letter sounds quickly with the interactive cards.',
-    createdAt: 'Sep 24, 2026, 10:30 AM'
-  },
-  {
-    id: 'fb-sample-2',
-    teacherId: 'TCH-2026',
-    studentName: 'Diya Patel',
-    classSection: 'UKG - Rose',
-    status: 'Developing',
-    topicId: 'ukg-math-1',
-    topicName: 'Counting & Numbers 1-50',
-    classId: 'ukg',
-    notes: 'Good with 1-20, needs a little encouragement on tens places.',
-    createdAt: 'Sep 25, 2026, 11:15 AM'
-  },
-  {
-    id: 'fb-sample-3',
-    teacherId: 'TCH-2026',
-    studentName: 'Vivaan Singh',
-    classSection: '1st Class - Sunflower',
-    status: 'Support Needed',
-    topicId: '1st-sci-1',
-    topicName: 'Plants & Nature',
-    classId: '1st-class',
-    notes: 'Requested extra video examples for plant parts.',
-    createdAt: 'Sep 26, 2026, 09:45 AM'
-  }
-];
-
-const getStoredFeedback = (): FeedbackItem[] => {
-  if (typeof window === 'undefined') return initialSampleFeedback;
+const getStoredFeedback = (teacherId?: string): FeedbackItem[] => {
+  if (typeof window === 'undefined' || !teacherId) return [];
   try {
-    const item = localStorage.getItem('chotaplay_feedback_list');
+    const item = localStorage.getItem(`chotaplay_feedback_${teacherId}`);
     if (item) {
       const parsed = JSON.parse(item);
-      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      if (Array.isArray(parsed)) return parsed;
     }
   } catch (e) {
     console.warn('Failed to load feedback from localStorage:', e);
   }
-  return initialSampleFeedback;
+  return [];
 };
 
 const getStoredProgress = (): ProgressState => {
@@ -174,13 +135,18 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
     // Immediately restore from localStorage for zero flash and instant persistence across reloads
     const localTeacher = getStoredTeacher();
     const localProgress = getStoredProgress();
-    const localFeedback = getStoredFeedback();
+    const localFeedback = localTeacher.isLoggedIn && localTeacher.id ? getStoredFeedback(localTeacher.id) : [];
 
     if (localTeacher.isLoggedIn) {
       setTeacher(localTeacher);
     }
     setProgress(localProgress);
     setFeedbackList(localFeedback);
+
+    // Clean up any legacy shared feedback cache
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('chotaplay_feedback_list');
+    }
 
     const initAuth = async () => {
       if (isLive) {
@@ -223,11 +189,13 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
             await loadSupabaseFeedback(session.user.id);
           } else if (!localTeacher.isLoggedIn) {
             setTeacher(defaultTeacher);
+            setFeedbackList([]);
           }
         } catch (err) {
           console.warn('Supabase session load error:', err);
           if (!localTeacher.isLoggedIn) {
             setTeacher(defaultTeacher);
+            setFeedbackList([]);
           }
         }
       }
@@ -277,6 +245,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
             completedGames: [],
             completedActivities: []
           });
+          setFeedbackList([]);
         }
       });
 
@@ -333,15 +302,16 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
     }
   };
 
-  // Helper to load feedback from Supabase
+  // Helper to load feedback from Supabase for the authenticated teacher
   const loadSupabaseFeedback = async (userId: string) => {
     try {
       const { data, error } = await supabase
         .from('feedback')
         .select('*')
+        .eq('teacher_id', userId)
         .order('created_at', { ascending: false });
 
-      if (data && !error && data.length > 0) {
+      if (data && !error) {
         const formatted: FeedbackItem[] = data.map((row: any) => ({
           id: row.id,
           teacherId: row.teacher_id,
@@ -361,18 +331,16 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
           })
         }));
 
-        setFeedbackList(prev => {
-          const existingIds = new Set(formatted.map(f => f.id));
-          const localOnly = prev.filter(p => !existingIds.has(p.id));
-          const merged = [...formatted, ...localOnly];
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('chotaplay_feedback_list', JSON.stringify(merged));
-          }
-          return merged;
-        });
+        setFeedbackList(formatted);
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`chotaplay_feedback_${userId}`, JSON.stringify(formatted));
+        }
+      } else {
+        setFeedbackList([]);
       }
     } catch (e) {
       console.warn('Error loading feedback from Supabase:', e);
+      setFeedbackList([]);
     }
   };
 
@@ -380,6 +348,10 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
   const login = async (input: string, pass: string): Promise<{ success: boolean; error?: string }> => {
     const rawInput = (input || 'teacher').trim();
     const rawPass = pass || '123456';
+
+    // Clear previous feedback/progress before authenticating new user
+    setProgress({ completedNotes: [], completedVideos: [], completedGames: [], completedActivities: [] });
+    setFeedbackList([]);
 
     // Format valid email format for Supabase Auth if needed
     const validEmail = rawInput.includes('@')
@@ -491,9 +463,22 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
         await supabase.auth.signOut();
       } catch (e) {}
     }
+    const currentId = teacher.id;
     setTeacher(defaultTeacher);
+    setProgress({
+      completedNotes: [],
+      completedVideos: [],
+      completedGames: [],
+      completedActivities: []
+    });
+    setFeedbackList([]);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('chotaplay_teacher');
+      localStorage.removeItem('chotaplay_progress');
+      localStorage.removeItem('chotaplay_feedback_list');
+      if (currentId) {
+        localStorage.removeItem(`chotaplay_feedback_${currentId}`);
+      }
     }
   };
 
@@ -609,8 +594,22 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
 
   // 5. Feedback Insertion to Supabase & Local Storage
   const addFeedback = async (item: Omit<FeedbackItem, 'id' | 'createdAt'>) => {
+    let activeTeacherId = teacher?.id || 'TCH-TEACHER';
+    let authUserId: string | null = null;
+
+    if (isSupabaseConfigured()) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          authUserId = session.user.id;
+          activeTeacherId = session.user.user_metadata?.teacher_id || session.user.id;
+        }
+      } catch (e) {}
+    }
+
     const newItem: FeedbackItem = {
       ...item,
+      teacherId: activeTeacherId,
       id: 'fb-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7),
       createdAt: new Date().toLocaleDateString('en-US', {
         year: 'numeric',
@@ -625,7 +624,8 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
       const updated = [newItem, ...prev];
       if (typeof window !== 'undefined') {
         try {
-          localStorage.setItem('chotaplay_feedback_list', JSON.stringify(updated));
+          const storageKey = authUserId ? `chotaplay_feedback_${authUserId}` : `chotaplay_feedback_${activeTeacherId}`;
+          localStorage.setItem(storageKey, JSON.stringify(updated));
         } catch (e) {
           console.warn('Failed to save feedback to localStorage:', e);
         }
@@ -633,7 +633,7 @@ export function AppContextProvider({ children }: { children: React.ReactNode }) 
       return updated;
     });
 
-    if (isSupabaseConfigured() && teacher.isLoggedIn) {
+    if (isSupabaseConfigured() && (authUserId || teacher.isLoggedIn)) {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session?.user) {
